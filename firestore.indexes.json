@@ -1,0 +1,18 @@
+{
+  "indexes": [
+       {
+         "collectionId": "items",
+         "fields": [
+           { "fieldPath": "createdBy", "mode": "ASCENDING" },
+           { "fieldPath": "createdAt", "mode": "DESCENDING" }
+         ]
+       },
+       {
+         "collectionId": "items",
+         "fields": [
+           { "fieldPath": "status", "mode": "ASCENDING" },
+           { "fieldPath": "createdAt", "mode": "DESCENDING" }
+         ]
+       }
+  ]
+}

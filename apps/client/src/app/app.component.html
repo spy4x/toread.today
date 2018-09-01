@@ -1,0 +1,43 @@
+<ng-template #signInSection>
+  <button (click)="signIn()">Sign in</button>
+</ng-template>
+
+<div *ngIf="user$ | async as user; else signInSection">
+  <h4>User: {{user.displayName}}</h4>
+  <button (click)="signOut()">Sign out</button>
+  <hr>
+  <ng-template #loading>
+    Loading...
+  </ng-template>
+  <div *ngIf="items$ | async as items; else loading">
+    <input placeholder="Enter url"
+           #input
+           (keydown.enter)="addItem(input.value, user.uid)">
+    <p style="color: red" *ngIf="addItemError">{{addItemError}}</p>
+    <p style="color: red" *ngIf="startReadingError">{{startReadingError}}</p>
+    <p style="color: red" *ngIf="finishReadingError">{{finishReadingError}}</p>
+    <p *ngIf="!items.length">No items yet.</p>
+    <hr>
+    <div class="items">
+      <h4>Reading:</h4>
+      <p style="color: red" *ngIf="loadInProgressItemsError">{{loadInProgressItemsError}}</p>
+      <div *ngFor="let item of inProgressItems$ | async" class="items__item" (click)="finishReading(item.id)">
+        <p class="items__item__type">{{item.type}}</p>
+        <p class="items__item__primary-text">{{item.title || item.url}}</p>
+        <p class="items__item__secondary-text">{{item.description || (item.title && item.url)}}</p>
+        <hr>
+      </div>
+    </div>
+    <hr>
+    <div class="items">
+      <h4>All:</h4>
+      <p style="color: red" *ngIf="loadAllItemsError">{{loadAllItemsError}}</p>
+      <div *ngFor="let item of items" class="items__item" (click)="startReading(item.id)">
+        <p class="items__item__type">{{item.type}}</p>
+        <p class="items__item__primary-text">{{item.title || item.url}}</p>
+        <p class="items__item__secondary-text">{{item.description || (item.title && item.url)}}</p>
+        <hr>
+      </div>
+    </div>
+  </div>
+</div>
