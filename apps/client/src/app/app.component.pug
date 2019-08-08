@@ -6,9 +6,18 @@ div('*ngIf'='user$ | async as user; else signInSection')
   hr
   ng-template(#loading='')
     | Loading...
-  div('*ngIf'='items$ | async as items; else loading')
+  .container.is-widescreen('*ngIf'='items$ | async as items; else loading')
+    .field.is-grouped
+      p.control.is-expanded
+        input.input(type='text' placeholder='Find a repository')
+      p.control
+        a.button.is-info
+          | Search
+
+
     input(placeholder='Enter url' '#input'='' '(keydown.enter)'='addItem(input.value, user.uid);input.value=""')
     button.button('(click)'='addItem(input.value, user.uid);input.value=""') Add
+
     p(style='color: red' '*ngIf'='addItemError') {{addItemError}}
     p(style='color: red' '*ngIf'='startReadingError') {{startReadingError}}
     p(style='color: red' '*ngIf'='finishReadingError') {{finishReadingError}}
@@ -17,15 +26,55 @@ div('*ngIf'='user$ | async as user; else signInSection')
     h3.title Reading:
     p(style='color: red' '*ngIf'='loadInProgressItemsError') {{loadInProgressItemsError}}
     .items
-      .items__item('*ngFor'='let item of inProgressItems$ | async')
-        p.items__item__type {{item.type}}
-        p.items__item__primary-text {{item.title || item.url}}
-        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
-        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-        div
-          button.button.is-warning('(click)'='finishReading(item.id)') Mark as finished
-          button.button.is-success('(click)'='undoReading(item.id)') Mark as unread
-        hr
+      article.message.items__item('*ngFor'='let item of inProgressItems$ | async')
+        .message-body
+          p.items__item__primary-text.subtitle {{item.title || item.url}} 
+            span.tag.is-info {{item.type}}
+          p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
+          //- p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
+          .field.is-grouped.is-grouped-multiline
+            .control            
+              .tags.has-addons
+                a.tag.is-light Technology
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light CSS
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light Flexbox
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light Web Design
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light Open Source
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light Community
+                a.tag.is-delete
+            .control
+              .tags.has-addons
+                a.tag.is-light Documentation
+                a.tag.is-delete
+          .columns
+            .column.is-6
+              .field.is-grouped
+                .control
+                  button.button.is-outlined.is-info('(click)'='finishReading(item.id)') Mark as finished 
+                .control
+                  button.button.is-outlined.is-success('(click)'='undoReading(item.id)') Mark as unread 
+            .column.is-6
+              .field.is-grouped.is-pulled-right
+                .control
+                  button.button.is-outlined.is-warning('(click)'='undoReading(item.id)') Edit 
+                .control
+                  button.button.is-outlined.is-danger('(click)'='undoReading(item.id)') Delete
+
     hr
     h3.title All: (click to open in new tab)
     p(style='color: red' '*ngIf'='loadAllItemsError') {{loadAllItemsError}}
