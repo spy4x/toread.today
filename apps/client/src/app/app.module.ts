@@ -6,10 +6,11 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
+import { ListComponent } from './list/list.component';
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ListComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),

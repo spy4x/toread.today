@@ -5,6 +5,7 @@ import { auth, User } from 'firebase';
 import { of } from 'rxjs';
 import { catchError, filter, first, map, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
+import { Item } from './item.interface';
 
 
 @Component({
@@ -14,10 +15,7 @@ import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.he
 })
 export class AppComponent {
   user$ = this.angularFireAuth.authState;
-  addItemError: string;
-  startReadingError: string;
-  finishReadingError: string;
-  loadAllItemsError: string;
+  error: string;
   items$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -28,13 +26,11 @@ export class AppComponent {
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
-    tap(items => console.log('items all:', items)),
     catchError(error => {
-      this.loadAllItemsError = error.message;
+      this.error = error.message;
       return of([]);
     })
   );
-  loadInProgressItemsError: string;
   inProgressItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -45,13 +41,11 @@ export class AppComponent {
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
-    tap(items => console.log('items in progress:', items)),
     catchError(error => {
-      this.loadInProgressItemsError = error.message;
+      this.error = error.message;
       return of([]);
     })
   );
-  loadinFinishedItemsError: string;
   inFinishedItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -62,9 +56,8 @@ export class AppComponent {
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
-    tap(items => console.log('items in done:', items)),
     catchError(error => {
-      this.loadinFinishedItemsError = error.message;
+      this.error = error.message;
       return of([]);
     })
   );
@@ -82,7 +75,7 @@ export class AppComponent {
   }
 
   addItem(url: string, userId: string) {
-    this.addItemError = undefined;
+    this.error = undefined;
     this.firestore
       .collection('items', ref => ref.where('url', '==', url).where('createdBy', '==', userId).limit(1))
       .snapshotChanges()
@@ -92,11 +85,13 @@ export class AppComponent {
         tap(async results => {
           if (!results.length) {
             try {
-              const data = {
+              const data: Item = {
+                id: null,
                 url,
                 title: null,
+                imageUrl: null,
                 description: null,
-                type: 'website',
+                type: null,
                 status: 'new',
                 tags: [],
                 priority: 3,
@@ -106,14 +101,15 @@ export class AppComponent {
                 finishedAt: null
               };
               console.log('saving item:', data);
+              const {id, ...body} = data;
               await this.firestore
                 .collection('items')
-                .add(data);
+                .add(body);
             } catch (error) {
-              this.addItemError = error.message;
+              this.error = error.message;
             }
           } else {
-            this.addItemError = 'Item already exist. Title: ' + results[0].title;
+            this.error = 'Item already exist. Title: ' + results[0].title;
           }
         })
       ).subscribe();
@@ -122,12 +118,13 @@ export class AppComponent {
   async startReading(itemId: string) {
     this.startReadingError = undefined;
     try {
+      const data: Partial<Item> = {
+        status: 'opened',
+        openedAt: new Date()
+      };
       await this.firestore
         .doc('items/' + itemId)
-        .update({
-          status: 'opened',
-          openedAt: new Date()
-        });
+        .update(data);
     } catch (error) {
       console.log('startReading() error:', error);
       this.startReadingError = error.message;
@@ -137,12 +134,13 @@ export class AppComponent {
   async finishReading(itemId: string) {
     this.finishReadingError = undefined;
     try {
+      const data: Partial<Item> = {
+        status: 'finished',
+        finishedAt: new Date()
+      };
       await this.firestore
         .doc('items/' + itemId)
-        .update({
-          status: 'finished',
-          finishedAt: new Date()
-        });
+        .update(data);
     } catch (error) {
       console.log('finishReading() error:', error);
       this.finishReadingError = error.message;
@@ -151,15 +149,26 @@ export class AppComponent {
 
   async undoReading(itemId: string) {
     try {
+      const data: Partial<Item> = {
+        status: 'new',
+        openedAt: null,
+        finishedAt: null
+      };
       await this.firestore
         .doc('items/' + itemId)
-        .update({
-          status: 'new',
-          openedAt: null,
-          finishedAt: null
-        });
+        .update(data);
     } catch (error) {
       console.log('undoReading() error:', error);
+    }
+  }
+
+  async delete(itemId: string) {
+    try {
+      await this.firestore
+        .doc('items/' + itemId)
+        .delete();
+    } catch (error) {
+      console.log('delete() error:', error);
     }
   }
 }

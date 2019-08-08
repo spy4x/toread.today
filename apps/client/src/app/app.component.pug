@@ -4,94 +4,32 @@ div('*ngIf'='user$ | async as user; else signInSection')
   h4 User: {{user.displayName}}
   button('(click)'='signOut()') Sign out
   hr
-  ng-template(#loading='')
-    | Loading...
-  .container.is-widescreen('*ngIf'='items$ | async as items; else loading')
+  .container.is-widescreen
     .field.is-grouped
       p.control.is-expanded
-        input.input(type='text' placeholder='Find a repository')
+        input.input(
+          type='text',
+          placeholder='Enter URL',
+          '#input'='',
+          '(keydown.enter)'='addItem(input.value, user.uid);input.value=""')
       p.control
-        a.button.is-info
-          | Search
+        button.button.is-info('(click)'='addItem(input.value, user.uid);input.value=""') Add
+
+    .notification.is-warning('*ngIf'='error')
+      button.delete('(click)'='error = null')
+      | {{error}}
 
 
-    input(placeholder='Enter url' '#input'='' '(keydown.enter)'='addItem(input.value, user.uid);input.value=""')
-    button.button('(click)'='addItem(input.value, user.uid);input.value=""') Add
-
-    p(style='color: red' '*ngIf'='addItemError') {{addItemError}}
-    p(style='color: red' '*ngIf'='startReadingError') {{startReadingError}}
-    p(style='color: red' '*ngIf'='finishReadingError') {{finishReadingError}}
-    p('*ngIf'='!items.length') No items yet.
-    hr
     h3.title Reading:
-    p(style='color: red' '*ngIf'='loadInProgressItemsError') {{loadInProgressItemsError}}
-    .items
-      article.message.items__item('*ngFor'='let item of inProgressItems$ | async')
-        .message-body
-          p.items__item__primary-text.subtitle {{item.title || item.url}} 
-            span.tag.is-info {{item.type}}
-          p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
-          //- p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-          .field.is-grouped.is-grouped-multiline
-            .control            
-              .tags.has-addons
-                a.tag.is-light Technology
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light CSS
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light Flexbox
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light Web Design
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light Open Source
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light Community
-                a.tag.is-delete
-            .control
-              .tags.has-addons
-                a.tag.is-light Documentation
-                a.tag.is-delete
-          .columns
-            .column.is-6
-              .field.is-grouped
-                .control
-                  button.button.is-outlined.is-info('(click)'='finishReading(item.id)') Mark as finished 
-                .control
-                  button.button.is-outlined.is-success('(click)'='undoReading(item.id)') Mark as unread 
-            .column.is-6
-              .field.is-grouped.is-pulled-right
-                .control
-                  button.button.is-outlined.is-warning('(click)'='undoReading(item.id)') Edit 
-                .control
-                  button.button.is-outlined.is-danger('(click)'='undoReading(item.id)') Delete
-
-    hr
-    h3.title All: (click to open in new tab)
-    p(style='color: red' '*ngIf'='loadAllItemsError') {{loadAllItemsError}}
-    .items
-      a.items__item('*ngFor'='let item of items' '(click)'='startReading(item.id)' '[href]'='item.url' target='_blank')
-        p.items__item__type {{item.type}}
-        p.items__item__primary-text {{item.title || item.url}}
-        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
-        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-        hr
-    hr
-    h3.title Finished: (click to unread)
-    p(style='color: red' '*ngIf'='loadinFinishedItemsError') {{loadinFinishedItemsError}}
-    .items
-      .items__item('*ngFor'='let item of inFinishedItems$ | async' '(click)'='undoReading(item.id)')
-        p.items__item__type {{item.type}}
-        p.items__item__primary-text {{item.title || item.url}}
-        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
-        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-        hr
+    tt-list('[items]'='inProgressItems$ | async',
+            '(finishReading)'='finishReading($event)',
+            '(undoReading)'='undoReading($event)',
+            '(delete)'='delete($event)')
+    h3.title All:
+    tt-list('[items]'='items$ | async',
+            '(startReading)'='startReading($event)',
+            '(delete)'='delete($event)')
+    h3.title Finished:
+    tt-list('[items]'='inFinishedItems$ | async',
+            '(undoReading)'='undoReading($event)',
+            '(delete)'='delete($event)')
