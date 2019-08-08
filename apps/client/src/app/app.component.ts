@@ -42,11 +42,26 @@ export class AppComponent {
       return of([]);
     })
   );
+  inFinishedItems$ = this.user$.pipe(
+    filter(v => !!v),
+    switchMap((user: User) =>
+      this.firestore
+        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('status', '==','done').orderBy('createdAt', 'desc').limit(5))
+        .snapshotChanges()
+    ),
+    map(unwrapCollectionSnapshotChanges),
+    tap(items => console.log('items in done:', items)),
+    catchError(error => {
+      this.loadinFinishedItemsError = error.message;
+      return of([]);
+    })
+  );
   addItemError: string;
   startReadingError: string;
   finishReadingError: string;
   loadAllItemsError: string;
   loadInProgressItemsError: string;
+  loadinFinishedItemsError: string;
 
   constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {
 
@@ -103,6 +118,7 @@ export class AppComponent {
           status: 'inProgress',
         });
     } catch (error) {
+      console.log('startReading() error:', error);
       this.startReadingError = error.message;
     }
   }
@@ -116,7 +132,20 @@ export class AppComponent {
           status: 'done',
         });
     } catch (error) {
+      console.log('finishReading() error:', error);
       this.finishReadingError = error.message;
+    }
+  }
+
+  async undoReading(itemId: string) {
+    try {
+      await this.firestore
+        .doc('items/'+itemId)
+        .update({
+          status: 'new',
+        });
+    } catch (error) {
+      console.log('undoReading() error:', error);
     }
   }
 }
