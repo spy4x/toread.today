@@ -40,7 +40,7 @@ export class AppComponent {
     switchMap((user: User) =>
       this.firestore
         .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'inProgress').orderBy('createdAt',
+          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'opened').orderBy('createdAt',
             'desc').limit(5))
         .snapshotChanges()
     ),
@@ -57,7 +57,7 @@ export class AppComponent {
     switchMap((user: User) =>
       this.firestore
         .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'done').orderBy('createdAt',
+          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'finished').orderBy('createdAt',
             'desc').limit(5))
         .snapshotChanges()
     ),
