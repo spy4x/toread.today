@@ -4,7 +4,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { auth, User } from 'firebase';
 import { of } from 'rxjs';
 import { catchError, filter, first, map, switchMap, tap } from 'rxjs/operators';
-import { firestoreQueryStringStartsWith, unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
+import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 
 
 @Component({
@@ -14,11 +14,17 @@ import { firestoreQueryStringStartsWith, unwrapCollectionSnapshotChanges } from 
 })
 export class AppComponent {
   user$ = this.angularFireAuth.authState;
+  addItemError: string;
+  startReadingError: string;
+  finishReadingError: string;
+  loadAllItemsError: string;
   items$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
       this.firestore
-        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('status', '==','new').orderBy('createdAt', 'desc').limit(5))
+        .collection('items',
+          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'new').orderBy('createdAt', 'desc').limit(
+            5))
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
@@ -28,11 +34,14 @@ export class AppComponent {
       return of([]);
     })
   );
+  loadInProgressItemsError: string;
   inProgressItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
       this.firestore
-        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('status', '==','inProgress').orderBy('createdAt', 'desc').limit(5))
+        .collection('items',
+          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'inProgress').orderBy('createdAt',
+            'desc').limit(5))
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
@@ -42,11 +51,14 @@ export class AppComponent {
       return of([]);
     })
   );
+  loadinFinishedItemsError: string;
   inFinishedItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
       this.firestore
-        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('status', '==','done').orderBy('createdAt', 'desc').limit(5))
+        .collection('items',
+          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'done').orderBy('createdAt',
+            'desc').limit(5))
         .snapshotChanges()
     ),
     map(unwrapCollectionSnapshotChanges),
@@ -56,12 +68,6 @@ export class AppComponent {
       return of([]);
     })
   );
-  addItemError: string;
-  startReadingError: string;
-  finishReadingError: string;
-  loadAllItemsError: string;
-  loadInProgressItemsError: string;
-  loadinFinishedItemsError: string;
 
   constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {
 
@@ -93,7 +99,9 @@ export class AppComponent {
                 type: 'website',
                 status: 'new',
                 createdBy: userId,
-                createdAt: new Date()
+                createdAt: new Date(),
+                openedAt: null,
+                finishedAt: null
               };
               console.log('saving item:', data);
               await this.firestore
@@ -103,7 +111,7 @@ export class AppComponent {
               this.addItemError = error.message;
             }
           } else {
-            this.addItemError = 'Item already exist. Title: '+results[0].title;
+            this.addItemError = 'Item already exist. Title: ' + results[0].title;
           }
         })
       ).subscribe();
@@ -113,9 +121,10 @@ export class AppComponent {
     this.startReadingError = undefined;
     try {
       await this.firestore
-        .doc('items/'+itemId)
+        .doc('items/' + itemId)
         .update({
-          status: 'inProgress',
+          status: 'opened',
+          openedAt: new Date()
         });
     } catch (error) {
       console.log('startReading() error:', error);
@@ -127,9 +136,10 @@ export class AppComponent {
     this.finishReadingError = undefined;
     try {
       await this.firestore
-        .doc('items/'+itemId)
+        .doc('items/' + itemId)
         .update({
-          status: 'done',
+          status: 'finished',
+          finishedAt: new Date()
         });
     } catch (error) {
       console.log('finishReading() error:', error);
@@ -140,9 +150,11 @@ export class AppComponent {
   async undoReading(itemId: string) {
     try {
       await this.firestore
-        .doc('items/'+itemId)
+        .doc('items/' + itemId)
         .update({
           status: 'new',
+          openedAt: null,
+          finishedAt: null
         });
     } catch (error) {
       console.log('undoReading() error:', error);
