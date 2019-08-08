@@ -98,6 +98,8 @@ export class AppComponent {
                 description: null,
                 type: 'website',
                 status: 'new',
+                tags: [],
+                priority: 3,
                 createdBy: userId,
                 createdAt: new Date(),
                 openedAt: null,
