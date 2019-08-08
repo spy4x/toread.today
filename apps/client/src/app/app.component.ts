@@ -14,8 +14,9 @@ import { Item } from './item.interface';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  user$ = this.angularFireAuth.authState;
+  user$ = this.angularFireAuth.authState.pipe(tap(user => this.userId = user ? user.uid : null));
   error: string;
+  userId: null | string;
   items$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -74,10 +75,10 @@ export class AppComponent {
     this.angularFireAuth.auth.signOut();
   }
 
-  addItem(url: string, userId: string) {
+  addItem(url: string) {
     this.error = undefined;
     this.firestore
-      .collection('items', ref => ref.where('url', '==', url).where('createdBy', '==', userId).limit(1))
+      .collection('items', ref => ref.where('url', '==', url).where('createdBy', '==', this.userId).limit(1))
       .snapshotChanges()
       .pipe(
         map(unwrapCollectionSnapshotChanges),
@@ -95,7 +96,7 @@ export class AppComponent {
                 status: 'new',
                 tags: [],
                 priority: 3,
-                createdBy: userId,
+                createdBy: this.userId,
                 createdAt: new Date(),
                 openedAt: null,
                 finishedAt: null

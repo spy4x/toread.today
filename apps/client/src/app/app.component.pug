@@ -1,19 +1,19 @@
-ng-template(#signinsection='')
-  button.button('(click)'='signIn()') Sign in
-div('*ngIf'='user$ | async as user; else signInSection')
-  h4 User: {{user.displayName}}
-  button('(click)'='signOut()') Sign out
-  hr
+ng-template(#notSignedIn='')
+  section.hero.is-success.is-fullheight
+    .hero-body
+      .container
+        h1.title
+          | Manage your URLs as a GOD!
+        h2.subtitle
+          | Just sign in and sell your soul...
+        button.button.is-large('(click)'='signIn()') Sign in
+
+ng-container('*ngIf'='user$ | async as user; else notSignedIn')
+  tt-navbar('[user]'='user',
+            '(signOut)'='signOut()',
+            '(addItem)'='addItem($event)')
+
   .container.is-widescreen
-    .field.is-grouped
-      p.control.is-expanded
-        input.input(
-          type='text',
-          placeholder='Enter URL',
-          '#input'='',
-          '(keydown.enter)'='addItem(input.value, user.uid);input.value=""')
-      p.control
-        button.button.is-info('(click)'='addItem(input.value, user.uid);input.value=""') Add
 
     .notification.is-warning('*ngIf'='error')
       button.delete('(click)'='error = null')
@@ -25,10 +25,12 @@ div('*ngIf'='user$ | async as user; else signInSection')
             '(finishReading)'='finishReading($event)',
             '(undoReading)'='undoReading($event)',
             '(delete)'='delete($event)')
-    h3.title All:
+
+    h3.title New:
     tt-list('[items]'='items$ | async',
             '(startReading)'='startReading($event)',
             '(delete)'='delete($event)')
+
     h3.title Finished:
     tt-list('[items]'='inFinishedItems$ | async',
             '(undoReading)'='undoReading($event)',
