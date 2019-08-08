@@ -1,0 +1,48 @@
+ng-template(#signinsection='')
+  button.button('(click)'='signIn()') Sign in
+div('*ngIf'='user$ | async as user; else signInSection')
+  h4 User: {{user.displayName}}
+  button('(click)'='signOut()') Sign out
+  hr
+  ng-template(#loading='')
+    | Loading...
+  div('*ngIf'='items$ | async as items; else loading')
+    input(placeholder='Enter url' '#input'='' '(keydown.enter)'='addItem(input.value, user.uid);input.value=""')
+    button.button('(click)'='addItem(input.value, user.uid);input.value=""') Add
+    p(style='color: red' '*ngIf'='addItemError') {{addItemError}}
+    p(style='color: red' '*ngIf'='startReadingError') {{startReadingError}}
+    p(style='color: red' '*ngIf'='finishReadingError') {{finishReadingError}}
+    p('*ngIf'='!items.length') No items yet.
+    hr
+    h3.title Reading:
+    p(style='color: red' '*ngIf'='loadInProgressItemsError') {{loadInProgressItemsError}}
+    .items
+      .items__item('*ngFor'='let item of inProgressItems$ | async')
+        p.items__item__type {{item.type}}
+        p.items__item__primary-text {{item.title || item.url}}
+        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
+        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
+        div
+          button.button.is-warning('(click)'='finishReading(item.id)') Mark as finished
+          button.button.is-success('(click)'='undoReading(item.id)') Mark as unread
+        hr
+    hr
+    h3.title All: (click to open in new tab)
+    p(style='color: red' '*ngIf'='loadAllItemsError') {{loadAllItemsError}}
+    .items
+      a.items__item('*ngFor'='let item of items' '(click)'='startReading(item.id)' '[href]'='item.url' target='_blank')
+        p.items__item__type {{item.type}}
+        p.items__item__primary-text {{item.title || item.url}}
+        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
+        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
+        hr
+    hr
+    h3.title Finished: (click to unread)
+    p(style='color: red' '*ngIf'='loadinFinishedItemsError') {{loadinFinishedItemsError}}
+    .items
+      .items__item('*ngFor'='let item of inFinishedItems$ | async' '(click)'='undoReading(item.id)')
+        p.items__item__type {{item.type}}
+        p.items__item__primary-text {{item.title || item.url}}
+        p.items__item__secondary-text('*ngIf'='item.title') {{item.url}}
+        p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
+        hr
