@@ -76,7 +76,6 @@ export class AppComponent {
   }
 
   addItem(url: string) {
-    this.error = undefined;
     this.firestore
       .collection('items', ref => ref.where('url', '==', url).where('createdBy', '==', this.userId).limit(1))
       .snapshotChanges()
@@ -117,7 +116,6 @@ export class AppComponent {
   }
 
   async startReading(itemId: string) {
-    this.startReadingError = undefined;
     try {
       const data: Partial<Item> = {
         status: 'opened',
@@ -128,12 +126,11 @@ export class AppComponent {
         .update(data);
     } catch (error) {
       console.log('startReading() error:', error);
-      this.startReadingError = error.message;
+      this.error = error.message;
     }
   }
 
   async finishReading(itemId: string) {
-    this.finishReadingError = undefined;
     try {
       const data: Partial<Item> = {
         status: 'finished',
@@ -144,7 +141,7 @@ export class AppComponent {
         .update(data);
     } catch (error) {
       console.log('finishReading() error:', error);
-      this.finishReadingError = error.message;
+      this.error = error.message;
     }
   }
 
@@ -160,6 +157,7 @@ export class AppComponent {
         .update(data);
     } catch (error) {
       console.log('undoReading() error:', error);
+      this.error = error.message;
     }
   }
 
@@ -170,6 +168,7 @@ export class AppComponent {
         .delete();
     } catch (error) {
       console.log('delete() error:', error);
+      this.error = error.message;
     }
   }
 }

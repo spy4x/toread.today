@@ -1,17 +1,15 @@
 nav.navbar.is-primary(role='navigation' aria-label='main navigation')
-  .navbar-brand
+  .navbar-start
     .navbar-item TOREAD.SPACE
-  #navbarBasicExample.navbar-menu
-    .navbar-start
-      .navbar-item
-        p.control.is-expanded
-          input.input(
-          type='text',
-          placeholder='Enter URL',
-          '#input'='',
-          '(keydown.enter)'='addItem.emit(input.value);input.value=""')
-    .navbar-end('*ngIf'='user')
-      .navbar-item
-        | {{user.displayName}}
-      .navbar-item
-        button.button('(click)'='signOut.emit()') Sign out
+    .navbar-item
+      p.control.is-expanded
+        input.input(
+        type='text',
+        placeholder='Enter URL',
+        '#input'='',
+        '(keydown.enter)'='addItem.emit(input.value);input.value=""')
+  .navbar-end('*ngIf'='user')
+    .navbar-item
+      | {{user.displayName}}
+    .navbar-item
+      button.button('(click)'='signOut.emit()') Sign out
