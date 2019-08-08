@@ -41,6 +41,7 @@
     "@ngrx/store": "6.0.1",
     "@nrwl/nx": "6.3.0",
     "angularfire2": "^5.0.0-rc.12",
+    "bulma": "^0.7.5",
     "core-js": "^2.5.4",
     "firebase": "^5.4.2",
     "rxjs": "^6.0.0",

@@ -23,7 +23,7 @@
               "apps/client/src/assets"
             ],
             "styles": [
-              "apps/client/src/styles.css"
+              "apps/client/src/styles.sass"
             ],
             "scripts": []
           },
