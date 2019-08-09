@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { User } from 'firebase';
 
 @Component({
   selector: 'tt-navbar',
   templateUrl: './navbar.component.pug',
-  styleUrls: ['./navbar.component.sass']
+  styleUrls: ['./navbar.component.sass'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   @Input() user: User;

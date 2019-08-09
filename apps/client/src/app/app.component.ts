@@ -3,9 +3,11 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { auth, User } from 'firebase';
 import { of } from 'rxjs';
-import { catchError, filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 import { Item } from './item.interface';
+import { ToggleItemTagEvent } from './list/list.component';
+import * as firebase from 'firebase/app';
 
 
 @Component({
@@ -14,9 +16,19 @@ import { Item } from './item.interface';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  user$ = this.angularFireAuth.authState.pipe(tap(user => this.userId = user ? user.uid : null));
   error: string;
   userId: null | string;
+  user$ = this.angularFireAuth.authState.pipe(
+    startWith(JSON.parse(localStorage.getItem('tt-user'))),
+    tap(user => {
+      this.userId = user ? user.uid : null;
+      localStorage.setItem('tt-user', JSON.stringify(user));
+    }),
+    catchError(error => {
+      this.error = error.message;
+      console.error('user$ error', error);
+      return of(null);
+    }));
   items$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -29,9 +41,11 @@ export class AppComponent {
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
+      console.error('items$ error', error);
       return of([]);
     })
   );
+
   inProgressItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -44,9 +58,11 @@ export class AppComponent {
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
+      console.error('inProgressItems$ error', error);
       return of([]);
     })
   );
+
   inFinishedItems$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -59,8 +75,26 @@ export class AppComponent {
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
+      console.error('inFinishedItems$ error', error);
       return of([]);
     })
+  );
+
+  tags$ = this.user$.pipe(
+    filter(v => !!v),
+    switchMap((user: User) =>
+      this.firestore
+        .collection('tags',
+          ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
+        .snapshotChanges()
+    ),
+    map(unwrapCollectionSnapshotChanges),
+    catchError(error => {
+      this.error = error.message;
+      console.error('tags$ error', error);
+      return of([]);
+    }),
+    shareReplay(1)
   );
 
   constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {
@@ -101,12 +135,13 @@ export class AppComponent {
                 finishedAt: null
               };
               console.log('saving item:', data);
-              const {id, ...body} = data;
+              const { id, ...body } = data;
               await this.firestore
                 .collection('items')
                 .add(body);
             } catch (error) {
               this.error = error.message;
+              console.error('addItem error', error);
             }
           } else {
             this.error = 'Item already exist. Title: ' + results[0].title;
@@ -168,6 +203,21 @@ export class AppComponent {
         .delete();
     } catch (error) {
       console.log('delete() error:', error);
+      this.error = error.message;
+    }
+  }
+
+  async toggleTag(event: ToggleItemTagEvent) {
+    try {
+      await this.firestore
+        .doc('items/' + event.itemId)
+        .update({
+          tags: event.mode === 'add'
+                ? firebase.firestore.FieldValue.arrayUnion(event.id)
+                : firebase.firestore.FieldValue.arrayRemove(event.id)
+        });
+    } catch (error) {
+      console.log('toggleTag() error:', error);
       this.error = error.message;
     }
   }

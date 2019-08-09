@@ -8,10 +8,11 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { ListComponent } from './list/list.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { TagsComponent } from './tags/tags.component';
 
 
 @NgModule({
-  declarations: [AppComponent, ListComponent, NavbarComponent],
+  declarations: [AppComponent, ListComponent, NavbarComponent, TagsComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),

@@ -1,0 +1,6 @@
+.field.is-grouped.is-grouped-multiline
+  .control('*ngFor'='let tag of all')
+    .tags.has-addons('(click)'='toggleTag(tag)')
+      span.tag.is-white {{tag.title}}
+      span.tag.is-danger.is-delete('*ngIf'='isSelected(tag)')
+      span.tag.is-primary('*ngIf'='!isSelected(tag)') +

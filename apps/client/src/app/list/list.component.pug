@@ -8,19 +8,7 @@
       a('[href]'='item.url', target='_blank', '(click)'='startReading.emit(item.id)')
         p.items__item__secondary-text {{item.url}}
       //- p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-      .field.is-grouped.is-grouped-multiline
-        .control            
-          .tags.has-addons
-            a.tag.is-light Technology
-            a.tag.is-delete
-        .control
-          .tags.has-addons
-            a.tag.is-light CSS
-            a.tag.is-delete
-        .control
-          .tags.has-addons
-            a.tag.is-light Flexbox
-            a.tag.is-delete
+      tt-tags('[all]'='tags', '[selectedIds]'='item.tags', '(toggle)'='toggleTagHandler($event, item)')
       .columns
         .column.is-6
           .field.is-grouped

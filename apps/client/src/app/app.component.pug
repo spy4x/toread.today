@@ -22,16 +22,22 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
 
     h3.title Reading:
     tt-list('[items]'='inProgressItems$ | async',
+            '[tags]'='tags$ | async',
             '(finishReading)'='finishReading($event)',
             '(undoReading)'='undoReading($event)',
+            '(toggleTag)'='toggleTag($event)',
             '(delete)'='delete($event)')
 
     h3.title New:
     tt-list('[items]'='items$ | async',
+            '[tags]'='tags$ | async',
             '(startReading)'='startReading($event)',
+            '(toggleTag)'='toggleTag($event)',
             '(delete)'='delete($event)')
 
     h3.title Finished:
     tt-list('[items]'='inFinishedItems$ | async',
+            '[tags]'='tags$ | async',
             '(undoReading)'='undoReading($event)',
+            '(toggleTag)'='toggleTag($event)',
             '(delete)'='delete($event)')
