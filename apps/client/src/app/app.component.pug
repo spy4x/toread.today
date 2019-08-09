@@ -13,31 +13,42 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
             '(signOut)'='signOut()',
             '(addItem)'='addItem($event)')
 
-  .container.is-widescreen
+  .container
+
+    tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
 
     .notification.is-warning('*ngIf'='error')
       button.delete('(click)'='error = null')
       | {{error}}
 
+    ng-container('*ngIf'='(filter$ | async)?.tagId; else all')
+      h3.title Filtered:
+      tt-list('[items]'='filteredItems$ | async',
+      '[tags]'='tags$ | async',
+      '(undoReading)'='undoReading($event)',
+      '(toggleTag)'='toggleTag($event)',
+      '(delete)'='delete($event)')
 
-    h3.title Reading:
-    tt-list('[items]'='inProgressItems$ | async',
-            '[tags]'='tags$ | async',
-            '(finishReading)'='finishReading($event)',
-            '(undoReading)'='undoReading($event)',
-            '(toggleTag)'='toggleTag($event)',
-            '(delete)'='delete($event)')
+    ng-template('#all'='')
+      h3.title Reading:
+      tt-list('[items]'='inProgressItems$ | async',
+              '[tags]'='tags$ | async',
+              '(finishReading)'='finishReading($event)',
+              '(undoReading)'='undoReading($event)',
+              '(toggleTag)'='toggleTag($event)',
+              '(delete)'='delete($event)')
 
-    h3.title New:
-    tt-list('[items]'='items$ | async',
-            '[tags]'='tags$ | async',
-            '(startReading)'='startReading($event)',
-            '(toggleTag)'='toggleTag($event)',
-            '(delete)'='delete($event)')
+      h3.title New:
+      tt-list('[items]'='items$ | async',
+              '[tags]'='tags$ | async',
+              '(startReading)'='startReading($event)',
+              '(toggleTag)'='toggleTag($event)',
+              '(delete)'='delete($event)')
 
-    h3.title Finished:
-    tt-list('[items]'='inFinishedItems$ | async',
-            '[tags]'='tags$ | async',
-            '(undoReading)'='undoReading($event)',
-            '(toggleTag)'='toggleTag($event)',
-            '(delete)'='delete($event)')
+      h3.title Finished:
+      tt-list('[items]'='inFinishedItems$ | async',
+              '[tags]'='tags$ | async',
+              '(undoReading)'='undoReading($event)',
+              '(toggleTag)'='toggleTag($event)',
+              '(delete)'='delete($event)')
+

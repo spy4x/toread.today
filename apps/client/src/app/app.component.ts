@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { auth, User } from 'firebase';
-import { of } from 'rxjs';
+import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 import { Item } from './item.interface';
 import { ToggleItemTagEvent } from './list/list.component';
 import * as firebase from 'firebase/app';
+import { Filter } from './filter/filter.interface';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class AppComponent {
       console.error('user$ error', error);
       return of(null);
     }));
+  filter$ = new BehaviorSubject<Filter>({ tagId: null });
   items$ = this.user$.pipe(
     filter(v => !!v),
     switchMap((user: User) =>
@@ -96,6 +98,28 @@ export class AppComponent {
     }),
     shareReplay(1)
   );
+
+  filteredItems$ = combineLatest([this.user$, this.filter$], (user, filter) => ({ user, filter })).pipe(
+    filter(v => !!v.user && !!v.filter.tagId),
+    switchMap((v: { user: User, filter: Filter }) => {
+      console.log('v', v);
+      return this.firestore
+        .collection('items',
+          ref => ref
+            .where('createdBy', '==', v.user.uid)
+            .where('tags', 'array-contains', v.filter.tagId)
+            .orderBy('createdAt', 'desc'))
+        .snapshotChanges();
+    }),
+    map(unwrapCollectionSnapshotChanges),
+    tap(docs => console.log('filteredItems$', docs)),
+    catchError(error => {
+      this.error = error.message;
+      console.error('filteredItems$ error', error);
+      return of([]);
+    })
+  );
+
 
   constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {
 

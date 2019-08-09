@@ -9,10 +9,11 @@ import { AppComponent } from './app.component';
 import { ListComponent } from './list/list.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { TagsComponent } from './tags/tags.component';
+import { FilterComponent } from './filter/filter.component';
 
 
 @NgModule({
-  declarations: [AppComponent, ListComponent, NavbarComponent, TagsComponent],
+  declarations: [AppComponent, ListComponent, NavbarComponent, TagsComponent, FilterComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
