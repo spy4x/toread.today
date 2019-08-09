@@ -30,57 +30,7 @@ export class AppComponent {
       console.error('user$ error', error);
       return of(null);
     }));
-  filter$ = new BehaviorSubject<Filter>({ tagId: null });
-  items$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'new').orderBy('createdAt', 'desc').limit(
-            5))
-        .snapshotChanges()
-    ),
-    map(unwrapCollectionSnapshotChanges),
-    catchError(error => {
-      this.error = error.message;
-      console.error('items$ error', error);
-      return of([]);
-    })
-  );
-
-  inProgressItems$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'opened').orderBy('createdAt',
-            'desc').limit(5))
-        .snapshotChanges()
-    ),
-    map(unwrapCollectionSnapshotChanges),
-    catchError(error => {
-      this.error = error.message;
-      console.error('inProgressItems$ error', error);
-      return of([]);
-    })
-  );
-
-  inFinishedItems$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'finished').orderBy('createdAt',
-            'desc').limit(5))
-        .snapshotChanges()
-    ),
-    map(unwrapCollectionSnapshotChanges),
-    catchError(error => {
-      this.error = error.message;
-      console.error('inFinishedItems$ error', error);
-      return of([]);
-    })
-  );
+  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened' });
 
   tags$ = this.user$.pipe(
     filter(v => !!v),
@@ -99,23 +49,27 @@ export class AppComponent {
     shareReplay(1)
   );
 
-  filteredItems$ = combineLatest([this.user$, this.filter$], (user, filter) => ({ user, filter })).pipe(
-    filter(v => !!v.user && !!v.filter.tagId),
+  items$ = combineLatest([this.user$, this.filter$], (user, filter) => ({ user, filter })).pipe(
+    filter(v => !!v.user),
     switchMap((v: { user: User, filter: Filter }) => {
-      console.log('v', v);
       return this.firestore
         .collection('items',
-          ref => ref
-            .where('createdBy', '==', v.user.uid)
-            .where('tags', 'array-contains', v.filter.tagId)
-            .orderBy('createdAt', 'desc'))
+          ref => {
+            let query = ref
+              .where('createdBy', '==', v.user.uid)
+              .where('status', '==', v.filter.status)
+              .orderBy('createdAt', 'desc');
+            if (v.filter.tagId) {
+              query = query.where('tags', 'array-contains', v.filter.tagId);
+            }
+            return query;
+          })
         .snapshotChanges();
     }),
     map(unwrapCollectionSnapshotChanges),
-    tap(docs => console.log('filteredItems$', docs)),
     catchError(error => {
       this.error = error.message;
-      console.error('filteredItems$ error', error);
+      console.error('items$ error', error);
       return of([]);
     })
   );
@@ -183,6 +137,7 @@ export class AppComponent {
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
+      this.filter$.next({...this.filter$.value, status: 'opened'})
     } catch (error) {
       console.log('startReading() error:', error);
       this.error = error.message;

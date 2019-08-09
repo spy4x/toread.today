@@ -1,2 +1,8 @@
 h3.title Filter by:
 tt-tags('[all]'='tags', '[selectedIds]'='[filter.tagId]', '(toggle)'='toggleTagId($event)')
+br
+.tabs
+  ul
+    li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
+      a {{status}}
+br
