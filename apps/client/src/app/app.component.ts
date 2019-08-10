@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 import { Item } from './item.interface';
-import { ToggleItemTagEvent } from './list/list.component';
+import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from './list/list.component';
 import * as firebase from 'firebase/app';
 import { Filter } from './filter/filter.interface';
 
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
     shareReplay(1)
   );
 
-  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened' });
+  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened', isFavourite: null });
   items$ = new BehaviorSubject<Item[]>([]);
   loadMoreItems$ = new BehaviorSubject<number>(0);
   areAllItemsLoaded: boolean = false;
@@ -73,9 +73,14 @@ export class AppComponent implements OnInit {
             ref => {
               let query = ref
                 .where('createdBy', '==', v.user.uid)
-                .where('status', '==', v.filter.status)
                 .orderBy('createdAt', 'desc')
                 .limit(v.itemsToLoad);
+              if (v.filter.status) {
+                query = query.where('status', '==', v.filter.status)
+              }
+              if (v.filter.isFavourite) {
+                query = query.where('isFavourite', '==', true)
+              }
               if (v.filter.tagId) {
                 query = query.where('tags', 'array-contains', v.filter.tagId);
               }
@@ -126,6 +131,7 @@ export class AppComponent implements OnInit {
                 status: 'new',
                 tags: [],
                 priority: 3,
+                isFavourite: false,
                 createdBy: this.userId,
                 createdAt: new Date(),
                 openedAt: null,
@@ -215,6 +221,20 @@ export class AppComponent implements OnInit {
         });
     } catch (error) {
       console.error('toggleTag() error:', error);
+      this.error = error.message;
+    }
+  }
+
+  async toggleFavourite(event: ToggleItemFavouriteEvent) {
+    try {
+      const data: Partial<Item> = {
+        isFavourite: event.isFavourite
+      };
+      await this.firestore
+        .doc('items/' + event.itemId)
+        .update(data);
+    } catch (error) {
+      console.error('toggleFavourite() error:', error);
       this.error = error.message;
     }
   }

@@ -1,6 +1,7 @@
 import { ItemStatus } from '../item.interface';
 
 export interface Filter {
-  tagId: string
-  status: ItemStatus
+  tagId: null | string
+  status: null | ItemStatus
+  isFavourite: null | boolean
 }

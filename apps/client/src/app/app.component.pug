@@ -30,5 +30,6 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
               '(finishReading)'='finishReading($event)',
               '(undoReading)'='undoReading($event)',
               '(toggleTag)'='toggleTag($event)',
+              '(toggleFavourite)'='toggleFavourite($event)',
               '(delete)'='delete($event)'
               '(loadMore)'='loadMore()')

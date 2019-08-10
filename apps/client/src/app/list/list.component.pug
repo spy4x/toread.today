@@ -4,16 +4,12 @@
     '(scrolled)'='loadMore.emit()')
   article.message.is-dark('*ngFor'='let item of items')
     .message-body
-      p.items__item__primary-text.subtitle('*ngIf'='item.title')
-        span {{item.title}}&nbsp;
-        span.tag.is-info {{item.type}}
-        a.button
-          span.icon.is-small.has-text-warning
-            i.far.fa-star
-        span.has-text-warning.pointer.ml-2
-          i.far.fa-star
-        span.has-text-warning.pointer.ml-2
-          i.fas.fa-star
+      p.items__item__primary-text.subtitle
+        span {{item.title || 'URL was not parsed'}}&nbsp;
+        span.tag.is-info('*ngIf'='item.type') {{item.type}}
+        button.button.is-small.ml-2('(click)'='toggleFavouriteHandler(item)', title='Toggle favorite')
+          span.icon.is-small('[class.has-text-warning]'='item.isFavourite')
+            i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
       a('[href]'='item.url', target='_blank', '(click)'='startReading.emit(item.id)')
         p.items__item__secondary-text {{item.url}}
       br

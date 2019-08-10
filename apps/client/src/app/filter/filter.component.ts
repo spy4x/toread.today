@@ -22,10 +22,18 @@ export class FilterComponent {
   }
 
   setStatus(status: ItemStatus) {
-    this.changed.emit({ ...this.filter, status: status });
+    this.changed.emit({ ...this.filter, status: status, isFavourite: null });
   }
 
   isStatus(status: ItemStatus): boolean {
     return this.filter.status === status;
+  }
+
+  isFavourite(): boolean {
+    return this.filter.isFavourite;
+  }
+
+  setFavourite() {
+    this.changed.emit({ ...this.filter, status: null, isFavourite: true });
   }
 }

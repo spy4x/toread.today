@@ -10,6 +10,7 @@ export interface Item {
   createdAt: Date
   tags: string[]
   priority: 1 | 2 | 3
+  isFavourite: boolean
   type: null | 'website' | 'video' | 'article' | 'profile'
   status: ItemStatus
   openedAt: null | Date
