@@ -7,21 +7,17 @@ article.message.is-dark('*ngFor'='let item of items')
     a('[href]'='item.url', target='_blank', '(click)'='startReading.emit(item.id)')
       p.items__item__secondary-text {{item.url}}
     //- p.items__item__secondary-text('*ngIf'='item.description') {{item.description}}
-    br
+
     tt-tags('[all]'='tags', '[selectedIds]'='item.tags', '(toggle)'='toggleTagHandler($event, item)')
-    .columns
-      .column.is-6
-        .field.is-grouped
-          .control('*ngIf'='item.status === "new"')
-            a.button.is-outlined.is-info(
-              '(click)'='startReading.emit(item.id)',
-              '[href]'='item.url',
-              target='_blank') Start reading
-          .control('*ngIf'='item.status === "opened"')
-            button.button.is-outlined.is-info('(click)'='finishReading.emit(item.id)') Mark as finished
-          .control('*ngIf'='item.status !== "new"')
-            button.button.is-outlined.is-success('(click)'='undoReading.emit(item.id)') Mark as unread
-      .column.is-6
-        .field.is-grouped.is-pulled-right
-          .control
-            button.button.is-outlined.is-danger('(click)'='delete.emit(item.id)') Delete
+    .field.is-grouped
+      .control('*ngIf'='item.status === "new"')
+        a.button.is-outlined.is-info(
+          '(click)'='startReading.emit(item.id)',
+          '[href]'='item.url',
+          target='_blank') Start reading
+      .control('*ngIf'='item.status === "opened"')
+        button.button.is-outlined.is-info('(click)'='finishReading.emit(item.id)') Finished
+      .control('*ngIf'='item.status !== "new"')
+        button.button.is-outlined.is-success('(click)'='undoReading.emit(item.id)') Unread
+      .control.ml-auto
+        button.button.is-outlined.is-danger('(click)'='delete.emit(item.id)') Delete
