@@ -10,6 +10,7 @@ import { ListComponent } from './list/list.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { TagsComponent } from './tags/tags.component';
 import { FilterComponent } from './filter/filter.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FilterComponent } from './filter/filter.component';
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    InfiniteScrollModule
   ],
   providers: [],
   bootstrap: [AppComponent]

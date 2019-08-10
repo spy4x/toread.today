@@ -17,13 +17,20 @@ export interface ToggleItemTagEvent extends ToggleTagEvent {
 export class ListComponent {
   @Input() items: Item[];
   @Input() tags: Tag[];
+  @Input() isLoading: boolean = false;
+  @Input() areAllItemsLoaded: boolean = false;
   @Output() startReading = new EventEmitter<string>();
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
+  @Output() loadMore = new EventEmitter<void>();
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({...event, itemId: item.id})
+  }
+
+  isZeroItems(): boolean {
+    return this.items && !this.items.length && !this.isLoading;
   }
 }

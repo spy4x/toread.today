@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
 import { auth, User } from 'firebase';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
@@ -10,13 +10,14 @@ import { ToggleItemTagEvent } from './list/list.component';
 import * as firebase from 'firebase/app';
 import { Filter } from './filter/filter.interface';
 
+const LOAD_ITEMS_LIMIT = 20;
 
 @Component({
   selector: 'tt-root',
   templateUrl: './app.component.pug',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   error: string;
   userId: null | string;
   user$ = this.angularFireAuth.authState.pipe(
@@ -30,7 +31,6 @@ export class AppComponent {
       console.error('user$ error', error);
       return of(null);
     }));
-  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened' });
 
   tags$ = this.user$.pipe(
     filter(v => !!v),
@@ -49,34 +49,53 @@ export class AppComponent {
     shareReplay(1)
   );
 
-  items$ = combineLatest([this.user$, this.filter$], (user, filter) => ({ user, filter })).pipe(
-    filter(v => !!v.user),
-    switchMap((v: { user: User, filter: Filter }) => {
-      return this.firestore
-        .collection('items',
-          ref => {
-            let query = ref
-              .where('createdBy', '==', v.user.uid)
-              .where('status', '==', v.filter.status)
-              .orderBy('createdAt', 'desc');
-            if (v.filter.tagId) {
-              query = query.where('tags', 'array-contains', v.filter.tagId);
-            }
-            return query;
-          })
-        .snapshotChanges();
-    }),
-    map(unwrapCollectionSnapshotChanges),
-    catchError(error => {
-      this.error = error.message;
-      console.error('items$ error', error);
-      return of([]);
-    })
-  );
+  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened' });
+  items$ = new BehaviorSubject<Item[]>([]);
+  loadMoreItems$ = new BehaviorSubject<number>(0);
+  areAllItemsLoaded: boolean = false;
+  isLoading: boolean = false;
 
+  constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {}
 
-  constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {
-
+  ngOnInit() {
+    this.filter$.subscribe(() => {
+      this.items$.next([]);
+      this.areAllItemsLoaded = false;
+      this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
+    });
+    combineLatest([this.user$, this.filter$, this.loadMoreItems$],
+      (user, filter, itemsToLoad) => ({ user, filter, itemsToLoad }))
+      .pipe(
+        filter(v => !!v.user && !this.areAllItemsLoaded),
+        tap(v => this.isLoading = true),
+        switchMap((v: { user: User, filter: Filter, itemsToLoad: number }) => this.firestore
+          .collection('items',
+            ref => {
+              let query = ref
+                .where('createdBy', '==', v.user.uid)
+                .where('status', '==', v.filter.status)
+                .orderBy('createdAt', 'desc')
+                .limit(v.itemsToLoad);
+              if (v.filter.tagId) {
+                query = query.where('tags', 'array-contains', v.filter.tagId);
+              }
+              return query;
+            })
+          .snapshotChanges()
+        ),
+        tap((documentChangeAction: DocumentChangeAction<Item>[]) => {
+          this.isLoading = false;
+          this.areAllItemsLoaded = documentChangeAction.length < this.loadMoreItems$.value;
+        }),
+        map(unwrapCollectionSnapshotChanges),
+        catchError(error => {
+          this.isLoading = false;
+          this.error = error.message;
+          console.error('items$ error', error);
+          return of([]);
+        })
+      )
+      .subscribe(this.items$);
   }
 
   signIn() {
@@ -112,7 +131,6 @@ export class AppComponent {
                 openedAt: null,
                 finishedAt: null
               };
-              console.log('saving item:', data);
               const { id, ...body } = data;
               await this.firestore
                 .collection('items')
@@ -137,9 +155,9 @@ export class AppComponent {
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
-      this.filter$.next({...this.filter$.value, status: 'opened'})
+      this.filter$.next({ ...this.filter$.value, status: 'opened' });
     } catch (error) {
-      console.log('startReading() error:', error);
+      console.error('startReading() error:', error);
       this.error = error.message;
     }
   }
@@ -154,7 +172,7 @@ export class AppComponent {
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      console.log('finishReading() error:', error);
+      console.error('finishReading() error:', error);
       this.error = error.message;
     }
   }
@@ -170,7 +188,7 @@ export class AppComponent {
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      console.log('undoReading() error:', error);
+      console.error('undoReading() error:', error);
       this.error = error.message;
     }
   }
@@ -181,7 +199,7 @@ export class AppComponent {
         .doc('items/' + itemId)
         .delete();
     } catch (error) {
-      console.log('delete() error:', error);
+      console.error('delete() error:', error);
       this.error = error.message;
     }
   }
@@ -196,8 +214,17 @@ export class AppComponent {
                 : firebase.firestore.FieldValue.arrayRemove(event.id)
         });
     } catch (error) {
-      console.log('toggleTag() error:', error);
+      console.error('toggleTag() error:', error);
       this.error = error.message;
     }
+  }
+
+  async loadMore() {
+    if(this.areAllItemsLoaded){
+      return;
+    }
+    const newAmountOfItemsToLoad = this.loadMoreItems$.value + LOAD_ITEMS_LIMIT;
+    console.log('Load more items:', newAmountOfItemsToLoad);
+    this.loadMoreItems$.next(newAmountOfItemsToLoad);
   }
 }
