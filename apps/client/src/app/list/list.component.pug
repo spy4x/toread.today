@@ -7,6 +7,13 @@
       p.items__item__primary-text.subtitle('*ngIf'='item.title')
         span {{item.title}}&nbsp;
         span.tag.is-info {{item.type}}
+        a.button
+          span.icon.is-small.has-text-warning
+            i.far.fa-star
+        span.has-text-warning.pointer.ml-2
+          i.far.fa-star
+        span.has-text-warning.pointer.ml-2
+          i.fas.fa-star
       a('[href]'='item.url', target='_blank', '(click)'='startReading.emit(item.id)')
         p.items__item__secondary-text {{item.url}}
       br
