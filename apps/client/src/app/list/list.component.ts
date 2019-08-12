@@ -20,8 +20,8 @@ export interface ToggleItemFavouriteEvent {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  @Input() items: Item[];
-  @Input() tags: Tag[];
+  @Input() items: Item[] = [];
+  @Input() tags: Tag[] = [];
   @Input() isLoading: boolean = false;
   @Input() areAllItemsLoaded: boolean = false;
   @Output() startReading = new EventEmitter<string>();

@@ -1,12 +1,10 @@
-h3.title Filter by:
-tt-tags('[all]'='tags', '[selectedIds]'='[filter.tagId]', '(toggle)'='toggleTagId($event)')
-br
-.tabs
-  ul
-    li('[class.is-active]'='isFavourite()', '(click)'='setFavourite()')
-      a
-        span.icon.has-text-warning
-          i.fas.fa-star
-    li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
-      a {{status}}
-br
+.panel-block.is-flex.p-0
+  .tabs
+    ul
+      li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()')
+        a
+          span.icon.has-text-warning
+            i.fas.fa-star
+      li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
+        a {{status}}
+  tt-tag-selector.mr-1('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)')

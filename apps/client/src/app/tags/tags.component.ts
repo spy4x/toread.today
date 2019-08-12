@@ -3,7 +3,7 @@ import { Tag } from '../tag.interface';
 
 export interface ToggleTagEvent {
   id: string
-  mode: 'add' | 'remove'
+  isSelected: boolean
 }
 
 @Component({
@@ -23,6 +23,6 @@ export class TagsComponent {
   }
 
   toggleTag(tag: Tag): void {
-    this.toggle.emit({ id: tag.id, mode: this.selectedIds.includes(tag.id) ? 'remove' : 'add' });
+    this.toggle.emit({ id: tag.id, isSelected: !this.selectedIds.includes(tag.id) });
   }
 }

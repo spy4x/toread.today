@@ -130,5 +130,12 @@
     },
     "defaultCollection": "@nrwl/schematics"
   },
-  "defaultProject": "client"
+  "defaultProject": "client",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "sass",
+      "viewEncapsulation": "None",
+      "changeDetection": "OnPush"
+    }
+  }
 }

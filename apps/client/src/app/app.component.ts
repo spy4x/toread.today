@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
-import { auth, User } from 'firebase';
+import { User } from 'firebase';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 import { Item } from './item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from './list/list.component';
-import * as firebase from 'firebase/app';
+import { auth, firestore } from 'firebase/app';
 import { Filter } from './filter/filter.interface';
 
 const LOAD_ITEMS_LIMIT = 20;
@@ -15,7 +15,8 @@ const LOAD_ITEMS_LIMIT = 20;
 @Component({
   selector: 'tt-root',
   templateUrl: './app.component.pug',
-  styleUrls: ['./app.component.sass']
+  styleUrls: ['./app.component.sass'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
   error: string;
@@ -200,6 +201,9 @@ export class AppComponent implements OnInit {
   }
 
   async delete(itemId: string) {
+    if(!confirm('Are you sure you want to completely delete this item?')){
+      return;
+    }
     try {
       await this.firestore
         .doc('items/' + itemId)
@@ -215,9 +219,9 @@ export class AppComponent implements OnInit {
       await this.firestore
         .doc('items/' + event.itemId)
         .update({
-          tags: event.mode === 'add'
-                ? firebase.firestore.FieldValue.arrayUnion(event.id)
-                : firebase.firestore.FieldValue.arrayRemove(event.id)
+          tags: event.isSelected
+                ? firestore.FieldValue.arrayUnion(event.id)
+                : firestore.FieldValue.arrayRemove(event.id)
         });
     } catch (error) {
       console.error('toggleTag() error:', error);

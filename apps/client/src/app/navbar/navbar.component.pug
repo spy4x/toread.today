@@ -1,18 +1,6 @@
 nav.navbar.is-primary(role='navigation' aria-label='main navigation')
   .navbar-start
     .navbar-item TOREAD.TODAY
-    .navbar-item
-      .field.is-grouped
-        p.control.is-expanded
-          input.input(
-          type='text',
-          placeholder='Enter URL',
-          '#input'='',
-          '(keydown.enter)'='addItem.emit(input.value);input.value=""')
-        p.control
-          a.button.is-primary.is-inverted('(click)'='addItem.emit(input.value);input.value=""')
-            | Add
-
   .navbar-end('*ngIf'='user')
     .navbar-item
       | {{user.displayName}}

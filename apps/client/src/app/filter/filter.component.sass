@@ -1,4 +1,14 @@
 tt-filter
   .tabs
+    flex: 1 0
+    margin-bottom: -1px !important
     li
       text-transform: capitalize
+      @media(max-width: 768px)
+        a
+          padding-left: 0.5rem
+          padding-right: 0.5rem
+        &.favourite
+          a
+            padding-left: 0
+            padding-right: 0

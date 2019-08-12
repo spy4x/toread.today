@@ -11,5 +11,4 @@ import { User } from 'firebase';
 export class NavbarComponent {
   @Input() user: User;
   @Output() signOut = new EventEmitter<void>();
-  @Output() addItem = new EventEmitter<string>();
 }

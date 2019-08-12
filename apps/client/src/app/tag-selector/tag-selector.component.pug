@@ -1,0 +1,16 @@
+.dropdown.is-hoverable.is-right
+  .dropdown-trigger
+    a
+      span {{getActiveTitle()}}
+      span.icon.is-small
+        i.fas.fa-angle-down(aria-hidden='true')
+  .dropdown-menu(role='menu')
+    .dropdown-content
+      a.dropdown-item('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
+        | All tags
+      hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
+      a.dropdown-item(
+          '*ngFor'='let tag of tags' href='javascript:;',
+          '[class.is-active]'='isSelected(tag)',
+          '(click)'='toggleTag(tag)')
+        | {{ tag.title }}

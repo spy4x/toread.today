@@ -2,30 +2,47 @@
     infinite-scroll='',
     '[infiniteScrollThrottle]'="300",
     '(scrolled)'='loadMore.emit()')
-  article.message.is-dark('*ngFor'='let item of items')
-    .message-body
-      p.items__item__primary-text.subtitle
-        span {{item.title || 'URL was not parsed'}}&nbsp;
-        span.tag.is-info('*ngIf'='item.type') {{item.type}}
-        button.button.is-small.ml-2('(click)'='toggleFavouriteHandler(item)', title='Toggle favorite')
-          span.icon.is-small('[class.has-text-warning]'='item.isFavourite')
-            i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
-      a('[href]'='item.url', target='_blank', '(click)'='startReading.emit(item.id)')
-        p.items__item__secondary-text {{item.url}}
-      br
-      tt-tags('[all]'='tags', '[selectedIds]'='item.tags', '(toggle)'='toggleTagHandler($event, item)')
-      .field.is-grouped
-        .control('*ngIf'='item.status === "new"')
-          a.button.is-outlined.is-info(
-              '(click)'='startReading.emit(item.id)',
-              '[href]'='item.url',
-              target='_blank') Start reading
-        .control('*ngIf'='item.status === "opened"')
-          button.button.is-outlined.is-info('(click)'='finishReading.emit(item.id)') Finished
-        .control('*ngIf'='item.status !== "new"')
-          button.button.is-outlined.is-success('(click)'='undoReading.emit(item.id)') Unread
-        .control.ml-auto
-          button.button.is-outlined.is-danger('(click)'='delete.emit(item.id)') Delete
+
+  .item.panel-block.is-flex('*ngFor'='let item of items')
+
+    span.panel-icon
+      i(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
+
+    a.item--title(  '[href]'='item.url',
+        target='_blank',
+        '(click)'='startReading.emit(item.id)',
+        '[title]'='item.url')
+      | {{item.title || item.url}}
+
+    span.tag.is-light.ml-2('*ngFor'='let tagId of item.tags') {{tagId | tagTitleById:tags}}
+
+    tt-tag-selector.ml-2(
+        '[tags]'='tags',
+        '[selectedIds]'='item.tags',
+        '(toggle)'='toggleTagHandler($event, item)',
+        'title'='#',
+        '[isTitleStatic]'='true',
+        '[isAllTagsVisible]'='false')
+
+    a.icon.is-small.ml-2(
+        '[class.has-text-warning]'='item.isFavourite',
+        '(click)'='toggleFavouriteHandler(item)',
+        title='Toggle favorite')
+      i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
+
+    .dropdown.is-hoverable.is-right.ml-2
+      .dropdown-trigger
+        a
+          span.icon.is-small
+            i.fas.fa-angle-down(aria-hidden='true')
+      .dropdown-menu(role='menu')
+        .dropdown-content
+          a.dropdown-item.has-text-success(
+              '*ngIf'='item.status === "opened"',
+              '(click)'='finishReading.emit(item.id)') Mark as Finished
+          a.dropdown-item('*ngIf'='item.status !== "new"', '(click)'='undoReading.emit(item.id)') Mark as Unread
+          a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
+
 
   ng-container('*ngIf'='isLoading')
     .notification
@@ -35,6 +52,6 @@
     .notification
       p No items
 
-  ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
-    .notification
-      p No more items. Total items for current filter: {{items.length}}
+  //ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
+  //  .notification
+  //    p No more items. Total items for current filter: {{items.length}}

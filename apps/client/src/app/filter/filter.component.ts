@@ -18,7 +18,7 @@ export class FilterComponent {
   statuses: ItemStatus[] = ['opened', 'new', 'finished'];
 
   toggleTagId(event: ToggleTagEvent) {
-    this.changed.emit({ ...this.filter, tagId: event.mode === 'add' ? event.id : null });
+    this.changed.emit({ ...this.filter, tagId: event.isSelected ? event.id : null });
   }
 
   setStatus(status: ItemStatus) {
