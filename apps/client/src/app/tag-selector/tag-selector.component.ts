@@ -14,6 +14,7 @@ export class TagSelectorComponent {
   @Input() selectedIds: string[] = [];
   @Input() title: string = 'All Tags';
   @Input() isTitleStatic: boolean = false;
+  @Input() isTitleCustom: boolean = false;
   @Input() isAllTagsVisible: boolean = true;
   @Output() toggle = new EventEmitter<ToggleTagEvent>();
 

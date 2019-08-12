@@ -1,9 +1,11 @@
 .dropdown.is-hoverable.is-right
   .dropdown-trigger
     a
-      span {{getActiveTitle()}}
-      span.icon.is-small
-        i.fas.fa-angle-down(aria-hidden='true')
+      ng-container('*ngIf'='!isTitleCustom')
+        span {{getActiveTitle()}}
+        span.icon.is-small
+          i.fas.fa-angle-down(aria-hidden='true')
+      ng-content
   .dropdown-menu(role='menu')
     .dropdown-content
       a.dropdown-item('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
