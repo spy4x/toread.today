@@ -16,6 +16,7 @@ import { TagSelectorComponent } from './tag-selector/tag-selector.component';
 import { ItemsAddComponent } from './items-add/items-add.component';
 import { TagTitleByIdPipe } from './tag-title-by-id/tag-title-by-id.pipe';
 import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-type.pipe';
+import { DropdownDirective } from './dropdown/dropdown.directive';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-
     TagSelectorComponent,
     ItemsAddComponent,
     TagTitleByIdPipe,
-    GetIconByItemTypePipe],
+    GetIconByItemTypePipe,
+    DropdownDirective],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
