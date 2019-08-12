@@ -1,8 +1,57 @@
 nav.navbar.is-primary(role='navigation' aria-label='main navigation')
-  .navbar-start
-    .navbar-item TOREAD.TODAY
-  .navbar-end('*ngIf'='user')
+  .navbar-brand
     .navbar-item
-      | {{user.displayName}}
-    .navbar-item
-      button.button('(click)'='signOut.emit()') Sign out
+      span.icon.mr-1
+        i.far.fa-bookmark
+      span Toread.today
+    a.navbar-burger.burger(
+        role='button',
+        aria-label='menu',
+        '[class.is-active]'='isMenuExpanded',
+        '(click)'='toggleMenu()')
+      span(aria-hidden='true')
+      span(aria-hidden='true')
+      span(aria-hidden='true')
+
+  .navbar-menu('[class.is-active]'='isMenuExpanded')
+
+    //.navbar-start
+    //  a.navbar-item
+    //    | Menu item 1
+    //  a.navbar-item
+    //    | Menu item 2
+
+    .navbar-end('*ngIf'='user')
+
+      //- mobile menu
+      ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
+        .navbar-item
+          .dropdown-item
+            span.icon.mr-1
+              i.fas.fa-cat
+            | Hello, {{user.displayName || user.email}}
+
+        .navbar-item
+          a.dropdown-item('(click)'='signOut.emit()')
+            span.icon.mr-1
+              i.fas.fa-sign-out-alt
+            | Sign out
+
+      ng-template('#desktopMenu'='')
+        .navbar-item
+          .dropdown.is-hoverable.is-right
+            .dropdown-trigger
+              a
+                figure.image.is-24x24
+                  img.is-rounded('[src]'='user.photoURL')
+            .dropdown-menu(role='menu')
+              .dropdown-content
+                .dropdown-item
+                  span.icon.mr-1
+                    i.fas.fa-cat
+                  | Hello, {{user.displayName || user.email}}
+                hr.dropdown-divider
+                a.dropdown-item('(click)'='signOut.emit()')
+                  span.icon.mr-1
+                    i.fas.fa-sign-out-alt
+                  | Sign out

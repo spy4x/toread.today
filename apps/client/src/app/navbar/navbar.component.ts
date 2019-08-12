@@ -11,4 +11,8 @@ import { User } from 'firebase';
 export class NavbarComponent {
   @Input() user: User;
   @Output() signOut = new EventEmitter<void>();
+  isMenuExpanded = false;
+  toggleMenu(): void {
+    this.isMenuExpanded = !this.isMenuExpanded;
+  }
 }
