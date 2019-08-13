@@ -1,6 +1,6 @@
 nav.navbar.is-primary(role='navigation' aria-label='main navigation')
   .navbar-brand
-    .navbar-item
+    a.navbar-item(routerLink='/')
       span.icon.mr-1
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
@@ -15,27 +15,29 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
 
   .navbar-menu('[class.is-active]'='isMenuExpanded')
 
-    //.navbar-start
-    //  a.navbar-item
-    //    | Menu item 1
-    //  a.navbar-item
-    //    | Menu item 2
+    .navbar-start
+      a.navbar-item(routerLink='/items', routerLinkActive='is-active')
+        span.icon.mr-1
+          i.fas.fa-list-ul
+        span Links
+      a.navbar-item(routerLink='/tags', routerLinkActive='is-active')
+        span.icon.mr-1
+          i.fas.fa-tags
+        span Tags
 
     .navbar-end('*ngIf'='user')
 
       //- mobile menu
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
-        .navbar-item
-          .dropdown-item
-            span.icon.mr-1
-              i.fas.fa-cat
-            | Hello, {{user.displayName || user.email}}
+        a.navbar-item
+          span.icon.mr-1
+            i.fas.fa-cat
+          | Hello, {{user.displayName || user.email}}
 
-        .navbar-item
-          a.dropdown-item('(click)'='signOut.emit()')
-            span.icon.mr-1
-              i.fas.fa-sign-out-alt
-            | Sign out
+        a.navbar-item('(click)'='signOut.emit()')
+          span.icon.mr-1
+            i.fas.fa-sign-out-alt
+          | Sign out
 
       ng-template('#desktopMenu'='')
         .navbar-item

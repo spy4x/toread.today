@@ -23,25 +23,4 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
           p('*ngIf'='appUpdateInfo') {{appUpdateInfo.version}}: {{appUpdateInfo.description}}
         button.button('(click)'='update()') Update
 
-      .notification.is-warning('*ngIf'='error')
-        button.delete('(click)'='error = null')
-        | {{error}}
-
-      nav.panel.panel--no-borders
-        tt-items-add('(addItem)'='addItem($event)')
-        tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
-        tt-list('[items]'='items$ | async',
-                '[tags]'='tags$ | async',
-                '[isLoading]'='isLoading',
-                '[areAllItemsLoaded]'='areAllItemsLoaded',
-                '(startReading)'='startReading($event)',
-                '(finishReading)'='finishReading($event)',
-                '(undoReading)'='undoReading($event)',
-                '(toggleTag)'='toggleTag($event)',
-                '(toggleFavourite)'='toggleFavourite($event)',
-                '(delete)'='delete($event)'
-                '(loadMore)'='loadMore()')
-
-      button.button.is-small('(click)'='makeError()') Make error
-
-      //tt-tags-editor('[tags]'='tags$ | async')
+      router-outlet

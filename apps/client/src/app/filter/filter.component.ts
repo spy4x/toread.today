@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Filter } from './filter.interface';
 import { Tag } from '../tag.interface';
-import { ToggleTagEvent } from '../tags/tags.component';
 import { ItemStatus } from '../item.interface';
+import { ToggleTagEvent } from '../list/list.component';
 
 @Component({
   selector: 'tt-filter',

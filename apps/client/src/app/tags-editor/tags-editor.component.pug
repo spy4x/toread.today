@@ -1,74 +1,22 @@
-nav.panel
-  .panel-block
-    p.control.has-icons-right
-      input.input(type='text' placeholder='Enter URL')
-      span.icon.is-right
-        i.fas.fa-plus(aria-hidden='true')
-  .panel-block.is-flex.pb-0
-    .tabs(style='margin-bottom: -1px; flex: 1 0')
-      ul
-        li
-          a
-            span.icon.has-text-warning
-              i.fas.fa-star
-        li.is-active
-          a Opened
-        li
-          a New
-        li
-          a Finished
-    .dropdown.is-hoverable.is-right
-      .dropdown-trigger
-        a
-          span Tag
+nav.panel.panel--no-borders
+
+  p.panel-heading
+    span Tags
+    button.button.is-small('(click)'='createHandler()') Create
+
+  .panel-block('*ngFor'='let tag of tags')
+
+    .field.has-addons
+      p.control
+        input.input(
+        type='text',
+        placeholder='Tag title',
+        '#input'='',
+        '[value]'='tag.title')
+      p.control
+        button.button.is-primary('(click)'='setTitle(tag, input.value)')
           span.icon.is-small
-            i.fas.fa-angle-down(aria-hidden='true')
-      .dropdown-menu(role='menu')
-        .dropdown-content
-          a.dropdown-item(href='javascript:;')
-            | All tags
-          hr.dropdown-divider('*ngIf'='tags?.length')
-          a.dropdown-item('*ngFor'='let tag of tags' href='javascript:;') {{ tag.title }}
+            i.far.fa-save
 
-
-
-  a.panel-block.is-flex
-    span.panel-icon
-      i.fab.fa-youtube(aria-hidden='true')
-    span(style='flex: 1 0;') Steve Schoger | Refactoring UI | CSS Day 2019
-    span.tag.is-light code
-    span.tag.is-info.ml-2 css
-    span.icon.is-small.ml-2.has-text-warning
-      i.fas.fa-star
-    span.icon.is-small.ml-2
-      i.fas.fa-chevron-down
-  a.panel-block.is-flex
-    span.panel-icon
-      i.far.fa-file-alt(aria-hidden='true')
-    span(style='flex: 1 0;') Generating Leads for Your Freelance Business
-    span.tag.is-success upwork
-    span.icon.is-small.ml-2
-      i.far.fa-star
-    span.icon.is-small.ml-2
-      i.fas.fa-chevron-down
-  a.panel-block.is-flex
-    span.panel-icon
-      i.fab.fa-youtube(aria-hidden='true')
-    span(style='flex: 1 0;') Architecting Mobile Web Apps (Google I/O'19)
-    span.tag.is-light code
-    span.tag.is-warning.ml-2 firebase
-    span.icon.is-small.ml-2.has-text-warning
-      i.fas.fa-star
-    span.icon.is-small.ml-2
-      i.fas.fa-chevron-down
-  a.panel-block.is-flex
-    span.panel-icon
-      i.far.fa-file-alt(aria-hidden='true')
-    span(style='flex: 1 0;') How to share your company vision as a leader
-    span.tag.is-link agency
-    span.icon.is-small.ml-2
-      i.far.fa-star
-    span.icon.is-small.ml-2
-      i.fas.fa-chevron-down
-
-
+    a.icon.is-small.ml-2.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
+      i.far.fa-trash-alt

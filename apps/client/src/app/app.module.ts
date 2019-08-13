@@ -8,7 +8,6 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { ListComponent } from './list/list.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { TagsComponent } from './tags/tags.component';
 import { FilterComponent } from './filter/filter.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { TagsEditorComponent } from './tags-editor/tags-editor.component';
@@ -20,22 +19,43 @@ import { DropdownDirective } from './dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
 import { LoggerService, SentryErrorHandler } from './logger.service';
+import { RouterModule, Routes } from '@angular/router';
+import { ItemsComponent } from './items/items.component';
+import { TagsComponent } from './tags/tags.component';
 
+const routes: Routes = [
+  {
+    path: 'items',
+    component: ItemsComponent,
+  },
+  {
+    path: 'tags',
+    component: TagsComponent,
+  },
+  {
+    path: '**',
+    redirectTo: 'items',
+  },
+];
 
 @NgModule({
-  declarations: [AppComponent,
+  declarations: [
+    AppComponent,
     ListComponent,
     NavbarComponent,
-    TagsComponent,
     FilterComponent,
     TagsEditorComponent,
     TagSelectorComponent,
     ItemsAddComponent,
     TagTitleByIdPipe,
     GetIconByItemTypePipe,
-    DropdownDirective],
+    DropdownDirective,
+    ItemsComponent,
+    TagsComponent
+  ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
     AngularFireAuthModule,
