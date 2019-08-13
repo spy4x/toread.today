@@ -2,16 +2,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Tag } from '../tag.interface';
 
 @Pipe({
-  name: 'tagTitleById'
+  name: 'tagById'
 })
 export class TagTitleByIdPipe implements PipeTransform {
-  transform(value: any, ...args: any[]): any {
-    const tagId: string = value;
-    const tags: Tag[] = args[0];
+  transform(value: string, tags: Tag[]): null | Tag {
     if(!tags) {
-      return 'tags were not provided';
+      return null;
     }
-    const tag = tags.find(t => t.id === tagId);
-    return tag ? tag.title : 'Tag not found';
+    return tags.find(t => t.id === value);
   }
 }

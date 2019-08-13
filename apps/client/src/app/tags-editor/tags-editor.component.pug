@@ -5,7 +5,10 @@ nav.panel.panel--no-borders
   .tag-item.panel-block('*ngFor'='let tag of tags')
 
     .tag-item--title
-      span.tag.is-light('*ngIf'='!isInEditMode(tag.id)') {{tag.title}}
+
+      span.tag(
+          '*ngIf'='!isInEditMode(tag.id)',
+          '[ngStyle]'='{"background-color": tag.color || "#00d1b2", "color": "white"}') {{tag.title}}
       .field.has-addons('*ngIf'='isInEditMode(tag.id)')
         p.control
           input.input(
@@ -21,6 +24,17 @@ nav.panel.panel--no-borders
           button.button('(click)'='toggleEditMode(tag)', title='Cancel edit')
             span.icon.is-small
               i.fas.fa-times
+
+    .color-selector.dropdown.is-hoverable.is-right.ml-2
+      .dropdown-trigger
+        a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
+      .dropdown-menu(role='menu')
+        .dropdown-content
+          a.dropdown-item(
+              '*ngFor'='let color of colors',
+              '(click)'='setColor(tag, color)',
+              '[class.is-active]'='isColor(tag, color)',)
+            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{ tag.title }}
 
     a.icon.is-small.ml-2.has-text-primary(
         '*ngIf'='!isInEditMode(tag.id)',

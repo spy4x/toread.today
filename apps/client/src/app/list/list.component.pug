@@ -2,7 +2,7 @@
     infinite-scroll='',
     '[infiniteScrollThrottle]'="300",
     '(scrolled)'='loadMore.emit()')
-  
+
   .item.panel-block.is-block('*ngFor'='let item of items')
     .columns.is-mobile
       .column
@@ -17,7 +17,10 @@
           
           .column('*ngIf'='item.tags.length')
             .tags-container
-              span.tag.is-light.mr-2('*ngFor'='let tagId of item.tags') {{tagId | tagTitleById:tags}}
+              span.tag.mr-2(
+                  '*ngFor'='let tagId of item.tags',
+                  '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
+                | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
 
       .column.is-narrow
         tt-tag-selector(

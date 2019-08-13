@@ -19,16 +19,35 @@ export class TagsEditorComponent {
   @Output() update = new EventEmitter<TagUpdateEvent>();
   @Output() delete = new EventEmitter<string>();
   tagIdsInEditMode: string[] = [];
+  colors = [
+    '#0a0a0a',
+    '#363636',
+    '#00d1b2',
+    '#3273dc',
+    '#209cee',
+    '#23d160',
+    '#ffdd57',
+    '#ff3860',
+  ];
 
   setTitle(tag: Tag, title: string): void {
     this.update.emit({ id: tag.id, change: { title } });
     this.toggleEditMode(tag);
   }
 
+  setColor(tag: Tag, color: string): void {
+    this.update.emit({ id: tag.id, change: { color } });
+  }
+
+  isColor(tag: Tag, color: string): boolean {
+    return tag.color === color;
+  }
+
   createHandler(): void {
     const newTag: Tag = {
       id: null,
       title: 'New tag',
+      color: '#00d1b2',
       createdAt: new Date(),
       createdBy: null
     };

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.2.1",
-    "description": "Improve tags editor UI"
+    "version": "v1.3.0",
+    "description": "Add color to tags"
   },
   "assetGroups": [
     {
