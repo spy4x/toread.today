@@ -40,3 +40,4 @@ Thumbs.db
 
 .firebase/
 public
+firebase-debug.log

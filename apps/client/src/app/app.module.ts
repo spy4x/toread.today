@@ -17,6 +17,8 @@ import { ItemsAddComponent } from './items-add/items-add.component';
 import { TagTitleByIdPipe } from './tag-title-by-id/tag-title-by-id.pipe';
 import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-type.pipe';
 import { DropdownDirective } from './dropdown/dropdown.directive';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { ConnectionStatusService } from './connection-status/connection-status.service';
 
 
 @NgModule({
@@ -36,9 +38,10 @@ import { DropdownDirective } from './dropdown/dropdown.directive';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
     AngularFireAuthModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
-  providers: [],
+  providers: [ConnectionStatusService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

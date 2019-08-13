@@ -9,10 +9,20 @@ ng-template(#notSignedIn='')
         button.button.is-large('(click)'='signIn()') Sign in
 
 ng-container('*ngIf'='user$ | async as user; else notSignedIn')
-  tt-navbar('[user]'='user', '(signOut)'='signOut()')
+  tt-navbar('[user]'='user', '(signOut)'='signOut()', '[appVersionInfo]'='appVersionInfo')
 
   .section
-    .container
+    .container.app-component-container
+
+      .notification.is-warning('*ngIf'='!isOnline')
+        | You are Offline
+
+      .notification.is-info.update-available('*ngIf'='isNewVersionAvailable')
+        div
+          p New version is available&nbsp;
+          p('*ngIf'='appUpdateInfo') {{appUpdateInfo.version}}: {{appUpdateInfo.description}}
+        button.button('(click)'='update()') Update
+
       .notification.is-warning('*ngIf'='error')
         button.delete('(click)'='error = null')
         | {{error}}

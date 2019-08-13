@@ -5,7 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod && yarn post-build",
+    "post-build": "node post-build.js",
     "test": "ng test",
     "lint": "./node_modules/.bin/nx lint && ng lint",
     "e2e": "ng e2e",
@@ -36,7 +37,9 @@
     "@angular/forms": "^8.2.0",
     "@angular/platform-browser": "^8.2.0",
     "@angular/platform-browser-dynamic": "^8.2.0",
+    "@angular/pwa": "^0.802.1",
     "@angular/router": "^8.2.0",
+    "@angular/service-worker": "^8.2.0",
     "@fortawesome/fontawesome-free": "^5.10.1",
     "@ngrx/effects": "8.2.0",
     "@ngrx/router-store": "8.2.0",
@@ -76,6 +79,7 @@
     "protractor": "~5.4.2",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
+    "replace-in-file": "^4.1.2",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "typescript": "~3.5.3"

@@ -2,13 +2,18 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
 import { User } from 'firebase';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, interval, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
 import { Item } from './item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from './list/list.component';
 import { auth, firestore } from 'firebase/app';
 import { Filter } from './filter/filter.interface';
+import { ConnectionStatusService } from './connection-status/connection-status.service';
+import { SwUpdate } from '@angular/service-worker';
+import { AppVersionInfo } from '../appVersionInfo.interface';
+
+const { appData } = require('../../ngsw-config.json');
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -16,7 +21,7 @@ const LOAD_ITEMS_LIMIT = 20;
   selector: 'tt-root',
   templateUrl: './app.component.pug',
   styleUrls: ['./app.component.sass'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
   error: string;
@@ -55,8 +60,68 @@ export class AppComponent implements OnInit {
   loadMoreItems$ = new BehaviorSubject<number>(0);
   areAllItemsLoaded: boolean = false;
   isLoading: boolean = false;
+  isOnline: boolean;
+  isNewVersionAvailable: boolean;
+  appUpdateInfo: AppVersionInfo;
+  appVersionInfo = appData as AppVersionInfo;
 
-  constructor(private angularFireAuth: AngularFireAuth, private firestore: AngularFirestore) {}
+  constructor(private angularFireAuth: AngularFireAuth,
+              private firestore: AngularFirestore,
+              private connectionStatus: ConnectionStatusService,
+              private swUpdate: SwUpdate) {
+    this.connectionStatus.isOnline().subscribe(value => {
+      this.isOnline = value;
+      if (value) {
+        this.checkForUpdate();
+      }
+    });
+    this.swUpdate.available.subscribe(event => {
+      this.isNewVersionAvailable = true;
+      this.appUpdateInfo = event.available.appData as any;
+    });
+
+    this.checkForUpdateOnWindowFocus();
+    this.runTimerThatChecksForUpdate();
+  }
+
+  checkForUpdateOnWindowFocus() {
+    // Set the name of the hidden property and the change event for visibility
+    let hidden, visibilityChange;
+    if (typeof document['hidden'] !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+      hidden = 'hidden';
+      visibilityChange = 'visibilitychange';
+    } else if (typeof document['msHidden'] !== 'undefined') {
+      hidden = 'msHidden';
+      visibilityChange = 'msvisibilitychange';
+    } else if (typeof document['webkitHidden'] !== 'undefined') {
+      hidden = 'webkitHidden';
+      visibilityChange = 'webkitvisibilitychange';
+    }
+    document.addEventListener(visibilityChange, () => {
+      if (!document[hidden]) {
+        this.checkForUpdate();
+      }
+    }, false);
+  }
+
+  runTimerThatChecksForUpdate() {
+    interval(60 * 1000).subscribe(() => this.checkForUpdate());
+  }
+
+  async checkForUpdate() {
+    try {
+      await this.swUpdate.checkForUpdate();
+    } catch (error) {
+      if (error.message !== 'Service workers are disabled or not supported by this browser') {
+        console.error('swUpdate.checkForUpdate() failed', error);
+      }
+    }
+  }
+
+  async update() {
+    await this.swUpdate.activateUpdate();
+    document.location.reload();
+  }
 
   ngOnInit() {
     this.filter$.subscribe(() => {
@@ -77,10 +142,10 @@ export class AppComponent implements OnInit {
                 .orderBy('createdAt', 'desc')
                 .limit(v.itemsToLoad);
               if (v.filter.status) {
-                query = query.where('status', '==', v.filter.status)
+                query = query.where('status', '==', v.filter.status);
               }
               if (v.filter.isFavourite) {
-                query = query.where('isFavourite', '==', true)
+                query = query.where('isFavourite', '==', true);
               }
               if (v.filter.tagId) {
                 query = query.where('tags', 'array-contains', v.filter.tagId);
@@ -201,7 +266,7 @@ export class AppComponent implements OnInit {
   }
 
   async delete(itemId: string) {
-    if(!confirm('Are you sure you want to completely delete this item?')){
+    if (!confirm('Are you sure you want to completely delete this item?')) {
       return;
     }
     try {
@@ -244,7 +309,7 @@ export class AppComponent implements OnInit {
   }
 
   async loadMore() {
-    if(this.areAllItemsLoaded){
+    if (this.areAllItemsLoaded) {
       return;
     }
     const newAmountOfItemsToLoad = this.loadMoreItems$.value + LOAD_ITEMS_LIMIT;

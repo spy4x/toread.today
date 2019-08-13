@@ -6,3 +6,15 @@
       border-top: 0
       border-left: 0
       border-right: 0
+
+.app-component-container
+  > .notification
+    padding: 0.75rem
+    @media(max-width: 768px)
+      margin-left: 0.75rem
+      margin-right: 0.75rem
+    &.update-available
+      display: flex
+      justify-content: space-between
+      align-content: stretch
+      align-items: center

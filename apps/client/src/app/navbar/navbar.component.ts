@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { User } from 'firebase';
+import { AppVersionInfo } from '../../appVersionInfo.interface';
 
 @Component({
   selector: 'tt-navbar',
@@ -10,6 +11,7 @@ import { User } from 'firebase';
 })
 export class NavbarComponent {
   @Input() user: User;
+  @Input() appVersionInfo: AppVersionInfo;
   @Output() signOut = new EventEmitter<void>();
   isMenuExpanded = false;
   toggleMenu(): void {
