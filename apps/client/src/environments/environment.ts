@@ -11,7 +11,8 @@ export const environment = {
     projectId: 'toread-today',
     storageBucket: 'toread-today.appspot.com',
     messagingSenderId: '565165890761'
-  }
+  },
+  sentry: ""
 };
 
 /*

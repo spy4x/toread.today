@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -19,6 +19,7 @@ import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-
 import { DropdownDirective } from './dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
+import { LoggerService, SentryErrorHandler } from './logger.service';
 
 
 @NgModule({
@@ -41,7 +42,11 @@ import { ConnectionStatusService } from './connection-status/connection-status.s
     InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
-  providers: [ConnectionStatusService],
+  providers: [
+    ConnectionStatusService,
+    LoggerService,
+    { provide: ErrorHandler, useClass: SentryErrorHandler }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

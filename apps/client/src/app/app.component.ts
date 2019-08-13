@@ -12,6 +12,7 @@ import { Filter } from './filter/filter.interface';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
+import { LoggerService } from './logger.service';
 
 const { appData } = require('../../ngsw-config.json');
 
@@ -31,10 +32,11 @@ export class AppComponent implements OnInit {
     tap(user => {
       this.userId = user ? user.uid : null;
       localStorage.setItem('tt-user', JSON.stringify(user));
+      this.logger.setUser(user);
     }),
     catchError(error => {
       this.error = error.message;
-      console.error('user$ error', error);
+      this.logger.error('user$ error', error);
       return of(null);
     }));
 
@@ -49,7 +51,7 @@ export class AppComponent implements OnInit {
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
-      console.error('tags$ error', error);
+      this.logger.error('tags$ error', error);
       return of([]);
     }),
     shareReplay(1)
@@ -68,7 +70,9 @@ export class AppComponent implements OnInit {
   constructor(private angularFireAuth: AngularFireAuth,
               private firestore: AngularFirestore,
               private connectionStatus: ConnectionStatusService,
-              private swUpdate: SwUpdate) {
+              private swUpdate: SwUpdate,
+              private logger: LoggerService) {
+    if(appData){this.logger.setVersion(appData.version);}
     this.connectionStatus.isOnline().subscribe(value => {
       this.isOnline = value;
       if (value) {
@@ -78,6 +82,7 @@ export class AppComponent implements OnInit {
     this.swUpdate.available.subscribe(event => {
       this.isNewVersionAvailable = true;
       this.appUpdateInfo = event.available.appData as any;
+      this.logger.debug('New version available', {...this.appUpdateInfo});
     });
 
     this.checkForUpdateOnWindowFocus();
@@ -113,7 +118,7 @@ export class AppComponent implements OnInit {
       await this.swUpdate.checkForUpdate();
     } catch (error) {
       if (error.message !== 'Service workers are disabled or not supported by this browser') {
-        console.error('swUpdate.checkForUpdate() failed', error);
+        this.logger.error('swUpdate.checkForUpdate() failed', error);
       }
     }
   }
@@ -129,11 +134,16 @@ export class AppComponent implements OnInit {
       this.areAllItemsLoaded = false;
       this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
     });
+
+    let items$Params: any;
     combineLatest([this.user$, this.filter$, this.loadMoreItems$],
       (user, filter, itemsToLoad) => ({ user, filter, itemsToLoad }))
       .pipe(
         filter(v => !!v.user && !this.areAllItemsLoaded),
-        tap(v => this.isLoading = true),
+        tap(v => {
+          this.isLoading = true;
+          items$Params = v;
+        }),
         switchMap((v: { user: User, filter: Filter, itemsToLoad: number }) => this.firestore
           .collection('items',
             ref => {
@@ -162,7 +172,7 @@ export class AppComponent implements OnInit {
         catchError(error => {
           this.isLoading = false;
           this.error = error.message;
-          console.error('items$ error', error);
+          this.logger.error('items$ error', error, items$Params);
           return of([]);
         })
       )
@@ -209,7 +219,7 @@ export class AppComponent implements OnInit {
                 .add(body);
             } catch (error) {
               this.error = error.message;
-              console.error('addItem error', error);
+              this.logger.error('addItem error', error, {url});
             }
           } else {
             this.error = 'Item already exist. Title: ' + results[0].title;
@@ -219,48 +229,48 @@ export class AppComponent implements OnInit {
   }
 
   async startReading(itemId: string) {
-    try {
       const data: Partial<Item> = {
         status: 'opened',
         openedAt: new Date()
       };
+    try {
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
       this.filter$.next({ ...this.filter$.value, status: 'opened' });
     } catch (error) {
-      console.error('startReading() error:', error);
+      this.logger.error('startReading() error:', error, {itemId, data, filter: this.filter$.value});
       this.error = error.message;
     }
   }
 
   async finishReading(itemId: string) {
-    try {
       const data: Partial<Item> = {
         status: 'finished',
         finishedAt: new Date()
       };
+    try {
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      console.error('finishReading() error:', error);
+      this.logger.error('finishReading() error:', error, {itemId, data});
       this.error = error.message;
     }
   }
 
   async undoReading(itemId: string) {
-    try {
       const data: Partial<Item> = {
         status: 'new',
         openedAt: null,
         finishedAt: null
       };
+    try {
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      console.error('undoReading() error:', error);
+      this.logger.error('undoReading() error:', error, {itemId, data});
       this.error = error.message;
     }
   }
@@ -274,36 +284,37 @@ export class AppComponent implements OnInit {
         .doc('items/' + itemId)
         .delete();
     } catch (error) {
-      console.error('delete() error:', error);
+      this.logger.error('delete() error:', error, {itemId});
       this.error = error.message;
     }
   }
 
   async toggleTag(event: ToggleItemTagEvent) {
+    const data = {
+      tags: event.isSelected
+            ? firestore.FieldValue.arrayUnion(event.id)
+            : firestore.FieldValue.arrayRemove(event.id)
+    };
     try {
       await this.firestore
         .doc('items/' + event.itemId)
-        .update({
-          tags: event.isSelected
-                ? firestore.FieldValue.arrayUnion(event.id)
-                : firestore.FieldValue.arrayRemove(event.id)
-        });
+        .update(data);
     } catch (error) {
-      console.error('toggleTag() error:', error);
+      this.logger.error('toggleTag() error:', error, {event, data});
       this.error = error.message;
     }
   }
 
   async toggleFavourite(event: ToggleItemFavouriteEvent) {
-    try {
       const data: Partial<Item> = {
         isFavourite: event.isFavourite
       };
+    try {
       await this.firestore
         .doc('items/' + event.itemId)
         .update(data);
     } catch (error) {
-      console.error('toggleFavourite() error:', error);
+      this.logger.error('toggleFavourite() error:', error, {event, data});
       this.error = error.message;
     }
   }
@@ -313,7 +324,14 @@ export class AppComponent implements OnInit {
       return;
     }
     const newAmountOfItemsToLoad = this.loadMoreItems$.value + LOAD_ITEMS_LIMIT;
-    console.log('Load more items:', newAmountOfItemsToLoad);
+    this.logger.debug('Load more items:', {newAmountOfItemsToLoad});
     this.loadMoreItems$.next(newAmountOfItemsToLoad);
+  }
+
+  makeError() {
+    const test: any = {
+      a: null
+    };
+    this.logger.debug('makeError()', {test: test.a.b});
   }
 }

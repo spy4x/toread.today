@@ -42,4 +42,6 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
                 '(delete)'='delete($event)'
                 '(loadMore)'='loadMore()')
 
+      button.button.is-small('(click)'='makeError()') Make error
+
       //tt-tags-editor('[tags]'='tags$ | async')

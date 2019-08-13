@@ -1,4 +1,5 @@
 import { AfterViewInit, Directive, ElementRef, OnDestroy } from '@angular/core';
+import { LoggerService } from '../logger.service';
 
 @Directive({
   selector: '.dropdown'
@@ -11,11 +12,11 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
   clickEventType = 'click';
   isActive = false;
   isMobileSafari = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-  constructor(private dropdownElRef: ElementRef) {}
+  constructor(private dropdownElRef: ElementRef, private logger: LoggerService) {}
 
   ngAfterViewInit(): void {
     if (!this.dropdownElRef || !this.dropdownElRef.nativeElement) {
-      console.debug('dropdown directive: no dropdown element presented');
+      this.logger.debug('dropdown directive: no dropdown element presented');
       return;
     }
 
@@ -29,14 +30,14 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
     this.triggerEl = this.dropdownEl.querySelector('.dropdown-trigger') as HTMLElement;
 
     if (!this.triggerEl) {
-      console.debug('dropdown directive: no trigger element presented');
+      this.logger.debug('dropdown directive: no trigger element presented');
       return;
     }
 
     this.triggerEl.addEventListener(this.clickEventType, this.onTriggerClick.bind(this));
 
     if (!window) {
-      console.debug('dropdown directive: no window presented');
+      this.logger.debug('dropdown directive: no window presented');
       return;
     }
     window.addEventListener(this.clickEventType, this.onWindowClick.bind(this));
