@@ -1,22 +1,32 @@
+button.button.is-primary.mb-2('(click)'='createHandler()') Create
+
 nav.panel.panel--no-borders
 
-  p.panel-heading
-    span Tags
-    button.button.is-small('(click)'='createHandler()') Create
+  .tag-item.panel-block('*ngFor'='let tag of tags')
 
-  .panel-block('*ngFor'='let tag of tags')
+    .tag-item--title
+      span.tag.is-light('*ngIf'='!isInEditMode(tag.id)') {{tag.title}}
+      .field.has-addons('*ngIf'='isInEditMode(tag.id)')
+        p.control
+          input.input(
+          type='text',
+          placeholder='Tag title',
+          '#input'='',
+          '[value]'='tag.title')
+        p.control
+          button.button.is-primary('(click)'='setTitle(tag, input.value)', title='Save tag title')
+            span.icon.is-small
+              i.far.fa-save
+        p.control
+          button.button('(click)'='toggleEditMode(tag)', title='Cancel edit')
+            span.icon.is-small
+              i.fas.fa-times
 
-    .field.has-addons
-      p.control
-        input.input(
-        type='text',
-        placeholder='Tag title',
-        '#input'='',
-        '[value]'='tag.title')
-      p.control
-        button.button.is-primary('(click)'='setTitle(tag, input.value)')
-          span.icon.is-small
-            i.far.fa-save
+    a.icon.is-small.ml-2.has-text-primary(
+        '*ngIf'='!isInEditMode(tag.id)',
+        title='Edit tag',
+        '(click)'='toggleEditMode(tag)')
+      i.far.fa-edit
 
     a.icon.is-small.ml-2.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
       i.far.fa-trash-alt

@@ -18,9 +18,11 @@ export class TagsEditorComponent {
   @Output() create = new EventEmitter<Tag>();
   @Output() update = new EventEmitter<TagUpdateEvent>();
   @Output() delete = new EventEmitter<string>();
+  tagIdsInEditMode: string[] = [];
 
   setTitle(tag: Tag, title: string): void {
     this.update.emit({ id: tag.id, change: { title } });
+    this.toggleEditMode(tag);
   }
 
   createHandler(): void {
@@ -31,6 +33,18 @@ export class TagsEditorComponent {
       createdBy: null
     };
     this.create.emit(newTag);
+  }
+
+  toggleEditMode(tag: Tag): void {
+    if(!this.tagIdsInEditMode.includes(tag.id)){
+      this.tagIdsInEditMode = [...this.tagIdsInEditMode, tag.id];
+    }else{
+      this.tagIdsInEditMode = this.tagIdsInEditMode.filter(id => id !== tag.id);
+    }
+  }
+
+  isInEditMode(tagId: string): boolean {
+    return this.tagIdsInEditMode.includes(tagId);
   }
 
   deleteHandler(tag: Tag): void{
