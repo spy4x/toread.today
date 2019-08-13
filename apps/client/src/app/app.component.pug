@@ -11,7 +11,7 @@ ng-template(#notSignedIn='')
 ng-container('*ngIf'='user$ | async as user; else notSignedIn')
   tt-navbar('[user]'='user', '(signOut)'='signOut()', '[appVersionInfo]'='appVersionInfo')
 
-  .section
+  .section.pt-3
     .container.app-component-container
 
       .notification.is-warning('*ngIf'='!isOnline')
