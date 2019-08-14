@@ -240,10 +240,25 @@ export class ItemsComponent implements OnInit{
             ref => {
               let query = ref
                 .where('createdBy', '==', v.user.uid)
-                .orderBy('createdAt', 'desc')
                 .limit(v.itemsToLoad);
               if (v.filter.status) {
                 query = query.where('status', '==', v.filter.status);
+                switch(v.filter.status){
+                  case 'new': {
+                    query = query.orderBy('createdAt', 'desc')
+                    break;
+                  }
+                  case 'opened': {
+                    query = query.orderBy('openedAt', 'desc')
+                    break;
+                  }
+                  case 'finished': {
+                    query = query.orderBy('finishedAt', 'desc')
+                    break;
+                  }
+                }
+              } else {
+                query = query.orderBy('createdAt', 'desc')
               }
               if (v.filter.isFavourite) {
                 query = query.where('isFavourite', '==', true);
