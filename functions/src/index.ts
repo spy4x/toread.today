@@ -13,22 +13,20 @@ export const itemCreate = functions.firestore
   .onCreate(async docSnapshot => {
     const url = docSnapshot.data().url;
     const id = docSnapshot.id;
+    console.log('itemCreate - Working on:', id, url);
     try {
       const { data } = await ogs({ url });
       const updateFields = {
         title: data.ogTitle || null,
-        description: data.ogDescription || null,
         type: getType(data.ogType)
       };
       console.log('Result:', {
-        id,
-        url,
         updateFields,
         data: JSON.stringify(data, null, 2)
       });
       await docSnapshot.ref.update(updateFields);
     } catch (error) {
-      console.error('itemCreate', { url, id }, error);
+      console.error('itemCreate', error);
     }
   });
 
@@ -41,7 +39,7 @@ function getType(item: string): string {
   const availableTypes = ['video', 'article', 'profile', defaultType];
   let result = defaultType;
   availableTypes.find(arrItem => {
-    const contains = arrItem.indexOf(item) >= 0;
+    const contains = item.indexOf(arrItem) >= 0;
     if (contains) {
       result = arrItem;
     }

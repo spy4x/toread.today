@@ -42,4 +42,4 @@ Thumbs.db
 .firebase/
 public
 firebase-debug.log
-functions/dist/
+/functions/dist/
