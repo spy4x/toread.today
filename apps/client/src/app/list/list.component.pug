@@ -23,7 +23,19 @@
                 | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
 
       .column.is-narrow
-        tt-tag-selector(
+
+        .icon.is-small.has-text-info(
+            '*ngIf'='item.urlParseStatus === "notStarted"',
+            title='URL parsing is in progress..')
+          i.fas.fa-sync
+
+        a.icon.is-small.has-text-danger(
+            '*ngIf'='item.urlParseStatus === "error"',
+            '(click)'='retryURLParsing.emit(item.id)'
+            '[title]'='"URL parse error happened. Click to retry parsing. \nError message: "+item.urlParseError')
+          i.fas.fa-exclamation-triangle
+
+        tt-tag-selector.ml-3(
             '[tags]'='tags',
             '[selectedIds]'='item.tags',
             '(toggle)'='toggleTagHandler($event, item)',

@@ -33,6 +33,7 @@ export class ListComponent {
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
+  @Output() retryURLParsing = new EventEmitter<string>();
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
   @Output() loadMore = new EventEmitter<void>();

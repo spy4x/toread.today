@@ -195,6 +195,21 @@ export class ItemsComponent implements OnInit{
     }
   }
 
+  async retryURLParsing(itemId: string) {
+    const data: Partial<Item> = {
+      urlParseError: null,
+      urlParseStatus: 'notStarted'
+    };
+    try {
+      await this.firestore
+        .doc('items/' + itemId)
+        .update(data);
+    } catch (error) {
+      this.logger.error('retryURLParsing() error:', error, {itemId, data});
+      this.error = error.message;
+    }
+  }
+
   async loadMore() {
     if (this.areAllItemsLoaded) {
       return;

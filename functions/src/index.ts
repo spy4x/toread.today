@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as ogs from 'open-graph-scraper';
 
+const URL = require('url').URL;
+
 admin.initializeApp();
 const firestore = admin.firestore();
 
@@ -31,38 +33,90 @@ console.log('--- COLD START ---');
 
 export const itemCreate = functions.firestore
   .document(`items/{id}`)
-  .onCreate(async docSnapshot => {
-    const url = docSnapshot.data().url;
-    const id = docSnapshot.id;
-    console.log('itemCreate - Working on:', id, url);
-    try {
-      const { data } = await ogs({ url });
-      const updateFields: Partial<Item> = {
-        title: data.ogTitle as string || null,
-        type: getType(data.ogType),
-        urlParseStatus: 'done',
-        urlParseError: null
-      };
-      console.log('Result:', {
-        updateFields,
-        data: JSON.stringify(data, null, 2)
-      });
-      await docSnapshot.ref.update(updateFields);
-    } catch (error) {
-      console.error('itemCreate', error);
+  .onCreate(async doc => {
+    const item = { ...doc.data(), id: doc.id } as Item;
+    if (isUrl(item.url)) {
+      await parseURL(item);
+    } else {
       const updateFields: Partial<Item> = {
         urlParseStatus: 'error',
-        urlParseError: error['error'] || error.message || error.name || error['errorDetails']
+        urlParseError: 'Provided URL is not valid'
       };
       try {
         console.log('itemCreate - Saving failed status:', updateFields);
-        await docSnapshot.ref.update(updateFields);
+        await doc.ref.update(updateFields);
         console.log('itemCreate - Successfully saved failed status');
       } catch (saveError) {
         console.error('itemCreate - Failed to save failed status', saveError);
       }
     }
   });
+
+export const itemUpdate = functions.firestore
+  .document(`items/{id}`)
+  .onUpdate(async change => {
+    const before = {...change.before.data(), id: change.before.id} as Item;
+    const after = {...change.after.data(), id: change.after.id} as Item;
+    if (after.urlParseStatus === 'notStarted' && before.urlParseStatus !== 'notStarted' ) {
+      if (isUrl(after.url)) {
+        await parseURL(after);
+      } else {
+        const updateFields: Partial<Item> = {
+          urlParseStatus: 'error',
+          urlParseError: 'Provided URL is not valid'
+        };
+        try {
+          console.log('itemUpdate - Saving failed status:', updateFields);
+          await change.after.ref.update(updateFields);
+          console.log('itemUpdate - Successfully saved failed status');
+        } catch (saveError) {
+          console.error('itemUpdate - Failed to save failed status', saveError);
+        }
+      }
+    }
+  });
+
+function isUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+async function parseURL(item: Item): Promise<void> {
+  console.log('parseURL - Working on:', item.id, item.url);
+  const doc = firestore.doc('items/' + item.id);
+  try {
+    const { data } = await ogs({ url:item.url });
+    const updateFields: Partial<Item> = {
+      title: data.ogTitle as string || null,
+      type: getType(data.ogType),
+      urlParseStatus: 'done',
+      urlParseError: null
+    };
+    console.log('parseURL - OG data:', {
+      updateFields,
+      data: JSON.stringify(data, null, 2)
+    });
+    await doc.update(updateFields);
+    console.log('parseURL - Success');
+  } catch (error) {
+    console.error('parseURL', error);
+    const updateFields: Partial<Item> = {
+      urlParseStatus: 'error',
+      urlParseError: error['error'] || error.message || error.name || error['errorDetails']
+    };
+    try {
+      console.log('parseURL - Saving failed status:', updateFields);
+      await doc.update(updateFields);
+      console.log('parseURL - Successfully saved failed status');
+    } catch (saveError) {
+      console.error('parseURL - Failed to save failed status', saveError);
+    }
+  }
+}
 
 
 function getType(item: string): ItemType {
