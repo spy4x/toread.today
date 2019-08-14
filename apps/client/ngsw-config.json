@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.4.0",
-    "description": "Add opportunity to rerun failed URL parsing"
+    "version": "v1.4.1",
+    "description": "Close navbar menu on link click"
   },
   "assetGroups": [
     {

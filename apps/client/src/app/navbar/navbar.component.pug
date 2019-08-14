@@ -1,6 +1,6 @@
 nav.navbar.is-primary(role='navigation' aria-label='main navigation')
   .navbar-brand
-    a.navbar-item(routerLink='/')
+    a.navbar-item(routerLink='/', '(click)'='closeMenu()')
       span.icon.mr-1
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
@@ -16,11 +16,11 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
   .navbar-menu('[class.is-active]'='isMenuExpanded')
 
     .navbar-start
-      a.navbar-item(routerLink='/items', routerLinkActive='is-active')
+      a.navbar-item(routerLink='/items', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
           i.fas.fa-list-ul
         span Links
-      a.navbar-item(routerLink='/tags', routerLinkActive='is-active')
+      a.navbar-item(routerLink='/tags', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
           i.fas.fa-tags
         span Tags
