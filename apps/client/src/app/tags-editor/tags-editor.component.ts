@@ -20,14 +20,15 @@ export class TagsEditorComponent {
   @Output() delete = new EventEmitter<string>();
   tagIdsInEditMode: string[] = [];
   colors = [
-    '#0a0a0a',
-    '#363636',
-    '#00d1b2',
-    '#3273dc',
     '#209cee',
+    '#F3B5FF',
+    '#6f5499',
     '#23d160',
     '#ffdd57',
-    '#ff3860',
+    '#ff0090',
+    '#ff652f',
+    '#ff0000',
+    '#363636',
   ];
 
   setTitle(tag: Tag, title: string): void {
