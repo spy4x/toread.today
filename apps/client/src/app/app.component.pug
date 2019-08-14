@@ -11,7 +11,7 @@ ng-template(#notSignedIn='')
 ng-container('*ngIf'='user$ | async as user; else notSignedIn')
   tt-navbar('[user]'='user', '(signOut)'='signOut()', '[appVersionInfo]'='appVersionInfo')
 
-  .section.pt-3
+  .section.main-section.pt-3
     .container.app-component-container
 
       .notification.is-warning('*ngIf'='!isOnline')
@@ -24,3 +24,17 @@ ng-container('*ngIf'='user$ | async as user; else notSignedIn')
         button.button('(click)'='update()') Update
 
       router-outlet
+
+
+  footer.footer.p-3
+    .content.has-text-centered
+      p
+        strong Toread.today
+        |  by 
+        a(href='/') Anton Shubin
+        | . The source code is licensed
+        a(href='http://opensource.org/licenses/mit-license.php') MIT
+        | . The website content
+        |       is licensed 
+        a(href='http://creativecommons.org/licenses/by-nc-sa/4.0/') CC BY NC SA 4.0
+        | .

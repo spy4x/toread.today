@@ -72,8 +72,7 @@
     .notification
       p No items
 
-  //ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
-  //  .notification
-  //    p No more items. Total items for current filter: {{items.length}}
+  ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
+    .is-divider(data-content='The End :) ')
 
 
