@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.4.3",
-    "description": "Don't leave \"New\" tab when clicking on a link"
+    "version": "v1.4.4",
+    "description": "Goes to \"New\" tab when adding a new link"
   },
   "assetGroups": [
     {

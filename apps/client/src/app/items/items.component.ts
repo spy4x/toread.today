@@ -90,6 +90,7 @@ export class ItemsComponent implements OnInit{
                 urlParseStatus: 'notStarted'
               };
               const { id, ...body } = data;
+              this.filter$.next({ ...this.filter$.value, status: 'new' });
               await this.firestore
                 .collection('items')
                 .add(body);
