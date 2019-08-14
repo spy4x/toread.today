@@ -59,7 +59,12 @@
               a.dropdown-item.has-text-success(
                   '*ngIf'='item.status !== "finished"',
                   '(click)'='finishReading.emit(item.id)') Mark as Finished
-              a.dropdown-item('*ngIf'='item.status !== "new"', '(click)'='undoReading.emit(item.id)') Mark as Unread
+              a.dropdown-item(
+                  '*ngIf'='item.status === "finished"',
+                  '(click)'='startReading.emit(item.id)') Mark as Opened
+              a.dropdown-item(
+                  '*ngIf'='item.status !== "new"',
+                  '(click)'='undoReading.emit(item.id)') Mark as New
               hr.dropdown-divider
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
 
