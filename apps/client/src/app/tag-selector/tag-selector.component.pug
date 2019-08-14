@@ -9,10 +9,13 @@
   .dropdown-menu(role='menu')
     .dropdown-content
       a.dropdown-item('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
-        | All tags
+        span.icon.mr-2
+          i.fas.fa-check('[ngStyle]'='{"visibility": getSelected().length ? "hidden" : "visible"}')
+        span All tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
       a.dropdown-item(
           '*ngFor'='let tag of tags' href='javascript:;',
-          '[class.is-active]'='isSelected(tag)',
           '(click)'='toggleTag(tag)')
-        | {{ tag.title }}
+        span.icon.mr-2('[ngStyle]'='{"color": tag.color || "#00d1b2"}')
+          i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag) ? "visible" : "hidden"}')
+        span.tag('[ngStyle]'='{"background-color": tag.color || "#00d1b2", "color": "white"}') {{ tag.title }}

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.3.0",
-    "description": "Add color to tags"
+    "version": "v1.3.1",
+    "description": "Add tag colors to tag selector"
   },
   "assetGroups": [
     {
