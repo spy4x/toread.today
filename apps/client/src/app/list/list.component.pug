@@ -32,7 +32,7 @@
         a.icon.is-small.has-text-danger(
             '*ngIf'='item.urlParseStatus === "error"',
             '(click)'='retryURLParsing.emit(item.id)'
-            '[title]'='"URL parse error happened. Click to retry parsing. \nError message: "+item.urlParseError')
+            '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
           i.fas.fa-exclamation-triangle
 
         tt-tag-selector.ml-3(
@@ -60,6 +60,7 @@
                   '*ngIf'='item.status !== "finished"',
                   '(click)'='finishReading.emit(item.id)') Mark as Finished
               a.dropdown-item('*ngIf'='item.status !== "new"', '(click)'='undoReading.emit(item.id)') Mark as Unread
+              hr.dropdown-divider
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
 
 

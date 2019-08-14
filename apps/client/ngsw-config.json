@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.5.1",
-    "description": "Sort links on \"Opened\" tab by openedAt timestamp, on \"Finished\" tab by finishedAt timestamp"
+    "version": "v1.5.2",
+    "description": "Add divider for dropdown menu on Item menu"
   },
   "assetGroups": [
     {
