@@ -1,5 +1,9 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import * as ogs from 'open-graph-scraper';
+
+admin.initializeApp();
+const firestore = admin.firestore();
 
 
 console.log('--- COLD START ---');
@@ -45,3 +49,31 @@ function getType(item: string): string {
   });
   return result;
 }
+
+
+export const onTagDelete = functions.firestore
+  .document(`tags/{id}`)
+  .onDelete(async doc => {
+    const id = doc.id;
+    const tag = {...doc.data(), id: doc.id};
+    console.log('onTagDelete - Working on tag:', id, tag);
+    try {
+      const items = await firestore
+        .collection('items')
+        .where('tags', 'array-contains', id)
+        .get();
+
+      console.log('onTagDelete - Found items:', items.docs.length, items.docs.map(d => d.id));
+
+      const data = {
+        tags: admin.firestore.FieldValue.arrayRemove(id)
+      };
+
+      const batch = firestore.batch();
+      items.docs.forEach(d => batch.update(firestore.doc('items/'+d.id), data));
+      await batch.commit();
+      console.log('onTagDelete - Success');
+    } catch (error) {
+      console.error('onTagDelete', tag, error);
+    }
+  });
