@@ -113,7 +113,6 @@ export class ItemsComponent implements OnInit{
       await this.firestore
         .doc('items/' + itemId)
         .update(data);
-      this.filter$.next({ ...this.filter$.value, status: 'opened' });
     } catch (error) {
       this.logger.error('startReading() error:', error, {itemId, data, filter: this.filter$.value});
       this.error = error.message;

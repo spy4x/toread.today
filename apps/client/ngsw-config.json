@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.4.2",
-    "description": "Finish editing tag title with Enter key"
+    "version": "v1.4.3",
+    "description": "Don't leave \"New\" tab when clicking on a link"
   },
   "assetGroups": [
     {
