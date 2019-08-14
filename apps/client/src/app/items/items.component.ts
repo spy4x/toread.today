@@ -77,8 +77,6 @@ export class ItemsComponent implements OnInit{
                 id: null,
                 url,
                 title: null,
-                imageUrl: null,
-                description: null,
                 type: null,
                 status: 'new',
                 tags: [],
@@ -87,7 +85,9 @@ export class ItemsComponent implements OnInit{
                 createdBy: this.userId,
                 createdAt: new Date(),
                 openedAt: null,
-                finishedAt: null
+                finishedAt: null,
+                urlParseError: null,
+                urlParseStatus: 'notStarted'
               };
               const { id, ...body } = data;
               await this.firestore
