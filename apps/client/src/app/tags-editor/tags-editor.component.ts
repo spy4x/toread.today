@@ -46,7 +46,7 @@ export class TagsEditorComponent {
   createHandler(): void {
     const newTag: Tag = {
       id: null,
-      title: 'New tag',
+      title: '---New tag---',
       color: '#00d1b2',
       createdAt: new Date(),
       createdBy: null

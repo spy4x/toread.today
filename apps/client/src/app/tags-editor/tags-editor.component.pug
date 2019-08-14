@@ -15,7 +15,8 @@ nav.panel.panel--no-borders
           type='text',
           placeholder='Tag title',
           '#input'='',
-          '[value]'='tag.title')
+          '[value]'='tag.title'
+          '(keydown.enter)'='setTitle(tag, input.value)')
         p.control
           button.button.is-primary('(click)'='setTitle(tag, input.value)', title='Save tag title')
             span.icon.is-small
