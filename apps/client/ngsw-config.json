@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.5.2",
-    "description": "Add divider for dropdown menu on Item menu"
+    "version": "v1.5.3",
+    "description": "Unsubscribe from Firestore collections on sign out"
   },
   "assetGroups": [
     {

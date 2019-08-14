@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Tag } from '../tag.interface';
 import { TagUpdateEvent } from '../tags-editor/tags-editor.component';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { LoggerService } from '../logger.service';
-import { catchError, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, filter, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { User } from 'firebase';
 import { unwrapCollectionSnapshotChanges } from '../../../../../shared/firestore.helper';
@@ -16,10 +16,12 @@ import { unwrapCollectionSnapshotChanges } from '../../../../../shared/firestore
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TagsComponent {
+export class TagsComponent implements OnDestroy{
+  componentDestroy$ = new Subject<void>();
   error: string;
   userId: null | string;
   user$ = this.auth.authState.pipe(
+    takeUntil(this.componentDestroy$),
     startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
@@ -31,6 +33,7 @@ export class TagsComponent {
       this.logger.error('user$ error', error);
       return of(null);
     }));
+  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
 
   tags$ = this.user$.pipe(
     filter(v => !!v),
@@ -39,6 +42,10 @@ export class TagsComponent {
         .collection('tags',
           ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
         .snapshotChanges()
+        .pipe(
+          takeUntil(this.userIsNotAuthenticated$),
+          takeUntil(this.componentDestroy$),
+        )
     ),
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
@@ -85,5 +92,10 @@ export class TagsComponent {
       this.logger.error('deleteTag() error:', error, { tagId });
       this.error = error.message;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.componentDestroy$.next();
+    this.componentDestroy$.complete();
   }
 }

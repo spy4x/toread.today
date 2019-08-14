@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, first, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { catchError, filter, first, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { unwrapCollectionSnapshotChanges } from '../../../../../shared/firestore.helper';
 import { Item } from '../item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
@@ -8,7 +8,7 @@ import { firestore } from 'firebase/app';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
 import { LoggerService } from '../logger.service';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { Filter } from '../filter/filter.interface';
 
 const LOAD_ITEMS_LIMIT = 20;
@@ -20,10 +20,12 @@ const LOAD_ITEMS_LIMIT = 20;
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ItemsComponent implements OnInit{
+export class ItemsComponent implements OnInit, OnDestroy {
+  componentDestroy$ = new Subject<void>();
   error: string;
   userId: null | string;
   user$ = this.auth.authState.pipe(
+    takeUntil(this.componentDestroy$),
     startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
@@ -35,6 +37,7 @@ export class ItemsComponent implements OnInit{
       this.logger.error('user$ error', error);
       return of(null);
     }));
+  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
 
   tags$ = this.user$.pipe(
     filter(v => !!v),
@@ -43,6 +46,10 @@ export class ItemsComponent implements OnInit{
         .collection('tags',
           ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
         .snapshotChanges()
+        .pipe(
+          takeUntil(this.userIsNotAuthenticated$),
+          takeUntil(this.componentDestroy$)
+        )
     ),
     map(unwrapCollectionSnapshotChanges),
     catchError(error => {
@@ -96,7 +103,7 @@ export class ItemsComponent implements OnInit{
                 .add(body);
             } catch (error) {
               this.error = error.message;
-              this.logger.error('addItem error', error, {url});
+              this.logger.error('addItem error', error, { url });
             }
           } else {
             this.error = 'Item already exist. Title: ' + results[0].title;
@@ -115,7 +122,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('startReading() error:', error, {itemId, data, filter: this.filter$.value});
+      this.logger.error('startReading() error:', error, { itemId, data, filter: this.filter$.value });
       this.error = error.message;
     }
   }
@@ -130,7 +137,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('finishReading() error:', error, {itemId, data});
+      this.logger.error('finishReading() error:', error, { itemId, data });
       this.error = error.message;
     }
   }
@@ -146,7 +153,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('undoReading() error:', error, {itemId, data});
+      this.logger.error('undoReading() error:', error, { itemId, data });
       this.error = error.message;
     }
   }
@@ -160,7 +167,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + itemId)
         .delete();
     } catch (error) {
-      this.logger.error('delete() error:', error, {itemId});
+      this.logger.error('delete() error:', error, { itemId });
       this.error = error.message;
     }
   }
@@ -176,7 +183,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + event.itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('toggleTag() error:', error, {event, data});
+      this.logger.error('toggleTag() error:', error, { event, data });
       this.error = error.message;
     }
   }
@@ -190,7 +197,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + event.itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('toggleFavourite() error:', error, {event, data});
+      this.logger.error('toggleFavourite() error:', error, { event, data });
       this.error = error.message;
     }
   }
@@ -205,7 +212,7 @@ export class ItemsComponent implements OnInit{
         .doc('items/' + itemId)
         .update(data);
     } catch (error) {
-      this.logger.error('retryURLParsing() error:', error, {itemId, data});
+      this.logger.error('retryURLParsing() error:', error, { itemId, data });
       this.error = error.message;
     }
   }
@@ -215,21 +222,26 @@ export class ItemsComponent implements OnInit{
       return;
     }
     const newAmountOfItemsToLoad = this.loadMoreItems$.value + LOAD_ITEMS_LIMIT;
-    this.logger.debug('Load more items:', {newAmountOfItemsToLoad});
+    this.logger.debug('Load more items:', { newAmountOfItemsToLoad });
     this.loadMoreItems$.next(newAmountOfItemsToLoad);
   }
 
   ngOnInit(): void {
-    this.filter$.subscribe(() => {
-      this.items$.next([]);
-      this.areAllItemsLoaded = false;
-      this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
-    });
+    this.filter$
+      .pipe(
+        takeUntil(this.componentDestroy$)
+      )
+      .subscribe(() => {
+        this.items$.next([]);
+        this.areAllItemsLoaded = false;
+        this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
+      });
 
     let items$Params: any;
     combineLatest([this.user$, this.filter$, this.loadMoreItems$],
       (user, filter, itemsToLoad) => ({ user, filter, itemsToLoad }))
       .pipe(
+        takeUntil(this.componentDestroy$),
         filter(v => !!v.user && !this.areAllItemsLoaded),
         tap(v => {
           this.isLoading = true;
@@ -243,22 +255,22 @@ export class ItemsComponent implements OnInit{
                 .limit(v.itemsToLoad);
               if (v.filter.status) {
                 query = query.where('status', '==', v.filter.status);
-                switch(v.filter.status){
+                switch (v.filter.status) {
                   case 'new': {
-                    query = query.orderBy('createdAt', 'desc')
+                    query = query.orderBy('createdAt', 'desc');
                     break;
                   }
                   case 'opened': {
-                    query = query.orderBy('openedAt', 'desc')
+                    query = query.orderBy('openedAt', 'desc');
                     break;
                   }
                   case 'finished': {
-                    query = query.orderBy('finishedAt', 'desc')
+                    query = query.orderBy('finishedAt', 'desc');
                     break;
                   }
                 }
               } else {
-                query = query.orderBy('createdAt', 'desc')
+                query = query.orderBy('createdAt', 'desc');
               }
               if (v.filter.isFavourite) {
                 query = query.where('isFavourite', '==', true);
@@ -269,6 +281,10 @@ export class ItemsComponent implements OnInit{
               return query;
             })
           .snapshotChanges()
+          .pipe(
+            takeUntil(this.userIsNotAuthenticated$),
+            takeUntil(this.componentDestroy$)
+          )
         ),
         tap((documentChangeAction: DocumentChangeAction<Item>[]) => {
           this.isLoading = false;
@@ -283,5 +299,10 @@ export class ItemsComponent implements OnInit{
         })
       )
       .subscribe(this.items$);
+  }
+
+  ngOnDestroy(): void {
+    this.componentDestroy$.next();
+    this.componentDestroy$.complete();
   }
 }
