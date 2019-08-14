@@ -57,7 +57,7 @@
           .dropdown-menu(role='menu')
             .dropdown-content
               a.dropdown-item.has-text-success(
-                  '*ngIf'='item.status === "opened"',
+                  '*ngIf'='item.status !== "finished"',
                   '(click)'='finishReading.emit(item.id)') Mark as Finished
               a.dropdown-item('*ngIf'='item.status !== "new"', '(click)'='undoReading.emit(item.id)') Mark as Unread
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
