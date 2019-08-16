@@ -30,6 +30,8 @@ export class TagsEditorComponent {
     '#ff0000',
     '#363636',
   ];
+  newTagColor: string = this.colors[0];
+  newTagTitle: string = '';
 
   setTitle(tag: Tag, title: string): void {
     this.update.emit({ id: tag.id, change: { title } });
@@ -44,11 +46,14 @@ export class TagsEditorComponent {
     return tag.color === color;
   }
 
-  createHandler(): void {
+  createHandler(title: string, color: string): void {
+    if(!title){
+      return;
+    }
     const newTag: Tag = {
       id: null,
-      title: '---New tag---',
-      color: '#00d1b2',
+      title: title,
+      color: color,
       createdAt: new Date(),
       createdBy: null
     };

@@ -1,24 +1,29 @@
 .field.has-addons.is-fullwidth.pb-3.top-control
   .control.is-expanded
-    input.input(placeholder='Add new tag')
+    input.input(
+        placeholder='Add new tag',
+        '#newTagTitleInput'='',
+        '(input)'='newTagTitle = newTagTitleInput.value',
+        '(keydown.enter)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""')
 
   .control
     .dropdown.is-hoverable.is-right.button
       .dropdown-trigger
-        a.color-circle('[ngStyle]'='{"background-color": "#209cee"}')
+        a.color-circle('[ngStyle]'='{"background-color": newTagColor}')
       .dropdown-menu.dropdown-menu--w-none(role='menu')
         .dropdown-content
-          a.dropdown-item('*ngFor'='let color of colors')
-            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') New tag 
+          a.dropdown-item(
+              '*ngFor'='let color of colors',
+              '(click)'='newTagColor = color',
+              '[class.is-active]'='newTagColor === color')
+            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{newTagTitle || 'New tag'}}
 
   .control
-    a.button.has-text-grey
+    button.button.has-text-grey('(click)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""', title='Create tag')
       span.icon
         i.fas.fa-plus
 
 
-
-button.button.is-primary.mb-2('(click)'='createHandler()') Create
 
 nav.panel
 

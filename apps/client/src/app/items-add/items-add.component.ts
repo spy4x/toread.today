@@ -9,4 +9,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, ViewEncapsula
 })
 export class ItemsAddComponent {
   @Output() addItem = new EventEmitter<string>();
+
+  add(url: string): void {
+    if(!url){
+      return;
+    }
+    this.addItem.emit(url);
+  }
 }

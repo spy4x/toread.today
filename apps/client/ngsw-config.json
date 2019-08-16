@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.5.5",
-    "description": "Improve UI of tags editor and update & minimize app dependencies"
+    "version": "v1.5.6",
+    "description": "Make new UI of tag creation live"
   },
   "assetGroups": [
     {
