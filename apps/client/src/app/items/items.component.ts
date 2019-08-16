@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { unwrapCollectionSnapshotChanges } from '../../../../../shared/firestore.helper';
 import { Item } from '../item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
 import { User } from 'firebase';
 import { firestore } from 'firebase/app';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
 import { LoggerService } from '../logger.service';
 import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { Filter } from '../filter/filter.interface';
@@ -45,13 +44,12 @@ export class ItemsComponent implements OnInit, OnDestroy {
       this.firestore
         .collection('tags',
           ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .snapshotChanges()
+        .valueChanges({idField: 'id'})
         .pipe(
           takeUntil(this.userIsNotAuthenticated$),
           takeUntil(this.componentDestroy$)
         )
     ),
-    map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
       this.logger.error('tags$ error', error);
@@ -72,10 +70,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   addItem(url: string) {
     this.firestore
-      .collection('items', ref => ref.where('url', '==', url).where('createdBy', '==', this.userId).limit(1))
-      .snapshotChanges()
+      .collection<Item>('items', ref => ref.where('url', '==', url).where('createdBy', '==', this.userId).limit(1))
+      .valueChanges({idField: 'id'})
       .pipe(
-        map(unwrapCollectionSnapshotChanges),
         first(),
         tap(async results => {
           if (!results.length) {
@@ -248,7 +245,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
           items$Params = v;
         }),
         switchMap((v: { user: User, filter: Filter, itemsToLoad: number }) => this.firestore
-          .collection('items',
+          .collection<Item>('items',
             ref => {
               let query = ref
                 .where('createdBy', '==', v.user.uid)
@@ -280,17 +277,16 @@ export class ItemsComponent implements OnInit, OnDestroy {
               }
               return query;
             })
-          .snapshotChanges()
+          .valueChanges({idField: 'id'})
           .pipe(
             takeUntil(this.userIsNotAuthenticated$),
             takeUntil(this.componentDestroy$)
           )
         ),
-        tap((documentChangeAction: DocumentChangeAction<Item>[]) => {
+        tap((items: Item[]) => {
           this.isLoading = false;
-          this.areAllItemsLoaded = documentChangeAction.length < this.loadMoreItems$.value;
+          this.areAllItemsLoaded = items.length < this.loadMoreItems$.value;
         }),
-        map(unwrapCollectionSnapshotChanges),
         catchError(error => {
           this.isLoading = false;
           this.error = error.message;

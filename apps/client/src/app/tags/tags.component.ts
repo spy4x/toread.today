@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Tag } from '../tag.interface';
 import { TagUpdateEvent } from '../tags-editor/tags-editor.component';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { LoggerService } from '../logger.service';
 import { catchError, filter, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
-import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
-import { unwrapCollectionSnapshotChanges } from '../../../../../shared/firestore.helper';
 
 @Component({
   selector: 'tt-tags',
@@ -41,13 +40,12 @@ export class TagsComponent implements OnDestroy{
       this.firestore
         .collection('tags',
           ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .snapshotChanges()
+        .valueChanges({idField: 'id'})
         .pipe(
           takeUntil(this.userIsNotAuthenticated$),
           takeUntil(this.componentDestroy$),
         )
     ),
-    map(unwrapCollectionSnapshotChanges),
     catchError(error => {
       this.error = error.message;
       this.logger.error('tags$ error', error);

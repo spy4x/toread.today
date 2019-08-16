@@ -1,13 +1,8 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'firebase';
-import { BehaviorSubject, interval, of } from 'rxjs';
-import { catchError, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
-import { unwrapCollectionSnapshotChanges } from '../../../../shared/firestore.helper';
-import { Item } from './item.interface';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { interval, of } from 'rxjs';
+import { catchError, startWith, tap } from 'rxjs/operators';
 import { auth } from 'firebase/app';
-import { Filter } from './filter/filter.interface';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
