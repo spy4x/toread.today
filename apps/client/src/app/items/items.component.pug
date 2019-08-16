@@ -2,7 +2,7 @@
   button.delete('(click)'='error = null')
   | {{error}}
 
-nav.panel.panel--no-borders
+nav.panel
   tt-items-add('(addItem)'='addItem($event)')
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
   tt-list('[items]'='items$ | async',

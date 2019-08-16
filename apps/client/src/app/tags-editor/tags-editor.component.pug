@@ -1,6 +1,26 @@
+.field.has-addons.is-fullwidth.pb-3.top-control
+  .control.is-expanded
+    input.input(placeholder='Add new tag')
+
+  .control
+    .dropdown.is-hoverable.is-right.button
+      .dropdown-trigger
+        a.color-circle('[ngStyle]'='{"background-color": tag?.color || "#209cee"}')
+      .dropdown-menu.dropdown-menu--w-none(role='menu')
+        .dropdown-content
+          a.dropdown-item('*ngFor'='let color of colors')
+            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') New tag 
+
+  .control
+    a.button.has-text-grey
+      span.icon
+        i.fas.fa-plus
+
+
+
 button.button.is-primary.mb-2('(click)'='createHandler()') Create
 
-nav.panel.panel--no-borders
+nav.panel
 
   .tag-item.panel-block('*ngFor'='let tag of tags')
 
@@ -8,7 +28,7 @@ nav.panel.panel--no-borders
 
       span.tag(
           '*ngIf'='!isInEditMode(tag.id)',
-          '[ngStyle]'='{"background-color": tag.color || "#00d1b2", "color": "white"}') {{tag.title}}
+          '[ngStyle]'='{"background-color": tag.color || "#209cee", "color": "white"}') {{tag.title}}
       .field.has-addons('*ngIf'='isInEditMode(tag.id)')
         p.control
           input.input(
@@ -26,10 +46,10 @@ nav.panel.panel--no-borders
             span.icon.is-small
               i.fas.fa-times
 
-    .color-selector.dropdown.is-hoverable.is-right.ml-2
+    .dropdown.is-hoverable.is-right.ml-3
       .dropdown-trigger
         a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
-      .dropdown-menu(role='menu')
+      .dropdown-menu.dropdown-menu--w-none(role='menu')
         .dropdown-content
           a.dropdown-item(
               '*ngFor'='let color of colors',
@@ -37,11 +57,11 @@ nav.panel.panel--no-borders
               '[class.is-active]'='isColor(tag, color)',)
             span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{ tag.title }}
 
-    a.icon.is-small.ml-2.has-text-primary(
+    a.icon.is-small.ml-3.has-text-primary(
         '*ngIf'='!isInEditMode(tag.id)',
         title='Edit tag',
         '(click)'='toggleEditMode(tag)')
       i.far.fa-edit
 
-    a.icon.is-small.ml-2.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
+    a.icon.is-small.ml-3.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
       i.far.fa-trash-alt

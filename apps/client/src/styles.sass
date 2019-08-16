@@ -3,7 +3,6 @@ $fa-font-path: '../../../node_modules/@fortawesome/fontawesome-free/webfonts'
 
 
 @import '~bulma/bulma.sass'
-@import '~bulma-divider/src/sass/index'
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss'
 @import '~@fortawesome/fontawesome-free/scss/regular.scss'
 @import '~@fortawesome/fontawesome-free/scss/solid.scss'
@@ -11,3 +10,20 @@ $fa-font-path: '../../../node_modules/@fortawesome/fontawesome-free/webfonts'
 
 @import 'spacers'
 
+
+.dropdown-menu--w-none
+  min-width: auto
+  .dropdown-content
+    padding: 0.25rem 0
+  .dropdown-item
+    padding: .375rem .5rem
+
+@media(max-width: 768px)
+  tt-root > .section
+    padding: 0
+  .panel-block
+    border-left: 0
+    border-right: 0
+  .top-control
+    padding-left: 0.75rem
+    padding-right: 0.75rem

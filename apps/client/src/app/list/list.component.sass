@@ -1,13 +1,14 @@
 tt-list
   .item
     padding: 12px
+    border-bottom: none
     &--title
       text-overflow: ellipsis
       overflow: hidden
     &:first-child
       border-top: none
-    &:not(:last-child)
-      border-bottom: none
+    &:last-of-type
+      border-bottom: 1px solid #dbdbdb
     &:nth-child(even)
       background: hsl(0, 0%, 98%)
 

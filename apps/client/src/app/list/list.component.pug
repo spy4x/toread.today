@@ -69,15 +69,13 @@
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
 
 
-  ng-container('*ngIf'='isLoading')
-    .notification
-      p Loading...
+ng-container('*ngIf'='isLoading')
+  .notification
+    p Loading...
 
-  ng-container('*ngIf'='isZeroItems()')
-    .notification
-      p No items
+ng-container('*ngIf'='isZeroItems()')
+  .notification
+    p No items
 
-  ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
-    .is-divider(data-content='The End :) ')
-
-
+ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
+  .content.is-small.has-text-grey-light.has-text-centered.my-4 The End
