@@ -1,10 +1,22 @@
 .field.has-addons.is-fullwidth.pb-3.top-control
   .control.is-expanded
     input.input(
-        placeholder='Enter URL',
-        '#input'='',
-        '(keydown.enter)'='add(input.value);input.value=""')
+        '*ngIf'='isSingleURL',
+        '[placeholder]'='inputPlaceholder',
+        '[(ngModel)]'='inputValue',
+        '(keydown.enter)'='add()',)
+    textarea.textarea(
+        '*ngIf'='!isSingleURL',
+        '[placeholder]'='inputPlaceholder',
+        '[(ngModel)]'='inputValue',)
   .control
-    a.button.has-text-grey('(click)'='add(input.value);input.value=""')
+    button.button.has-text-grey(
+        '(click)'='isSingleURL = !isSingleURL',
+        '[title]'='isSingleURL ? "Add multiple URLs" : "Add single URL"')
+      span.icon('*ngIf'='isSingleURL')
+        i.fas.fa-stream
+      span('*ngIf'='!isSingleURL') 1
+  .control
+    button.button.has-text-grey('(click)'='add()', title='Add')
       span.icon
         i.fas.fa-plus

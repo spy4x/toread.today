@@ -22,6 +22,7 @@ import { LoggerService, SentryErrorHandler } from './logger.service';
 import { RouterModule, Routes } from '@angular/router';
 import { ItemsComponent } from './items/items.component';
 import { TagsComponent } from './tags/tags.component';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -60,7 +61,8 @@ const routes: Routes = [
     AngularFirestoreModule.enablePersistence(),
     AngularFireAuthModule,
     InfiniteScrollModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    FormsModule
   ],
   providers: [
     ConnectionStatusService,

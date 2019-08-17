@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.5.6",
-    "description": "Make new UI of tag creation live"
+    "version": "v1.6.0",
+    "description": "Add bulk URL creation"
   },
   "assetGroups": [
     {

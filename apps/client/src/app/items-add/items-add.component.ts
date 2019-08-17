@@ -9,11 +9,21 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, ViewEncapsula
 })
 export class ItemsAddComponent {
   @Output() addItem = new EventEmitter<string>();
+  inputValue = '';
+  inputPlaceholder = 'Enter URL(s). One per line or split with space (separators "\\n" and " ")';
+  isSingleURL = true;
 
-  add(url: string): void {
-    if(!url){
-      return;
+  add(): void {
+    if (this.inputValue) {
+      const separator = /[\r\n\t\f\v ]+/; // any spaces, tabs, \n
+      this.inputValue.split(separator).forEach(url => {
+        const value = url.trim();
+        if (!value) {
+          return;
+        }
+        this.addItem.emit(url);
+      });
     }
-    this.addItem.emit(url);
+    this.inputValue = '';
   }
 }
