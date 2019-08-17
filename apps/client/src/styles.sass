@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 $fa-font-path: '../../../node_modules/@fortawesome/fontawesome-free/webfonts'
 
+// $panel-tab-active-border-bottom-color: hsl(171, 100%, 41%)
+$panel-item-border: 1px solid transparent
+// $panel-tab-border-bottom: 1px solid red
 
 @import '~bulma/bulma.sass'
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss'
@@ -10,6 +13,9 @@ $fa-font-path: '../../../node_modules/@fortawesome/fontawesome-free/webfonts'
 
 @import 'spacers'
 
+
+.has-border-bottom
+  border-bottom: 1px solid $border
 
 .dropdown-menu--w-none
   min-width: auto

@@ -16,7 +16,7 @@
               | {{item.title || item.url}}
           
           .column('*ngIf'='item.tags.length')
-            .tags-container
+            .has-text-right-tablet
               span.tag.mr-2(
                   '*ngFor'='let tagId of item.tags',
                   '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
