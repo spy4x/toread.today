@@ -1,3 +1,7 @@
+.notification.is-warning('*ngIf'='errors.length')
+  button.delete('(click)'='errors = []')
+  p('*ngFor'='let error of errors') {{error}}
+
 .field.has-addons.is-fullwidth.pb-3.top-control
   .control.is-expanded
     input.input(
