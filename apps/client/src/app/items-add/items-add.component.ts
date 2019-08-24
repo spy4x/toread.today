@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import { Tag } from '../tag.interface';
+import { ToggleTagEvent } from '../list/list.component';
+
+export interface ItemAddEvent {
+  url: string,
+  tags: string[]
+}
 
 @Component({
   selector: 'tt-items-add',
@@ -8,9 +15,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, ViewEncapsula
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ItemsAddComponent {
-  @Output() addItem = new EventEmitter<string>();
+  @Input() tags: Tag[] = [];
+  @Output() addItem = new EventEmitter<ItemAddEvent>();
   inputValue = '';
   inputPlaceholder = 'Enter URL(s). One per line or split with space (separators "\\n" and " ")';
+  inputTags: string[] = [];
   isSingleURL = true;
 
   add(): void {
@@ -21,9 +30,22 @@ export class ItemsAddComponent {
         if (!value) {
           return;
         }
-        this.addItem.emit(url);
+        const item: ItemAddEvent = {
+          url: value,
+          tags: this.inputTags,
+        };
+        this.addItem.emit(item);
       });
     }
     this.inputValue = '';
+    this.inputTags = [];
+  }
+
+  toggleTag(event: ToggleTagEvent) {
+    if (event.isSelected) {
+      this.inputTags = [...this.inputTags, event.id];
+    } else {
+      this.inputTags = this.inputTags.filter(tagId => tagId !== event.id);
+    }
   }
 }

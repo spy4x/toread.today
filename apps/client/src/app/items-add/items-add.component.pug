@@ -9,6 +9,7 @@
         '*ngIf'='!isSingleURL',
         '[placeholder]'='inputPlaceholder',
         '[(ngModel)]'='inputValue',)
+
   .control
     button.button.has-text-grey(
         '(click)'='isSingleURL = !isSingleURL',
@@ -16,6 +17,17 @@
       span.icon('*ngIf'='isSingleURL')
         i.fas.fa-stream
       span('*ngIf'='!isSingleURL') 1
+
+  .control
+    tt-tag-selector(
+        '[tags]'='tags',
+        '[selectedIds]'='inputTags',
+        '(toggle)'='toggleTag($event)',
+        '[isTitleCustom]'='true',
+        '[isAllTagsVisible]'='false',)
+      a.button.has-text-info
+        i.fas.fa-hashtag(aria-hidden='true')
+
   .control
     button.button.has-text-grey('(click)'='add()', title='Add')
       span.icon

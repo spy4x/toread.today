@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, first, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Item } from '../item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
 import { User } from 'firebase';
 import { firestore } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { LoggerService } from '../logger.service';
 import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { Filter } from '../filter/filter.interface';
+import { ItemAddEvent } from '../items-add/items-add.component';
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -68,9 +69,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
               private firestore: AngularFirestore,
               private logger: LoggerService) { }
 
-  addItem(url: string) {
+  addItem(item: ItemAddEvent) {
     this.firestore
-      .collection<Item>('items', ref => ref.where('url', '==', url).where('createdBy', '==', this.userId).limit(1))
+      .collection<Item>('items', ref => ref.where('url', '==', item.url).where('createdBy', '==', this.userId).limit(1))
       .valueChanges({idField: 'id'})
       .pipe(
         first(),
@@ -78,12 +79,11 @@ export class ItemsComponent implements OnInit, OnDestroy {
           if (!results.length) {
             try {
               const data: Item = {
+                ...item,
                 id: null,
-                url,
                 title: null,
                 type: null,
                 status: 'new',
-                tags: [],
                 priority: 3,
                 isFavourite: false,
                 createdBy: this.userId,
@@ -100,7 +100,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
                 .add(body);
             } catch (error) {
               this.error = error.message;
-              this.logger.error('addItem error', error, { url });
+              this.logger.error('addItem error', error, { ...item });
             }
           } else {
             this.error = 'Item already exist. Title: ' + results[0].title;

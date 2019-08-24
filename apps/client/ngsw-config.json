@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.6.0",
-    "description": "Add bulk URL creation"
+    "version": "v1.7.0",
+    "description": "Add tag selection on item creation"
   },
   "assetGroups": [
     {
