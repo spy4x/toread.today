@@ -12,9 +12,9 @@
                 target='_blank',
                 '(click)'='startReading.emit(item.id)',
                 '[title]'='item.url')
-              i.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
+              i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
               | {{item.title || item.url}}
-          
+
           .column('*ngIf'='item.tags.length')
             .has-text-right-tablet
               span.tag.mr-2(
@@ -29,13 +29,13 @@
             title='URL parsing is in progress..')
           i.fas.fa-sync
 
-        a.icon.is-small.has-text-danger(
+        a.icon.is-small.has-text-danger.mr-3(
             '*ngIf'='item.urlParseStatus === "error"',
             '(click)'='retryURLParsing.emit(item.id)'
             '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
           i.fas.fa-exclamation-triangle
 
-        tt-tag-selector.ml-3(
+        tt-tag-selector(
             '[tags]'='tags',
             '[selectedIds]'='item.tags',
             '(toggle)'='toggleTagHandler($event, item)',
