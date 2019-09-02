@@ -23,6 +23,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { ItemsComponent } from './items/items.component';
 import { TagsComponent } from './tags/tags.component';
 import { FormsModule } from '@angular/forms';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 const routes: Routes = [
   {
@@ -52,7 +54,8 @@ const routes: Routes = [
     GetIconByItemTypePipe,
     DropdownDirective,
     ItemsComponent,
-    TagsComponent
+    TagsComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,
@@ -60,6 +63,7 @@ const routes: Routes = [
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
     AngularFireAuthModule,
+    AngularFireStorageModule,
     InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule

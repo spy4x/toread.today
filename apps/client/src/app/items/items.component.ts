@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, finalize, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Item } from '../item.interface';
 import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
 import { User } from 'firebase';
@@ -7,9 +7,10 @@ import { firestore } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LoggerService } from '../logger.service';
-import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { Filter } from '../filter/filter.interface';
 import { ItemAddEvent } from '../items-add/items-add.component';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -22,7 +23,9 @@ const LOAD_ITEMS_LIMIT = 20;
 })
 export class ItemsComponent implements OnInit, OnDestroy {
   componentDestroy$ = new Subject<void>();
-  error: string;
+  error$ = new BehaviorSubject<string>(null);
+  uploadFileTask: AngularFireUploadTask;
+  uploadFileProgress$: Observable<number>;
   userId: null | string;
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
@@ -33,7 +36,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
       this.logger.setUser(user);
     }),
     catchError(error => {
-      this.error = error.message;
+      this.error$.next(error.message);
       this.logger.error('user$ error', error);
       return of(null);
     }));
@@ -45,14 +48,14 @@ export class ItemsComponent implements OnInit, OnDestroy {
       this.firestore
         .collection('tags',
           ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .valueChanges({idField: 'id'})
+        .valueChanges({ idField: 'id' })
         .pipe(
           takeUntil(this.userIsNotAuthenticated$),
           takeUntil(this.componentDestroy$)
         )
     ),
     catchError(error => {
-      this.error = error.message;
+      this.error$.next(error.message);
       this.logger.error('tags$ error', error);
       return of([]);
     }),
@@ -67,46 +70,75 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
+              private storage: AngularFireStorage,
               private logger: LoggerService) { }
 
   addItem(item: ItemAddEvent) {
-    this.firestore
-      .collection<Item>('items', ref => ref.where('url', '==', item.url).where('createdBy', '==', this.userId).limit(1))
-      .valueChanges({idField: 'id'})
-      .pipe(
-        first(),
-        tap(async results => {
-          if (!results.length) {
-            try {
-              const data: Item = {
-                ...item,
-                id: null,
-                title: null,
-                type: null,
-                status: 'new',
-                priority: 3,
-                isFavourite: false,
-                createdBy: this.userId,
-                createdAt: new Date(),
-                openedAt: null,
-                finishedAt: null,
-                urlParseError: null,
-                urlParseStatus: 'notStarted'
-              };
-              const { id, ...body } = data;
-              this.filter$.next({ ...this.filter$.value, status: 'new' });
-              await this.firestore
-                .collection('items')
-                .add(body);
-            } catch (error) {
-              this.error = error.message;
-              this.logger.error('addItem error', error, { ...item });
+    if (item.isSingle) {
+      this.firestore
+        .collection<Item>('items',
+          ref => ref.where('url', '==', item.urls).where('createdBy', '==', this.userId).limit(1))
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          first(),
+          tap(async results => {
+            if (!results.length) {
+              try {
+                const data: Item = {
+                  id: null,
+                  url: item.urls,
+                  tags: item.tags,
+                  title: null,
+                  type: null,
+                  status: 'new',
+                  priority: 3,
+                  isFavourite: false,
+                  createdBy: this.userId,
+                  createdAt: new Date(),
+                  openedAt: null,
+                  finishedAt: null,
+                  urlParseError: null,
+                  urlParseStatus: 'notStarted'
+                };
+                const { id, ...body } = data;
+                if(this.filter$.value.status !== 'new') {
+                  this.filter$.next({ ...this.filter$.value, status: 'new' });
+                }
+                await this.firestore
+                  .collection('items')
+                  .add(body);
+              } catch (error) {
+                this.error$.next(error.message);
+                this.logger.error('addItem error', error, { ...item });
+              }
+            } else {
+              this.error$.next('Item already exist. Title: ' + results[0].title);
             }
-          } else {
-            this.error = 'Item already exist. Title: ' + results[0].title;
+          })
+        ).subscribe();
+    } else {
+      // TODO: upload as file
+      const fileId = Math.random().toString().substr(2);
+      const path = `users/${this.userId}/imports/${fileId}`;
+      this.uploadFileTask = this.storage.ref(path).putString(
+        item.urls,
+        undefined,
+        {
+          customMetadata: {
+            tags: JSON.stringify(item.tags)
+          }
+        });
+      this.uploadFileProgress$ = this.uploadFileTask.percentageChanges();
+      this.uploadFileTask.snapshotChanges().pipe(
+        finalize(() => {
+          this.uploadFileTask = null;
+          this.uploadFileProgress$ = null;
+          if(this.filter$.value.status !== 'new') {
+            this.filter$.next({ ...this.filter$.value, status: 'new' });
           }
         })
       ).subscribe();
+    }
   }
 
   async startReading(itemId: string) {
@@ -120,7 +152,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('startReading() error:', error, { itemId, data, filter: this.filter$.value });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -135,7 +167,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('finishReading() error:', error, { itemId, data });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -151,7 +183,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('undoReading() error:', error, { itemId, data });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -165,7 +197,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .delete();
     } catch (error) {
       this.logger.error('delete() error:', error, { itemId });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -181,7 +213,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('toggleTag() error:', error, { event, data });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -195,7 +227,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('toggleFavourite() error:', error, { event, data });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -210,7 +242,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('retryURLParsing() error:', error, { itemId, data });
-      this.error = error.message;
+      this.error$.next(error.message);
     }
   }
 
@@ -277,7 +309,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
               }
               return query;
             })
-          .valueChanges({idField: 'id'})
+          .valueChanges({ idField: 'id' })
           .pipe(
             takeUntil(this.userIsNotAuthenticated$),
             takeUntil(this.componentDestroy$)
@@ -289,7 +321,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
         }),
         catchError(error => {
           this.isLoading = false;
-          this.error = error.message;
+          this.error$.next(error.message);
           this.logger.error('items$ error', error, items$Params);
           return of([]);
         })

@@ -4,6 +4,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
       span.icon.mr-1
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
+    tt-notifications.navbar-item('*ngIf'='isMobile$ | async', '[userId]'='user.uid')
     a.navbar-burger.burger(
         role='button',
         aria-label='menu',
@@ -27,6 +28,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
 
     .navbar-end('*ngIf'='user')
 
+
       //- mobile menu
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
         a.navbar-item
@@ -34,12 +36,14 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
             i.fas.fa-cat
           | Hello, {{user.displayName || user.email}}
 
+
         a.navbar-item('(click)'='signOut.emit()')
           span.icon.mr-1
             i.fas.fa-sign-out-alt
           | Sign out
 
       ng-template('#desktopMenu'='')
+        tt-notifications.navbar-item('*ngIf'='!(isMobile$ | async)', '[userId]'='user.uid')
         .navbar-item
           .dropdown.is-hoverable.is-right
             .dropdown-trigger

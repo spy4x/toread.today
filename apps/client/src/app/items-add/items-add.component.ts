@@ -3,8 +3,9 @@ import { Tag } from '../tag.interface';
 import { ToggleTagEvent } from '../list/list.component';
 
 export interface ItemAddEvent {
-  url: string,
-  tags: string[]
+  urls: string,
+  tags: string[],
+  isSingle: boolean
 }
 
 @Component({
@@ -18,31 +19,21 @@ export class ItemsAddComponent {
   @Input() tags: Tag[] = [];
   @Output() addItem = new EventEmitter<ItemAddEvent>();
   inputValue = '';
-  inputPlaceholder = 'Enter URL(s). One per line or split with space (separators "\\n" and " ")';
   inputTags: string[] = [];
   isSingleURL = true;
   errors: string[] = [];
 
   add(): void {
-    if (this.inputValue) {
-      const separator = /[\r\n\t\f\v ]+/; // any spaces, tabs, \n
-      const urls = this.inputValue.split(separator);
-      urls.forEach(url => {
-        const value = url.trim();
-        if (!value) {
-          return;
-        }
-        if(!this.isUrl(value)) {
-          this.errors = [...this.errors, `${value} is not a valid URL`];
-          return;
-        }
-        const item: ItemAddEvent = {
-          url: value,
-          tags: this.inputTags,
-        };
-        this.addItem.emit(item);
-      });
+    if(!this.isUrl(this.inputValue)) {
+      this.errors = [...this.errors, `${this.inputValue} is not a valid URL`];
+      return;
     }
+    const item: ItemAddEvent = {
+      urls: this.inputValue,
+      tags: this.inputTags,
+      isSingle: this.isSingleURL
+    };
+    this.addItem.emit(item);
     this.inputValue = '';
     this.inputTags = [];
   }

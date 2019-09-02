@@ -6,12 +6,12 @@
   .control.is-expanded
     input.input(
         '*ngIf'='isSingleURL',
-        '[placeholder]'='inputPlaceholder',
+        placeholder='Enter URL',
         '[(ngModel)]'='inputValue',
         '(keydown.enter)'='add()',)
     textarea.textarea(
         '*ngIf'='!isSingleURL',
-        '[placeholder]'='inputPlaceholder',
+        placeholder='Enter URLs. One per line or split with space (separators "\\n" and " ")',
         '[(ngModel)]'='inputValue',)
 
   .control

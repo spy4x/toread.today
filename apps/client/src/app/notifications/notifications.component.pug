@@ -1,0 +1,22 @@
+a(title='Show notifications', '(click)'='areAllNotificationsVisible = !areAllNotificationsVisible')
+  span.icon.mr-1
+    i.far.fa-bell
+
+//- New notifications (disappear in 5 seconds)
+.notifications.notifications-new('*ngIf'='error || (isAnyNewNotification$ | async)')
+  .notification.is-warning('*ngIf'='error')
+    button.delete('(click)'='error = null')
+    | {{error}}
+
+  .notification.is-info('*ngFor'='let notification of newNotifications$ | async')
+    button.delete('(click)'='markAsRead(notification.id)')
+    p {{notification.text}}
+
+//- All notifications (visible after click on "Show notifications" button)
+.notifications.notifications-all('*ngIf'='areAllNotificationsVisible')
+  button.button.mb-2('(click)'='areAllNotificationsVisible = false') Close
+  .notification.is-info('*ngFor'='let notification of allNotifications$ | async')
+    button.delete('(click)'='delete(notification.id)')
+    p {{notification.text}}
+    p.has-text-grey-lighter.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
+

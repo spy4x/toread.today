@@ -1,6 +1,10 @@
-.notification.is-warning('*ngIf'='error')
-  button.delete('(click)'='error = null')
+.notification.is-warning('*ngIf'='error$ | async as error')
+  button.delete('(click)'='error$.next(null)')
   | {{error}}
+
+
+.notification.is-info('*ngIf'='uploadFileProgress$ | async as uploadFileProgressPersentage')
+  | Uploading file... {{uploadFileProgressPersentage}}%
 
 nav.panel
   tt-items-add('(addItem)'='addItem($event)', '[tags]'='tags$ | async',)

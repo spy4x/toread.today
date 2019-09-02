@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.7.1",
-    "description": "Add client-side URL validation"
+    "version": "v1.8.0",
+    "description": "Improve bulk URL creation, improve favicon, fix UI for long URLs"
   },
   "assetGroups": [
     {
