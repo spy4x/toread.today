@@ -18,6 +18,7 @@ export interface ItemAddEvent {
 export class ItemsAddComponent {
   @Input() tags: Tag[] = [];
   @Output() addItem = new EventEmitter<ItemAddEvent>();
+  isYouTubeCodeVisible = false;
   inputValue = '';
   inputTags: string[] = [];
   isSingleURL = true;
@@ -54,4 +55,25 @@ export class ItemsAddComponent {
       return false;
     }
   }
+
+  youTubeCode = `(async () => {
+  const totalVideosNumber = +document.querySelector('#stats').children[0].innerHTML.split(' ')[0];
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+  const getURLs = () => Array.from(document.querySelectorAll('ytd-playlist-video-renderer')).map(el => {
+    const url = 'https://www.youtube.com' + el.querySelector('a.ytd-playlist-video-renderer').getAttribute('href');
+    return url.substr(0, url.indexOf('&list'))
+  });
+  const scrollUntilAllVideosAreVisible = async (i=0) => {
+    if (i>100) { return; } // No more than 10000 videos for now
+    if (getURLs().length !== totalVideosNumber) {
+      if (!i) { console.log('Scrolling page to load all videos...'); }
+      window.scrollTo(0, document.querySelector('ytd-app').scrollHeight);
+      await sleep(500);
+      await scrollUntilAllVideosAreVisible(++i);
+    }
+  };
+  await scrollUntilAllVideosAreVisible();
+  const urls = getURLs();
+  console.log('Results:'); console.log(urls.join('\\n')); console.log(\`--- Total urls: \${urls.length} ---\`);
+})()`;
 }
