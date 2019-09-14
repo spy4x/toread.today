@@ -14,8 +14,9 @@
         .dropdown-content
           a.dropdown-item(
               '*ngFor'='let color of colors',
-              '(click)'='newTagColor = color',
-              '[class.is-active]'='newTagColor === color')
+              '(click)'='newTagColor = color',)
+            span.icon.mr-2('[ngStyle]'='{"color": color || "#00d1b2"}')
+              i.fas.fa-check('[ngStyle]'='{"visibility": newTagColor === color ? "visible" : "hidden"}')
             span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{newTagTitle || 'New tag'}}
 
   .control
@@ -58,8 +59,9 @@ nav.panel
         .dropdown-content
           a.dropdown-item(
               '*ngFor'='let color of colors',
-              '(click)'='setColor(tag, color)',
-              '[class.is-active]'='isColor(tag, color)',)
+              '(click)'='setColor(tag, color)',)
+            span.icon.mr-2('[ngStyle]'='{"color": tag.color || "#00d1b2"}')
+              i.fas.fa-check('[ngStyle]'='{"visibility": isColor(tag, color) ? "visible" : "hidden"}')
             span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{ tag.title }}
 
     a.icon.is-small.ml-3.has-text-primary(
