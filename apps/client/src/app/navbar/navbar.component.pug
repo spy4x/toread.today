@@ -4,8 +4,36 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
       span.icon.mr-1
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
-    tt-notifications.navbar-item('*ngIf'='isMobile$ | async', '[userId]'='user.uid')
-    a.navbar-burger.burger(
+
+    // TODO
+    .navbar-item.ml-auto
+      .dropdown.is-right.is-hidden-desktop
+        .dropdown-trigger
+          a
+            span.icon.is-white.has-text-white.px-3
+              i.far.fa-bell
+        .dropdown-menu(role='notifications')
+          .dropdown-content
+            .dropdown-item
+              .is-relative.pr-3
+                a.delete
+                p File parsed. URLs: 9 created.
+                p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+            hr.dropdown-divider
+            .dropdown-item
+              .is-relative.pr-3
+                a.delete
+                p Lorem ipsum dolor sit amet, id quodsi inermis quo. Viris legimus evertitur an pri, et qui movet prodesset. Est velit saepe ne, ad fabellas persecuti vix. Pri doming volumus ei, est munere prompta platonem at. Error paulo cetero te eum, ei ludus malorum pro, sit ea postea graecis sententiae. Sit te ullum noluisse interesset.
+                p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+            hr.dropdown-divider
+            .dropdown-item
+              .is-relative.pr-3
+                a.delete
+                p File parsed. URLs: 9 created.
+                p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+    //tt-notifications.navbar-item.ml-auto('*ngIf'='isMobile$ | async', '[userId]'='user.uid')
+
+    a.navbar-burger.burger.is-marginless(
         role='button',
         aria-label='menu',
         '[class.is-active]'='isMenuExpanded',
@@ -27,8 +55,6 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
         span Tags
 
     .navbar-end('*ngIf'='user')
-
-
       //- mobile menu
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
         a.navbar-item
@@ -42,8 +68,36 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
             i.fas.fa-sign-out-alt
           | Sign out
 
+      // TODO
       ng-template('#desktopMenu'='')
-        tt-notifications.navbar-item('*ngIf'='!(isMobile$ | async)', '[userId]'='user.uid')
+      .navbar-item
+        .dropdown.is-hoverable.is-right.mr-3
+          .dropdown-trigger
+            a
+              span.icon.is-white.has-text-white.px-3
+                i.far.fa-bell
+          .dropdown-menu(role='notifications')
+            .dropdown-content
+              .dropdown-item
+                .is-relative.pr-3
+                  a.delete
+                  p File parsed. URLs: 9 created.
+                  p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+              hr.dropdown-divider
+              .dropdown-item
+                .is-relative.pr-3
+                  a.delete
+                  p Lorem ipsum dolor sit amet, id quodsi inermis quo. Viris legimus evertitur an pri, et qui movet prodesset. Est velit saepe ne, ad fabellas persecuti vix. Pri doming volumus ei, est munere prompta platonem at. Error paulo cetero te eum, ei ludus malorum pro, sit ea postea graecis sententiae. Sit te ullum noluisse interesset.
+                  p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+              hr.dropdown-divider
+              .dropdown-item
+                .is-relative.pr-3
+                  a.delete
+                  p File parsed. URLs: 9 created.
+                  p.has-text-grey-light.is-size-7 2 Sep 2019 16:29
+        // TODO
+        //.navbar-item
+          //tt-notifications('*ngIf'='!(isMobile$ | async)', '[userId]'='user.uid')
         .navbar-item
           .dropdown.is-hoverable.is-right
             .dropdown-trigger

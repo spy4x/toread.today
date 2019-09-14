@@ -1,5 +1,5 @@
 a(title='Show notifications', '(click)'='areAllNotificationsVisible = !areAllNotificationsVisible')
-  span.icon.mr-1
+  span.icon.is-white.has-text-white
     i.far.fa-bell
 
 //- New notifications (disappear in 5 seconds)
@@ -14,9 +14,11 @@ a(title='Show notifications', '(click)'='areAllNotificationsVisible = !areAllNot
 
 //- All notifications (visible after click on "Show notifications" button)
 .notifications.notifications-all('*ngIf'='areAllNotificationsVisible')
-  button.button.mb-2('(click)'='areAllNotificationsVisible = false') Close
-  .notification.is-info('*ngFor'='let notification of allNotifications$ | async')
-    button.delete('(click)'='delete(notification.id)')
-    p {{notification.text}}
-    p.has-text-grey-lighter.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
+  .card
+    .card-content
+      button.button.mb-3('(click)'='areAllNotificationsVisible = false') Close
+      .is-relative.mb-3('*ngFor'='let notification of allNotifications$ | async')
+        a.delete('(click)'='delete(notification.id)')
+        p {{notification.text}}
+        p.has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
 
