@@ -14,12 +14,22 @@
           a.icon.button--delete.ml-auto('(click)'='error = null')
             i.far.fa-trash-alt
         hr.dropdown-divider
-      ng-container('*ngFor'='let notification of allNotifications$ | async; last as isLast')
+      ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
+        ng-container('*ngFor'='let notification of notifications; last as isLast')
+          .dropdown-item
+            .indicator('[class.has-background-primary]'='notification.status === "new"')
+            div
+              p {{notification.text}}
+              p.has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
+            a.icon.button--delete.ml-auto('(click)'='delete(notification.id)')
+              i.far.fa-trash-alt
+          hr.dropdown-divider('[ngClass]'='{"is-hidden": isLast}')
+
+        .dropdown-item('*ngIf'='!notifications.length')
+          span No notifications yet
+          span.ml-auto ※\(^o^)/※
+
+      ng-template('#loading'='')
         .dropdown-item
-          .indicator('[class.has-background-primary]'='notification.status === "new"')
-          div
-            p {{notification.text}}
-            p.has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
-          a.icon.button--delete.ml-auto('(click)'='delete(notification.id)')
-            i.far.fa-trash-alt
-        hr.dropdown-divider('[ngClass]'='{"is-hidden": isLast}')
+          span Loading...
+
