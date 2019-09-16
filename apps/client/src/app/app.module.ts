@@ -18,13 +18,18 @@ import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-
 import { DropdownDirective } from './dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
-import { LoggerService, SentryErrorHandler } from './logger.service';
+import { LoggerService, SentryErrorHandler } from './services/logger.service';
 import { RouterModule, Routes } from '@angular/router';
 import { ItemsComponent } from './items/items.component';
 import { TagsComponent } from './tags/tags.component';
 import { FormsModule } from '@angular/forms';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { FastAddAndImportComponent } from './fast-add-and-import/fast-add-and-import.component';
+import { ItemsImportComponent } from './items-import/items-import.component';
+import { ItemsImportListComponent } from './items-import-list/items-import-list.component';
+import { ItemsService } from './services/items/items.service';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   {
@@ -34,6 +39,10 @@ const routes: Routes = [
   {
     path: 'tags',
     component: TagsComponent,
+  },
+  {
+    path: 'fast-fast-add-and-import',
+    component: FastAddAndImportComponent,
   },
   {
     path: '**',
@@ -55,22 +64,27 @@ const routes: Routes = [
     DropdownDirective,
     ItemsComponent,
     TagsComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    FastAddAndImportComponent,
+    ItemsImportComponent,
+    ItemsImportListComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence(),
+    AngularFirestoreModule.enablePersistence({synchronizeTabs: true}),
     AngularFireAuthModule,
     AngularFireStorageModule,
     InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    FormsModule
+    FormsModule,
+    HttpClientModule,
   ],
   providers: [
     ConnectionStatusService,
     LoggerService,
+    ItemsService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

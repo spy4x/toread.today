@@ -6,7 +6,7 @@ import { auth } from 'firebase/app';
 import { ConnectionStatusService } from './connection-status/connection-status.service';
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
-import { LoggerService } from './logger.service';
+import { LoggerService } from './services/logger.service';
 
 const { appData } = require('../../ngsw-config.json');
 

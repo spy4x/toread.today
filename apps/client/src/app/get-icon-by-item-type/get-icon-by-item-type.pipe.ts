@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ItemType } from '../item.interface';
+import { ItemType } from '../interfaces/item.interface';
 
 @Pipe({
   name: 'getIconByItemType'

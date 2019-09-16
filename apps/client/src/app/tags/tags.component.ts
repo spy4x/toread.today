@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../tag.interface';
+import { Tag } from '../interfaces/tag.interface';
 import { TagUpdateEvent } from '../tags-editor/tags-editor.component';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { LoggerService } from '../logger.service';
+import { LoggerService } from '../services/logger.service';
 import { catchError, filter, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';

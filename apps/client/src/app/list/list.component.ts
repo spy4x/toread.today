@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Item } from '../item.interface';
-import { Tag } from '../tag.interface';
+import { Item } from '../interfaces/item.interface';
+import { Tag } from '../interfaces/tag.interface';
 
 
 export interface ToggleTagEvent {

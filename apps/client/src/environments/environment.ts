@@ -12,7 +12,8 @@ export const environment = {
     storageBucket: 'toread-today.appspot.com',
     messagingSenderId: '565165890761'
   },
-  sentry: ""
+  sentry: '',
+  apiPath: 'https://toread-today.web.app/api/'
 };
 
 /*

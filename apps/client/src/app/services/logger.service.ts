@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { User as FirebaseUser } from 'firebase';
 import * as Sentry from '@sentry/browser';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {

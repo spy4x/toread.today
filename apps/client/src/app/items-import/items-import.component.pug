@@ -1,0 +1,13 @@
+span Add common tags:
+tt-tag-selector(
+'[tags]'='tags',
+'[selectedIds]'='inputTags',
+'(toggle)'='toggleTag($event)',
+'[isTitleCustom]'='true',
+'[isAllTagsVisible]'='false',)
+  a.button.has-text-info
+    i.fas.fa-hashtag(aria-hidden='true')
+button.button.is-warning('(click)'='cancel.emit()') Cancel
+button.button.is-primary('(click)'='save()') Import
+
+tt-items-import-list('[items]'='import.bookmarks')

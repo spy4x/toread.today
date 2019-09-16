@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.8.0",
-    "description": "Improve bulk URL creation, improve favicon, fix UI for long URLs"
+    "version": "v1.9.0",
+    "description": "Add bookmarks import from Chrome, Safari and Pocket app"
   },
   "assetGroups": [
     {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../tag.interface';
+import { Tag } from '../interfaces/tag.interface';
 
 export interface TagUpdateEvent {
   id: string
@@ -51,7 +51,6 @@ export class TagsEditorComponent {
       return;
     }
     const newTag: Tag = {
-      id: null,
       title: title,
       color: color,
       createdAt: new Date(),

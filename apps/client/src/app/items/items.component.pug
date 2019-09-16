@@ -2,12 +2,8 @@
   button.delete('(click)'='error$.next(null)')
   | {{error}}
 
-
-.notification.is-info('*ngIf'='uploadFileProgress$ | async as uploadFileProgressPersentage')
-  | Uploading file... {{uploadFileProgressPersentage}}%
-
 nav.panel
-  tt-items-add('(addItem)'='addItem($event)', '[tags]'='tags$ | async',)
+  tt-items-add('(add)'='add($event)', '[tags]'='tags$ | async',)
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
   tt-list('[items]'='items$ | async',
           '[tags]'='tags$ | async',

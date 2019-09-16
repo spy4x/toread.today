@@ -1,4 +1,4 @@
-import { ItemStatus } from '../item.interface';
+import { ItemStatus } from '../interfaces/item.interface';
 
 export interface Filter {
   tagId: null | string

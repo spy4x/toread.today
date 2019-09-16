@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { catchError, delay, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { Notification } from '../notification.interface';
+import { Notification } from '../interfaces/notification.interface';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { LoggerService } from '../logger.service';
+import { LoggerService } from '../services/logger.service';
 import { Observable, of, Subject } from 'rxjs';
 
 @Component({

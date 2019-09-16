@@ -1,5 +1,5 @@
 import { AfterViewInit, Directive, ElementRef, OnDestroy } from '@angular/core';
-import { LoggerService } from '../logger.service';
+import { LoggerService } from '../services/logger.service';
 
 @Directive({
   selector: '.dropdown'

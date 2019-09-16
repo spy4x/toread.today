@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../tag.interface';
+import { Tag } from '../interfaces/tag.interface';
 import { ToggleTagEvent } from '../list/list.component';
+import { isURL } from '../helpers/isURL.helper';
 
 export interface ItemAddEvent {
-  urls: string,
-  tags: string[],
-  isSingle: boolean
+  url: string,
+  tags: string[]
 }
 
 @Component({
@@ -17,24 +17,21 @@ export interface ItemAddEvent {
 })
 export class ItemsAddComponent {
   @Input() tags: Tag[] = [];
-  @Output() addItem = new EventEmitter<ItemAddEvent>();
-  isYouTubeCodeVisible = false;
+  @Output() add = new EventEmitter<ItemAddEvent>();
   inputValue = '';
   inputTags: string[] = [];
-  isSingleURL = true;
   errors: string[] = [];
 
-  add(): void {
-    if(!this.isUrl(this.inputValue)) {
+  addItem(): void {
+    if(!isURL(this.inputValue)) {
       this.errors = [...this.errors, `${this.inputValue} is not a valid URL`];
       return;
     }
     const item: ItemAddEvent = {
-      urls: this.inputValue,
-      tags: this.inputTags,
-      isSingle: this.isSingleURL
+      url: this.inputValue,
+      tags: this.inputTags
     };
-    this.addItem.emit(item);
+    this.add.emit(item);
     this.inputValue = '';
     this.inputTags = [];
   }
@@ -46,34 +43,4 @@ export class ItemsAddComponent {
       this.inputTags = this.inputTags.filter(tagId => tagId !== event.id);
     }
   }
-
-  isUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  youTubeCode = `(async () => {
-  const totalVideosNumber = +document.querySelector('#stats').children[0].innerHTML.split(' ')[0];
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-  const getURLs = () => Array.from(document.querySelectorAll('ytd-playlist-video-renderer')).map(el => {
-    const url = 'https://www.youtube.com' + el.querySelector('a.ytd-playlist-video-renderer').getAttribute('href');
-    return url.substr(0, url.indexOf('&list'))
-  });
-  const scrollUntilAllVideosAreVisible = async (i=0) => {
-    if (i>100) { return; } // No more than 10000 videos for now
-    if (getURLs().length !== totalVideosNumber) {
-      if (!i) { console.log('Scrolling page to load all videos...'); }
-      window.scrollTo(0, document.querySelector('ytd-app').scrollHeight);
-      await sleep(500);
-      await scrollUntilAllVideosAreVisible(++i);
-    }
-  };
-  await scrollUntilAllVideosAreVisible();
-  const urls = getURLs();
-  console.log('Results:'); console.log(urls.join('\\n')); console.log(\`--- Total urls: \${urls.length} ---\`);
-})()`;
 }

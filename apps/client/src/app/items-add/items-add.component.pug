@@ -3,46 +3,12 @@
   p('*ngFor'='let error of errors') {{error}}
 
 .pb-3.top-control
-  .notification.p-2.mb-2('*ngIf'='!isSingleURL')
-    button.button.is-small('(click)'='isYouTubeCodeVisible = !isYouTubeCodeVisible') Show/hide YouTube list parser snippet
-    .mt-2('*ngIf'='isYouTubeCodeVisible')
-      .tags.mb-0
-        span.tag.is-warning feature requires developer skills
-      p
-        span To use this snippet - copy and run it in to DevTools on
-        a.tag.is-info.tag--inline(href='https://youtube.com/playlist?list=WL', target='_blank') YouTube Watch Later page
-        span or other page like
-        span.tag.tag--inline.is-info https://youtube.com/playlist?list=xxx
-      p Make sure your DevTools console settings allows "All" types of logs and not only "Warnings" or "Errors".
-      pre.p-1.my-2.br-1.has-text-success.has-background-black {{youTubeCode}}
-      p.mb-0
-        span You'll get a list of URLs. Copy it and paste to
-        span.tag.tag--inline.is-info textarea
-        span below. Set tags if necessary and use "Add button"
-        span.button.is-small.has-text-grey.mx-2
-          span.icon
-            i.fas.fa-plus
-        span to import
-
   .field.has-addons.is-fullwidth
     .control.is-expanded
       input.input(
-          '*ngIf'='isSingleURL',
           placeholder='Enter URL',
           '[(ngModel)]'='inputValue',
-          '(keydown.enter)'='add()',)
-      textarea.textarea(
-          '*ngIf'='!isSingleURL',
-          placeholder='Enter URLs. One per line or split with space (separators "\\n" and " ")',
-          '[(ngModel)]'='inputValue',)
-
-    .control
-      button.button.has-text-grey(
-          '(click)'='isSingleURL = !isSingleURL',
-          '[title]'='isSingleURL ? "Add multiple URLs" : "Add single URL"')
-        span.icon('*ngIf'='isSingleURL')
-          i.fas.fa-file-import
-        span('*ngIf'='!isSingleURL') 1
+          '(keydown.enter)'='addItem()',)
 
     .control
       tt-tag-selector(
@@ -55,6 +21,6 @@
           i.fas.fa-hashtag(aria-hidden='true')
 
     .control
-      button.button.has-text-grey('(click)'='add()', title='Add')
+      button.button.has-text-grey('(click)'='addItem()', title='Add')
         span.icon
           i.fas.fa-plus
