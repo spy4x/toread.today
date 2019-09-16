@@ -1,24 +1,25 @@
-a(title='Show notifications', '(click)'='areAllNotificationsVisible = !areAllNotificationsVisible')
-  span.icon.is-white.has-text-white
-    i.far.fa-bell
+.dropdown.is-hoverable.is-right('[class.is-active]'='error || (isAnyNewNotification$ | async)')
+  .dropdown-trigger(title='Show notifications')
+    a
+      span.icon.is-white.has-text-white.px-3
+        i.far.fa-bell
 
-//- New notifications (disappear in 5 seconds)
-.notifications.notifications-new('*ngIf'='error || (isAnyNewNotification$ | async)')
-  .notification.is-warning('*ngIf'='error')
-    button.delete('(click)'='error = null')
-    | {{error}}
-
-  .notification.is-info('*ngFor'='let notification of newNotifications$ | async')
-    button.delete('(click)'='markAsRead(notification.id)')
-    p {{notification.text}}
-
-//- All notifications (visible after click on "Show notifications" button)
-.notifications.notifications-all('*ngIf'='areAllNotificationsVisible')
-  .card
-    .card-content
-      button.button.mb-3('(click)'='areAllNotificationsVisible = false') Close
-      .is-relative.mb-3('*ngFor'='let notification of allNotifications$ | async')
-        a.delete('(click)'='delete(notification.id)')
-        p {{notification.text}}
-        p.has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
-
+  .dropdown-menu(role='notifications')
+    .dropdown-content
+      //- Error
+      ng-container('*ngIf'='error')
+        .dropdown-item
+          .indicator.has-background-danger
+          p {{error}}
+          a.icon.button--delete.ml-auto('(click)'='error = null')
+            i.far.fa-trash-alt
+        hr.dropdown-divider
+      ng-container('*ngFor'='let notification of allNotifications$ | async; last as isLast')
+        .dropdown-item
+          .indicator('[class.has-background-primary]'='notification.status === "new"')
+          div
+            p {{notification.text}}
+            p.has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
+          a.icon.button--delete.ml-auto('(click)'='delete(notification.id)')
+            i.far.fa-trash-alt
+        hr.dropdown-divider('[ngClass]'='{"is-hidden": isLast}')

@@ -16,7 +16,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   @Input() userId: string;
   componentDestroy$ = new Subject<void>();
   error: string;
-  areAllNotificationsVisible = false;
   dateFormat = 'd MMM yyyy HH:mm';
 
   allNotifications$: Observable<Notification[]>;
@@ -26,37 +25,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   constructor(private firestore: AngularFirestore,
               private logger: LoggerService) { }
-
-
-  async markAsRead(id: string) {
-    const data: Partial<Notification> = {
-      status: 'read'
-    };
-    try {
-      await this.firestore
-        .doc('notifications/' + id)
-        .update(data);
-    } catch (error) {
-      this.logger.error('markAsRead() error:', error, { id, data });
-      this.error = error.message;
-    }
-  }
-
-  async delete(id: string) {
-    try {
-      await this.firestore
-        .doc('notifications/' + id)
-        .delete();
-    } catch (error) {
-      this.logger.error('delete() error:', error, { id });
-      this.error = error.message;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroy$.next();
-    this.componentDestroy$.complete();
-  }
 
   ngOnInit(): void {
     this.allNotifications$ = this.firestore
@@ -88,4 +56,34 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  ngOnDestroy(): void {
+    this.componentDestroy$.next();
+    this.componentDestroy$.complete();
+  }
+
+
+  async markAsRead(id: string) {
+    const data: Partial<Notification> = {
+      status: 'read'
+    };
+    try {
+      await this.firestore
+        .doc('notifications/' + id)
+        .update(data);
+    } catch (error) {
+      this.logger.error('markAsRead() error:', error, { id, data });
+      this.error = error.message;
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.firestore
+        .doc('notifications/' + id)
+        .delete();
+    } catch (error) {
+      this.logger.error('delete() error:', error, { id });
+      this.error = error.message;
+    }
+  }
 }
