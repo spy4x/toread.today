@@ -8,12 +8,17 @@
       .column
         .columns.is-gapless
           .column
-            a.item--title(  '[href]'='item.url',
-                target='_blank',
-                '(click)'='startReading.emit(item.id)',
-                '[title]'='item.url')
-              i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
-              | {{item.title || item.url}}
+            .item--title
+              a.item--title--text.mr-3(  '[href]'='item.url',
+                  target='_blank',
+                  '(click)'='startReading.emit(item.id)',
+                  '[title]'='item.url')
+                i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
+                | {{item.title || item.url}}
+              .item--actions.has-text-grey-light
+                i.far.fa-thumbs-up.has-text-primary
+                i.far.fa-thumbs-down.ml-2
+                i.far.fa-comment-alt.ml-3
 
           .column('*ngIf'='item.tags.length')
             .has-text-right-tablet

@@ -1,12 +1,12 @@
 tt-list
   .item
     padding: 12px
-    &--title
-      word-break: break-word
-      display: -webkit-box
-      -webkit-box-orient: vertical
-      -webkit-line-clamp: 3
-      overflow: hidden
+    &--actions
+      display: inline-block
+      i
+        cursor: pointer
+        &:hover
+          opacity: 0.6
     &:nth-child(even)
       background: hsl(0, 0%, 98%)
 
