@@ -19,8 +19,9 @@
           i.far.fa-thumbs-down.ml-2
           i.far.fa-comment-alt.ml-3
         .item--tags.mt-2('*ngIf'='item.tags.length')
-          span.tag.mr-2(
+          a.tag.mr-2(
           '*ngFor'='let tagId of item.tags',
+          '(click)'='tagClick.emit(tagId)',
           '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
             | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
 

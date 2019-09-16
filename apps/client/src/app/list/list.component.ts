@@ -37,6 +37,7 @@ export class ListComponent {
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
   @Output() loadMore = new EventEmitter<void>();
+  @Output() tagClick = new EventEmitter<string>();
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });

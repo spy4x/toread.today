@@ -150,7 +150,7 @@ export const onFileUploadFunction = functions
       // TODO: Do I still need 'async-parallel' library if this operation is sequential?
       await every(bulk.items, async (itemSkeleton: ItemSkeleton, index: number) => {
         if (index && index % 100 === 0) {
-          await createNotification(`${index} lines parsed`, userId);
+          await createNotification(`${index} lines of ${bulk.items.length} parsed`, userId);
         }
         statistics.total++;
         if (!isUrl(itemSkeleton.url)) {

@@ -214,6 +214,10 @@ export class ItemsComponent implements OnInit, OnDestroy {
     this.loadMoreItems$.next(newAmountOfItemsToLoad);
   }
 
+  filterByTagId(tagId: string): void {
+    this.filter$.next({ ...this.filter$.value, tagId });
+  }
+
   ngOnInit(): void {
     this.filter$
       .pipe(
