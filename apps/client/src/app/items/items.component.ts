@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Item } from '../interfaces/item.interface';
-import { ChangeItemRatingEvent, ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
+import {
+  ChangeItemCommentEvent,
+  ChangeItemRatingEvent,
+  ToggleItemFavouriteEvent,
+  ToggleItemTagEvent
+} from '../list/list.component';
 import { User } from 'firebase';
 import { firestore } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -228,6 +233,21 @@ export class ItemsComponent implements OnInit, OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error('changeRating() error:', error, { id: event.id, data });
+      this.error$.next(error.message);
+    }
+  }
+
+  async changeComment(event: ChangeItemCommentEvent): Promise<void> {
+    const data: Partial<Item> = {
+      comment: event.comment,
+      withComment: !!event.comment
+    };
+    try {
+      await this.firestore
+        .doc('items/' + event.id)
+        .update(data);
+    } catch (error) {
+      this.logger.error('changeComment() error:', error, { id: event.id, data });
       this.error$.next(error.message);
     }
   }

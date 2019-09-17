@@ -4,7 +4,7 @@
     '(scrolled)'='loadMore.emit()')
 
   .item.panel-block.is-block('*ngFor'='let item of items')
-    .columns.is-mobile
+    .columns.is-mobile.is-multiline
       .column
         .item--title
           a.item--title--text.mr-2(  '[href]'='item.url',
@@ -13,20 +13,20 @@
               '[title]'='item.url')
             i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
             | {{item.title || item.url}}
-
-        .item--actions.mt-2.mr-3
-          a('[ngClass]'='{"has-text-primary": item.rating === 1}', '(click)'='setRating(item, 1)')
-            i.far.fa-thumbs-up
-          a('[ngClass]'='{"has-text-primary": item.rating === -1}', '(click)'='setRating(item, -1)')
-            i.far.fa-thumbs-down.ml-2
-          a('[ngClass]'='{"has-text-primary": item.withComment}')
-            i.far.fa-comment-alt.ml-3
-        .item--tags.mt-2('*ngIf'='item.tags.length')
-          a.tag.mr-2(
-          '*ngFor'='let tagId of item.tags',
-          '(click)'='tagClick.emit(tagId)',
-          '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
-            | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
+        .second-line.mt-2
+          .item--actions.mr-3
+            a('[ngClass]'='{"has-text-primary": item.rating === 1}', '(click)'='setRating(item, 1)')
+              i.far.fa-thumbs-up
+            a('[ngClass]'='{"has-text-primary": item.rating === -1}', '(click)'='setRating(item, -1)')
+              i.far.fa-thumbs-down.ml-2
+            a('[ngClass]'='{"has-text-primary": item.withComment}', '(click)'='toggleComment(item.id)')
+              i.far.fa-comment-alt.ml-3
+          .item--tags('*ngIf'='item.tags.length')
+            a.tag.mr-2(
+            '*ngFor'='let tagId of item.tags',
+            '(click)'='tagClick.emit(tagId)',
+            '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
+              | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
 
       .column.is-narrow
 
@@ -76,7 +76,11 @@
                   '(click)'='setRating(item, 0)') Set rating to neutral
               hr.dropdown-divider
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
-
+      .column.is-full('*ngIf'='openedComments[item.id]')
+        textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='')
+        .buttons.is-right.my-1
+          button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save comment
+          button.button.mr-0('(click)'='toggleComment(item.id, false)') Cancel
 
 ng-container('*ngIf'='isLoading')
   .notification

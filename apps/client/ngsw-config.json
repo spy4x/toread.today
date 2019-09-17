@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.9.0",
-    "description": "Add bookmarks import from Chrome, Safari and Pocket app"
+    "version": "v1.10.0",
+    "description": "Add like/dislike and comment for Links"
   },
   "assetGroups": [
     {

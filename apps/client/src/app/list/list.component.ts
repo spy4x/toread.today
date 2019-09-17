@@ -22,6 +22,11 @@ export interface ChangeItemRatingEvent {
   rating: ItemRating
 }
 
+export interface ChangeItemCommentEvent {
+  id: string
+  comment: string
+}
+
 @Component({
   selector: 'tt-list',
   templateUrl: './list.component.pug',
@@ -44,6 +49,8 @@ export class ListComponent {
   @Output() loadMore = new EventEmitter<void>();
   @Output() tagClick = new EventEmitter<string>();
   @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
+  @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
+  openedComments: {[id: string]: boolean} = {};
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
@@ -67,5 +74,14 @@ export class ListComponent {
       return;
     }
     this.startReading.emit(item.id);
+  }
+
+  setComment(id: string, comment: string): void {
+    this.changeComment.emit({id, comment});
+    this.toggleComment(id, false);
+  }
+
+  toggleComment(id: string, show?: boolean): void {
+    this.openedComments[id] = typeof show === 'undefined' ? !this.openedComments[id] : show;
   }
 }
