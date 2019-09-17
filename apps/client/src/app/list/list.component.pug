@@ -9,15 +9,18 @@
         .item--title
           a.item--title--text.mr-2(  '[href]'='item.url',
               target='_blank',
-              '(click)'='startReading.emit(item.id)',
+              '(click)'='read(item)',
               '[title]'='item.url')
             i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
             | {{item.title || item.url}}
 
-        .item--actions.mt-2.mr-3.has-text-grey-light
-          i.far.fa-thumbs-up.has-text-primary
-          i.far.fa-thumbs-down.ml-2
-          i.far.fa-comment-alt.ml-3
+        .item--actions.mt-2.mr-3
+          a('[ngClass]'='{"has-text-primary": item.rating === 1}', '(click)'='setRating(item, 1)')
+            i.far.fa-thumbs-up
+          a('[ngClass]'='{"has-text-primary": item.rating === -1}', '(click)'='setRating(item, -1)')
+            i.far.fa-thumbs-down.ml-2
+          a('[ngClass]'='{"has-text-primary": item.withComment}')
+            i.far.fa-comment-alt.ml-3
         .item--tags.mt-2('*ngIf'='item.tags.length')
           a.tag.mr-2(
           '*ngFor'='let tagId of item.tags',
@@ -68,6 +71,9 @@
               a.dropdown-item(
                   '*ngIf'='item.status !== "new"',
                   '(click)'='undoReading.emit(item.id)') Mark as New
+              a.dropdown-item(
+                  '*ngIf'='item.rating !== 0',
+                  '(click)'='setRating(item, 0)') Set rating to neutral
               hr.dropdown-divider
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
 

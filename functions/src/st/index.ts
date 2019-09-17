@@ -107,7 +107,10 @@ const createNotification = async (message: string, userId: string): Promise<void
 };
 
 export const onFileUploadFunction = functions
-  .runWith({ timeoutSeconds: 180 })
+  .runWith({
+    memory: '2GB',
+    timeoutSeconds: 540
+  })
   .storage
   .object()
   .onFinalize(async (object) => {
@@ -179,6 +182,9 @@ export const onFileUploadFunction = functions
             type: null,
             status: 'new',
             priority: 3,
+            rating: 0,
+            comment: '',
+            withComment: false,
             isFavourite: false,
             createdBy: userId,
             createdAt: new Date(),

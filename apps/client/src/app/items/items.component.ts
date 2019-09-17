@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Item } from '../interfaces/item.interface';
-import { ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
+import { ChangeItemRatingEvent, ToggleItemFavouriteEvent, ToggleItemTagEvent } from '../list/list.component';
 import { User } from 'firebase';
 import { firestore } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -216,6 +216,20 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   filterByTagId(tagId: string): void {
     this.filter$.next({ ...this.filter$.value, tagId });
+  }
+
+  async changeRating(event: ChangeItemRatingEvent): Promise<void> {
+    const data: Partial<Item> = {
+      rating: event.rating
+    };
+    try {
+      await this.firestore
+        .doc('items/' + event.id)
+        .update(data);
+    } catch (error) {
+      this.logger.error('changeRating() error:', error, { id: event.id, data });
+      this.error$.next(error.message);
+    }
   }
 
   ngOnInit(): void {
