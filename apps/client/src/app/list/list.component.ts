@@ -39,6 +39,7 @@ export class ListComponent {
   @Input() tags: Tag[] = [];
   @Input() isLoading: boolean = false;
   @Input() areAllItemsLoaded: boolean = false;
+  @Input() hideTheEnd: boolean = false;
   @Output() startReading = new EventEmitter<string>();
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();

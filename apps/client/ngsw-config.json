@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.10.0",
-    "description": "Add like/dislike and comment for Links"
+    "version": "v1.11.0",
+    "description": "Add Read Today section"
   },
   "assetGroups": [
     {

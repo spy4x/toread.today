@@ -1,5 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  first,
+  map,
+  shareReplay,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+  throttleTime
+} from 'rxjs/operators';
 import { Item } from '../interfaces/item.interface';
 import {
   ChangeItemCommentEvent,
@@ -64,6 +75,26 @@ export class ItemsComponent implements OnInit, OnDestroy {
     }),
     shareReplay(1)
   );
+
+  getNewRandom$ = new BehaviorSubject<void>(null);
+  randomItems$ = this.getNewRandom$
+    .pipe(
+      switchMap(() => this.user$.pipe(first())),
+      filter(v => !!v),
+      switchMap((user: User ) => this.firestore
+        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('__name__', '>=', this.firestore.createId()).where('status', '==', 'new').limit(3))
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          throttleTime(1000), // fixes bug related to that "where('__name__', '>=', v.randomId)" returns 1-2 emits instead of just 1
+          takeUntil(this.userIsNotAuthenticated$),
+          takeUntil(this.componentDestroy$)
+        )),
+      catchError(error => {
+        this.error$.next(error.message);
+        this.logger.error('randomItems$ error', error);
+        return of([]);
+      })
+    );
 
   filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened', isFavourite: null });
   items$ = new BehaviorSubject<Item[]>([]);

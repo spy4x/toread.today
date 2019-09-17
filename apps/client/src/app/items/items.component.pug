@@ -4,6 +4,27 @@
 
 nav.panel
   tt-items-add('(add)'='add($event)', '[tags]'='tags$ | async',)
+  div
+    .title.with-actions.top-control
+      h2 Read Today:
+      a.is-size-6.has-text-grey-light('(click)'='getNewRandom$.next()', title='Randomize')
+        span.icon
+          i.fas.fa-redo
+    tt-list('[items]'='randomItems$ | async',
+            '[tags]'='tags$ | async',
+            '[isLoading]'='false',
+            '[areAllItemsLoaded]'='true',
+            'hideTheEnd'='true',
+            '(startReading)'='startReading($event)',
+            '(finishReading)'='finishReading($event)',
+            '(undoReading)'='undoReading($event)',
+            '(toggleTag)'='toggleTag($event)',
+            '(toggleFavourite)'='toggleFavourite($event)',
+            '(delete)'='delete($event)',
+            '(retryURLParsing)'='retryURLParsing($event)',
+            '(tagClick)'='filterByTagId($event)',
+            '(changeRating)'='changeRating($event)',
+            '(changeComment)'='changeComment($event)',)
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
   tt-list('[items]'='items$ | async',
           '[tags]'='tags$ | async',

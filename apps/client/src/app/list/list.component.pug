@@ -90,5 +90,5 @@ ng-container('*ngIf'='isZeroItems()')
   .notification
     p No items
 
-ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems()')
+ng-container('*ngIf'='areAllItemsLoaded && !isZeroItems() && !hideTheEnd')
   .content.is-small.has-text-grey-light.has-text-centered.my-4 The End
