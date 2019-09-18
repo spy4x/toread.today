@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.12.3",
-    "description": "Improve items list UI a bit"
+    "version": "v1.13.0",
+    "description": "Move \"Read Today\" and \"You were reading\" to new page"
   },
   "assetGroups": [
     {

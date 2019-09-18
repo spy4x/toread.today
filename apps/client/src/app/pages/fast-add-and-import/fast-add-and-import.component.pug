@@ -1,0 +1,45 @@
+.notification.is-warning('*ngIf'='error$ | async as error')
+  button.delete('(click)'='error$.next(null)')
+  | {{error}}
+
+nav.panel
+  .columns.is-desktop
+    .column.is-6-desktop
+      h2.title 1. Add URL fast using bookmarklet
+      h3 Work in progress...
+      //p On Desktop: Drag and drop this button to bookmarks panel:
+      //p On Mobile: Long tap on this button and save it to bookmarks:
+      //p
+      //  a.button.is-primary('[href]'='youTubeCode') +Toread.today
+      //p It can save current tab URL as well as parse a YouTube Playlist for videos to import them all.
+      //p
+      //  span Check it on
+      //  a.tag.is-info.tag--inline(href='https://youtube.com/playlist?list=WL', target='_blank') YouTube Watch Later
+      //  span page or other page with a YouTube Playlist and URL like
+      //  span.tag.tag--inline.is-info https://youtube.com/playlist?list=xxx
+      //
+      //button.button.mb-1('(click)'='isBookmarkletVideoVisible = !isBookmarkletVideoVisible') Show/hide "How to video"
+      //figure.image.is-16by9('*ngIf'='isBookmarkletVideoVisible')
+      //  iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')
+
+    .column.is-6-desktop
+      h2.title 2. Import bookmarks / Pocket app / List of URLs
+      p To import list of URLs - upload txt file with one URL per line or split with space (separators "\n" and " ")
+
+      button.button.mb-1('(click)'='isImportVideoVisible = !isImportVideoVisible') Show/hide "How to video"
+      figure.image.is-16by9('*ngIf'='isImportVideoVisible')
+        iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')
+
+      br
+
+      ng-container('*ngIf'='bookmarksImport$ | async as import; else instructions')
+        .notification.is-info('*ngIf'='(importState$ | async) === "sending"') Sending import file to the server...
+        .notification.is-success('*ngIf'='(importState$ | async) === "success"') Import file has been sent successfully.
+        tt-items-import('[import]'='import',
+                        '[tags]'='tags$ | async',
+                        '(done)'='saveBookmarks($event)',
+                        '(cancel)'='cancelImportBookmarks()'
+                        '[ngClass]'='{"is-hidden": (importState$ | async) === "sending"}')
+      ng-template('#instructions'='')
+        input.dropzone__file-input(type='file' '(change)'='parseFile($event)' title='Click to upload files' accept='text/html, text/plain')
+

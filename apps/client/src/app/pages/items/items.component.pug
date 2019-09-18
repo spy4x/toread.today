@@ -1,0 +1,26 @@
+.notification.is-warning('*ngIf'='error$ | async as error')
+  button.delete('(click)'='error$.next(null)')
+  | {{error}}
+
+nav.panel
+  .notification.is-info('*ngIf'='existingItem$ | async as existingItem')
+    //- TODO: display item line component
+    | Item with this URL already exists. {{existingItem$.title ? 'Title: ' + existingItem$.title : ''}}
+    button.delete('(click)'='existingItem$.next(null)')
+  tt-items-add('(add)'='create($event)', '[tags]'='tags$ | async',)
+  tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='setFilter($event)')
+  tt-list('[items]'='items$ | async',
+          '[tags]'='tags$ | async',
+          '[areAllItemsLoaded]'='areAllItemsLoaded',
+          '(startReading)'='itemsService.startReading($event)',
+          '(finishReading)'='itemsService.finishReading($event)',
+          '(undoReading)'='itemsService.markAsNew($event)',
+          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
+          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
+          '(delete)'='itemsService.remove($event)',
+          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
+          '(loadMore)'='loadMore()',
+          '(tagClick)'='setFilter({tagId: $event})',
+          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
+          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
+

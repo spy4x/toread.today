@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { interval, of } from 'rxjs';
 import { catchError, startWith, tap } from 'rxjs/operators';
 import { auth } from 'firebase/app';
-import { ConnectionStatusService } from './connection-status/connection-status.service';
+import { ConnectionStatusService } from './services/connection-status/connection-status.service';
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
 import { LoggerService } from './services/logger.service';
@@ -17,7 +17,7 @@ const { appData } = require('../../ngsw-config.json');
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
-  error: string;
+  error$ = this.logger.lastErrorMessage$;
   user$ = this.angularFireAuth.authState.pipe(
     startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
@@ -25,8 +25,7 @@ export class AppComponent {
       this.logger.setUser(user);
     }),
     catchError(error => {
-      this.error = error.message;
-      this.logger.error('user$ error', error);
+      this.logger.error({messageForDev:'user$ error', messageForUser: 'Unable to resolve user information.', error});
       return of(null);
     }));
 
@@ -85,7 +84,8 @@ export class AppComponent {
       await this.swUpdate.checkForUpdate();
     } catch (error) {
       if (error.message !== 'Service workers are disabled or not supported by this browser') {
-        this.logger.error('swUpdate.checkForUpdate() failed', error);
+        this.logger.error({messageForDev:'swUpdate.checkForUpdate() failed', messageForUser:'Check for app update' +
+            ' failed.', error});
       }
     }
   }

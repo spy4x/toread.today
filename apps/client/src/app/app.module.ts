@@ -6,34 +6,40 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
-import { ListComponent } from './list/list.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { FilterComponent } from './filter/filter.component';
+import { ListComponent } from './common-components/items-list/list.component';
+import { NavbarComponent } from './common-components/navbar/navbar.component';
+import { FilterComponent } from './pages/items/filter/filter.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { TagsEditorComponent } from './tags-editor/tags-editor.component';
-import { TagSelectorComponent } from './tag-selector/tag-selector.component';
-import { ItemsAddComponent } from './items-add/items-add.component';
-import { TagTitleByIdPipe } from './tag-title-by-id/tag-title-by-id.pipe';
-import { GetIconByItemTypePipe } from './get-icon-by-item-type/get-icon-by-item-type.pipe';
-import { DropdownDirective } from './dropdown/dropdown.directive';
+import { TagsEditorComponent } from './pages/tags/editor/tags-editor.component';
+import { TagSelectorComponent } from './common-components/tag-selector/tag-selector.component';
+import { ItemsAddComponent } from './common-components/items-add/items-add.component';
+import { TagTitleByIdPipe } from './common-components/tag-title-by-id/tag-title-by-id.pipe';
+import { GetIconByItemTypePipe } from './common-components/get-icon-by-item-type/get-icon-by-item-type.pipe';
+import { DropdownDirective } from './common-components/dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { ConnectionStatusService } from './connection-status/connection-status.service';
+import { ConnectionStatusService } from './services/connection-status/connection-status.service';
 import { LoggerService, SentryErrorHandler } from './services/logger.service';
 import { RouterModule, Routes } from '@angular/router';
-import { ItemsComponent } from './items/items.component';
-import { TagsComponent } from './tags/tags.component';
+import { ItemsComponent } from './pages/items/items.component';
+import { TagsComponent } from './pages/tags/tags.component';
 import { FormsModule } from '@angular/forms';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { FastAddAndImportComponent } from './fast-add-and-import/fast-add-and-import.component';
-import { ItemsImportComponent } from './items-import/items-import.component';
-import { ItemsImportListComponent } from './items-import-list/items-import-list.component';
+import { NotificationsComponent } from './common-components/notifications/notifications.component';
+import { FastAddAndImportComponent } from './pages/fast-add-and-import/fast-add-and-import.component';
+import { ItemsImportComponent } from './pages/fast-add-and-import/items-import/items-import.component';
+import { ItemsImportListComponent } from './pages/fast-add-and-import/items-import-list/items-import-list.component';
 import { ItemsService } from './services/items/items.service';
 import { HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { ROUTER_CONSTANTS } from './helpers/router.constants';
 
 const routes: Routes = [
   {
-    path: 'items',
+    path: 'dashboard',
+    component: DashboardComponent
+  },
+  {
+    path: ROUTER_CONSTANTS.items.path,
     component: ItemsComponent
   },
   {
@@ -46,7 +52,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'items'
+    redirectTo: 'dashboard'
   }
 ];
 
@@ -68,6 +74,7 @@ const routes: Routes = [
     FastAddAndImportComponent,
     ItemsImportComponent,
     ItemsImportListComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

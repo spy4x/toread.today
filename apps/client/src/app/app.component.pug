@@ -8,6 +8,9 @@ ng-template(#notSignedIn='')
           | Just sign in and sell your soul...
         button.button.is-large('(click)'='signIn()') Sign in
 
+        .notification.is-warning('*ngIf'='error$ | async as error')
+          | {{error}}
+
 ng-container('*ngIf'='user$ | async as user; else notSignedIn')
   tt-navbar('[user]'='user', '(signOut)'='signOut()', '[appVersionInfo]'='appVersionInfo')
 

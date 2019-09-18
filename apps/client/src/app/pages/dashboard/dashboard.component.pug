@@ -1,0 +1,52 @@
+.widget.you-were-reading
+  .header
+    h2.header__title You were reading...
+      span.header__subtitle (recently opened)
+    a.header__action(routerLink='/items')
+      span More
+      span.icon
+        i.fa-fw.fas.fa-chevron-right
+  tt-list('[items]'='openedItem$ | async',
+          '[tags]'='tags$ | async',
+          '[areAllItemsLoaded]'='true',
+          '[hideTheEnd]'='true',
+          '(startReading)'='itemsService.startReading($event)',
+          '(finishReading)'='itemsService.finishReading($event)',
+          '(undoReading)'='itemsService.markAsNew($event)',
+          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
+          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
+          '(delete)'='itemsService.remove($event)',
+          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
+          '(tagClick)'='showItemsWithTag($event)',
+          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
+          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
+
+
+.widget.read-today
+  .header
+    h2.header__title Read Today
+      span.header__subtitle (random items)
+    a.header__action('(click)'='getNewRandom$.next()')
+      span Shuffle
+      span.icon
+        i.fa-fw.fas.fa-sync
+  tt-list('[items]'='randomItems$ | async',
+          '[tags]'='tags$ | async',
+          '[areAllItemsLoaded]'='true',
+          '[hideTheEnd]'='true',
+          '(startReading)'='itemsService.startReading($event)',
+          '(finishReading)'='itemsService.finishReading($event)',
+          '(undoReading)'='itemsService.markAsNew($event)',
+          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
+          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
+          '(delete)'='itemsService.remove($event)',
+          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
+          '(tagClick)'='showItemsWithTag($event)',
+          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
+          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
+
+.widget.statistics
+  .header
+    h2.header__title Statistics
+      span.header__subtitle (do you read or just save?)
+  h4.is-size-4.has-text-grey-lighter.has-text-centered.my-5 Coming soon...

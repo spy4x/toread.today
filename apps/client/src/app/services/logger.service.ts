@@ -2,6 +2,8 @@ import { ErrorHandler, Injectable } from '@angular/core';
 import { User as FirebaseUser } from 'firebase';
 import * as Sentry from '@sentry/browser';
 import { environment } from '../../environments/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
@@ -20,6 +22,8 @@ export class SentryErrorHandler implements ErrorHandler {
 
 @Injectable()
 export class LoggerService {
+  private lastErrorMessageSubject = new BehaviorSubject<null | string>(null);
+  lastErrorMessage$: Observable<null | string> = this.lastErrorMessageSubject.pipe(shareReplay(1));
 
   constructor() {
     if (environment.production && environment.sentry) {
@@ -48,7 +52,7 @@ export class LoggerService {
           type: 'debug',
           message,
           data: params,
-          timestamp: Date.now(),
+          timestamp: Date.now()
         });
       });
       return; // no output to console on production
@@ -65,13 +69,21 @@ export class LoggerService {
     });
   }
 
-  error(message: string, error?: Error, params?: { [key: string]: any }) {
-    console.error(message, error, params);
+  error({ messageForDev, messageForUser, error, params }:
+        { messageForDev: string, messageForUser?: string, error?: Error, params?: { [key: string]: any } }) {
+    console.error(messageForDev, error, params);
     Sentry.withScope(scope => {
-      scope.setExtra('message', message);
+      scope.setExtra('message', messageForDev);
       scope.setExtra('params', params);
       scope.setLevel(Sentry.Severity.Error);
       Sentry.captureException(error);
     });
+    if (messageForUser) {
+      this.lastErrorMessageSubject.next('Error happened: ' + messageForUser);
+    }
+  }
+
+  hideLastErrorMessage() {
+    this.lastErrorMessageSubject.next(null);
   }
 }
