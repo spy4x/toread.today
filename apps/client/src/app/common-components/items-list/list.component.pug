@@ -13,12 +13,12 @@
           i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
           | {{item.title || item.url}}
 
-      .column.is-narrow
-        .icon.is-small.has-text-info.mr-3(
+      .column.is-narrow.actions
+        .icon.is-small.has-text-info(
             '*ngIf'='item.urlParseStatus === "notStarted"',
             title='URL parsing is in progress..')
           i.fas.fa-sync
-        a.icon.is-small.has-text-danger.mr-3(
+        a.icon.is-small.has-text-danger(
             '*ngIf'='item.urlParseStatus === "error"',
             '(click)'='retryURLParsing.emit(item.id)'
             '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
@@ -31,15 +31,15 @@
             '[isAllTagsVisible]'='false')
           a.has-text-info
             i.fas.fa-hashtag(aria-hidden='true')
-        a.icon.is-small.ml-3.has-text-warning(
+        a.icon.is-small.has-text-warning(
             '(click)'='toggleFavouriteHandler(item)',
             '[title]'='item.isFavourite ? "Remove from favorite" : "Add to favorite"')
           i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
-        .dropdown.is-hoverable.is-right.ml-3
+        .dropdown.is-hoverable.is-right
           .dropdown-trigger
             a
               span.has-text-primary
-                i.far.fa-edit(aria-hidden='true')
+                i.fas.fa-ellipsis-v(aria-hidden='true')
           .dropdown-menu(role='menu')
             .dropdown-content
               a.dropdown-item.has-text-success(
@@ -48,11 +48,11 @@
                 span.icon
                   i.fa-fw.fas.fa-check
                 span Mark as Finished
-              a.dropdown-item(
+              a.dropdown-item.has-text-info(
                   '*ngIf'='item.status === "finished"',
                   '(click)'='startReading.emit(item.id)')
                 span.icon
-                  i.fa-fw.fas.fa-envelope-open
+                  i.fa-fw.far.fa-envelope-open
                 span Mark as Opened
               a.dropdown-item(
                   '*ngIf'='item.status !== "new"',
