@@ -24,7 +24,7 @@
             button.button.is-success.is-small.ml-3('*ngIf'='item.status === "opened"', '(click)'='finishReading.emit(item.id)')
               span.icon
                 i.fas.fa-check
-              span Mark as Finished
+              span Finish
           .item--tags.tags('*ngIf'='item.tags.length')
             a.tag.mr-2(
             '*ngFor'='let tagId of item.tags',
@@ -87,8 +87,12 @@
           button.button.mr-0('(click)'='toggleComment(item.id, false)') Cancel
 
 ng-container('*ngIf'='isLoading')
-  .notification
-    p Loading...
+  tt-items-list-line-loader
+  tt-items-list-line-loader
+  tt-items-list-line-loader
+  tt-items-list-line-loader
+  tt-items-list-line-loader
+
 
 ng-container('*ngIf'='isZeroItems()')
   .notification

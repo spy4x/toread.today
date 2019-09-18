@@ -30,6 +30,8 @@ import { ItemsImportComponent } from './items-import/items-import.component';
 import { ItemsImportListComponent } from './items-import-list/items-import-list.component';
 import { ItemsService } from './services/items/items.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ContentLoaderModule } from '@ngneat/content-loader';
+import { ItemsListLineLoaderComponent } from './items-list-line-loader/items-list-line-loader.component';
 
 const routes: Routes = [
   {
@@ -67,7 +69,8 @@ const routes: Routes = [
     NotificationsComponent,
     FastAddAndImportComponent,
     ItemsImportComponent,
-    ItemsImportListComponent
+    ItemsImportListComponent,
+    ItemsListLineLoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +83,7 @@ const routes: Routes = [
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule,
     HttpClientModule,
+    ContentLoaderModule,
   ],
   providers: [
     ConnectionStatusService,
