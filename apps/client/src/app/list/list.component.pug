@@ -4,47 +4,25 @@
     '(scrolled)'='loadMore.emit()')
 
   .item.panel-block.is-block('*ngFor'='let item of items')
-    .columns.is-mobile.is-multiline
+    .line.first.columns.is-mobile.is-multiline
       .column
-        .item--title
-          a.item--title--text.mr-2(  '[href]'='item.url',
-              target='_blank',
-              '(click)'='read(item)',
-              '[title]'='item.url')
-            i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
-            | {{item.title || item.url}}
-        .second-line.mt-2
-          .item--actions.mr-3
-            a('[ngClass]'='{"has-text-primary": item.rating === 1}', '(click)'='setRating(item, 1)')
-              i.far.fa-thumbs-up
-            a('[ngClass]'='{"has-text-primary": item.rating === -1}', '(click)'='setRating(item, -1)')
-              i.far.fa-thumbs-down.ml-2
-            a('[ngClass]'='{"has-text-primary": item.withComment}', '(click)'='toggleComment(item.id)')
-              i.far.fa-comment-alt.ml-3
-            button.button.is-success.is-small.ml-3('*ngIf'='item.status === "opened"', '(click)'='finishReading.emit(item.id)')
-              span.icon
-                i.fas.fa-check
-              span Finish
-          .item--tags.tags('*ngIf'='item.tags.length')
-            a.tag.mr-2(
-            '*ngFor'='let tagId of item.tags',
-            '(click)'='tagClick.emit(tagId)',
-            '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
-              | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
+        a.item--title.mr-2('[href]'='item.url',
+                           target='_blank',
+                           '(click)'='read(item)',
+                           '[title]'='item.url',)
+          i.is-inline.mr-2(aria-hidden='true', '[ngClass]'='item.type | getIconByItemType')
+          | {{item.title || item.url}}
 
       .column.is-narrow
-
         .icon.is-small.has-text-info.mr-3(
             '*ngIf'='item.urlParseStatus === "notStarted"',
             title='URL parsing is in progress..')
           i.fas.fa-sync
-
         a.icon.is-small.has-text-danger.mr-3(
             '*ngIf'='item.urlParseStatus === "error"',
             '(click)'='retryURLParsing.emit(item.id)'
             '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
           i.fas.fa-exclamation-triangle
-
         tt-tag-selector(
             '[tags]'='tags',
             '[selectedIds]'='item.tags',
@@ -53,12 +31,10 @@
             '[isAllTagsVisible]'='false')
           a.has-text-info
             i.fas.fa-hashtag(aria-hidden='true')
-
         a.icon.is-small.ml-3.has-text-warning(
             '(click)'='toggleFavouriteHandler(item)',
             '[title]'='item.isFavourite ? "Remove from favorite" : "Add to favorite"')
           i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
-
         .dropdown.is-hoverable.is-right.ml-3
           .dropdown-trigger
             a
@@ -80,9 +56,27 @@
                   '(click)'='setRating(item, 0)') Set rating to neutral
               hr.dropdown-divider
               a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)') Delete
-      .column.is-full('*ngIf'='openedComments[item.id]')
+
+    .line.second
+        a.action('[ngClass]'='{"has-text-primary": item.rating === 1}', '(click)'='setRating(item, 1)')
+          i.far.fa-thumbs-up
+        a.action('[ngClass]'='{"has-text-primary": item.rating === -1}', '(click)'='setRating(item, -1)')
+          i.far.fa-thumbs-down
+        a.action.bigger-margin('[ngClass]'='{"has-text-primary": item.withComment}', '(click)'='toggleComment(item.id)')
+          i.far.fa-comment-alt
+        button.button.finish.is-success.is-small.bigger-margin('*ngIf'='item.status === "opened"', '(click)'='finishReading.emit(item.id)')
+          span.icon
+            i.fas.fa-check
+          span Finish
+        a.tag.action(
+        '*ngFor'='let tagId of item.tags',
+        '(click)'='tagClick.emit(tagId)',
+        '[ngStyle]'='{"background-color": (tagId | tagById:tags)?.color || "#00d1b2", "color": "white"}')
+          | {{(tagId | tagById:tags)?.title || 'Tag not found'}}
+
+    .line.third('*ngIf'='openedComments[item.id]')
         textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='')
-        .buttons.is-right.my-1
+        .buttons.is-right
           button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save comment
           button.button.mr-0('(click)'='toggleComment(item.id, false)') Cancel
 

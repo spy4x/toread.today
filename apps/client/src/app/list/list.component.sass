@@ -1,17 +1,36 @@
 tt-list
   .item
     padding: 12px
-    .second-line
-      display: flex
-    &--tags,
-    &--actions
-      > *
-        color: #b5b5b5
-        &:hover
-          opacity: 0.6
     &:nth-child(even)
       background: hsl(0, 0%, 98%)
       border-radius: 4px
+
+    .line
+      &.first
+        margin-bottom: 0
+        > .column
+          padding-bottom: 0
+      &.second
+        display: flex
+        flex-wrap: wrap
+        align-items: center
+        > *
+          margin-right: .5rem
+          margin-top: .3rem // margin from ".line.first" and for case where many tags goes multiple lines
+        .bigger-margin
+          margin-left: .25rem
+          margin-right: .75rem
+        .button.finish
+          font-size: .68rem
+        .action
+          color: #b5b5b5
+          &:hover
+            opacity: .6
+      &.third
+        margin-top: .3rem
+        .buttons
+          margin-top: .3rem
+
 
 
   content-loader
