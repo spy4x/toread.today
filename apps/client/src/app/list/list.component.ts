@@ -35,9 +35,8 @@ export interface ChangeItemCommentEvent {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  @Input() items: Item[] = [];
+  @Input() items: Item[];
   @Input() tags: Tag[] = [];
-  @Input() isLoading: boolean = false;
   @Input() areAllItemsLoaded: boolean = false;
   @Input() hideTheEnd: boolean = false;
   @Output() startReading = new EventEmitter<string>();
@@ -58,7 +57,7 @@ export class ListComponent {
   }
 
   isZeroItems(): boolean {
-    return this.items && !this.items.length && !this.isLoading;
+    return this.items && !this.items.length;
   }
 
   toggleFavouriteHandler(item: Item): void {

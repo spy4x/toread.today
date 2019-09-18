@@ -12,7 +12,6 @@ nav.panel
           i.fas.fa-redo
     tt-list('[items]'='randomItems$ | async',
             '[tags]'='tags$ | async',
-            '[isLoading]'='false',
             '[areAllItemsLoaded]'='true',
             '[hideTheEnd]'='true',
             '(startReading)'='startReading($event)',
@@ -28,7 +27,6 @@ nav.panel
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='setFilter($event)')
   tt-list('[items]'='items$ | async',
           '[tags]'='tags$ | async',
-          '[isLoading]'='isLoading',
           '[areAllItemsLoaded]'='areAllItemsLoaded',
           '(startReading)'='startReading($event)',
           '(finishReading)'='finishReading($event)',
@@ -48,7 +46,6 @@ nav.panel
     a.is-size-6.has-text-grey-light('(click)'='setFilter({status:"opened", isFavourite: false})') More
   tt-list('[items]'='openedItem$ | async',
           '[tags]'='tags$ | async',
-          '[isLoading]'='false',
           '[areAllItemsLoaded]'='true',
           '[hideTheEnd]'='true',
           '(startReading)'='startReading($event)',

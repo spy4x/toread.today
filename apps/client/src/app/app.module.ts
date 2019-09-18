@@ -30,26 +30,24 @@ import { ItemsImportComponent } from './items-import/items-import.component';
 import { ItemsImportListComponent } from './items-import-list/items-import-list.component';
 import { ItemsService } from './services/items/items.service';
 import { HttpClientModule } from '@angular/common/http';
-import { ContentLoaderModule } from '@ngneat/content-loader';
-import { ItemsListLineLoaderComponent } from './items-list-line-loader/items-list-line-loader.component';
 
 const routes: Routes = [
   {
     path: 'items',
-    component: ItemsComponent,
+    component: ItemsComponent
   },
   {
     path: 'tags',
-    component: TagsComponent,
+    component: TagsComponent
   },
   {
     path: 'fast-fast-add-and-import',
-    component: FastAddAndImportComponent,
+    component: FastAddAndImportComponent
   },
   {
     path: '**',
-    redirectTo: 'items',
-  },
+    redirectTo: 'items'
+  }
 ];
 
 @NgModule({
@@ -70,20 +68,18 @@ const routes: Routes = [
     FastAddAndImportComponent,
     ItemsImportComponent,
     ItemsImportListComponent,
-    ItemsListLineLoaderComponent,
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence({synchronizeTabs: true}),
+    AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireStorageModule,
     InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule,
-    HttpClientModule,
-    ContentLoaderModule,
+    HttpClientModule
   ],
   providers: [
     ConnectionStatusService,

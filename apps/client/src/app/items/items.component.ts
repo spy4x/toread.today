@@ -114,10 +114,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
     );
 
   filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened', isFavourite: null });
-  items$ = new BehaviorSubject<Item[]>([]);
+  items$ = new BehaviorSubject<Item[]>(null);
   loadMoreItems$ = new BehaviorSubject<number>(0);
   areAllItemsLoaded: boolean = false;
-  isLoading: boolean = false;
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -306,7 +305,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
         takeUntil(this.componentDestroy$)
       )
       .subscribe(() => {
-        this.items$.next([]);
         this.areAllItemsLoaded = false;
         this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
       });
@@ -318,7 +316,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
         takeUntil(this.componentDestroy$),
         filter(v => !!v.user && !this.areAllItemsLoaded),
         tap(v => {
-          this.isLoading = true;
           items$Params = v;
         }),
         switchMap((v: { user: User, filter: Filter, itemsToLoad: number }) => this.firestore
@@ -361,14 +358,12 @@ export class ItemsComponent implements OnInit, OnDestroy {
           )
         ),
         tap((items: Item[]) => {
-          this.isLoading = false;
           this.areAllItemsLoaded = items.length < this.loadMoreItems$.value;
         }),
         catchError(error => {
-          this.isLoading = false;
           this.error$.next(error.message);
           this.logger.error('items$ error', error, items$Params);
-          return of([]);
+          return of(null);
         })
       )
       .subscribe(this.items$);

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.12.1",
-    "description": "Add list component loading placeholder"
+    "version": "v1.12.2",
+    "description": "Remove loading state at all"
   },
   "assetGroups": [
     {

@@ -86,14 +86,6 @@
           button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save comment
           button.button.mr-0('(click)'='toggleComment(item.id, false)') Cancel
 
-ng-container('*ngIf'='isLoading')
-  tt-items-list-line-loader
-  tt-items-list-line-loader
-  tt-items-list-line-loader
-  tt-items-list-line-loader
-  tt-items-list-line-loader
-
-
 ng-container('*ngIf'='isZeroItems()')
   .notification
     p No items
