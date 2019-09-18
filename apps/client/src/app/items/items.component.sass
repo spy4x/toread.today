@@ -1,6 +1,27 @@
 tt-items
+  display: block
+  padding-bottom: 90px
+
   .title.with-actions
     display: flex
     align-items: center
     justify-content: space-between
     margin-bottom: 1rem
+
+  .you-were-reading
+    position: fixed
+    bottom: 0
+    left: 0
+    right: 0
+    background-color: white
+    border-top: 1px solid #ccc
+    transition: transform 0.5s ease-in-out
+    &.hidden
+      transform: translate(0, 200px)
+    .title
+      padding: .5rem .5rem 0
+      margin-bottom: 0
+
+    tt-list
+      .item.panel-block
+        padding-top: 0.5rem

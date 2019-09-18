@@ -14,7 +14,7 @@ nav.panel
             '[tags]'='tags$ | async',
             '[isLoading]'='false',
             '[areAllItemsLoaded]'='true',
-            'hideTheEnd'='true',
+            '[hideTheEnd]'='true',
             '(startReading)'='startReading($event)',
             '(finishReading)'='finishReading($event)',
             '(undoReading)'='undoReading($event)',
@@ -22,10 +22,10 @@ nav.panel
             '(toggleFavourite)'='toggleFavourite($event)',
             '(delete)'='delete($event)',
             '(retryURLParsing)'='retryURLParsing($event)',
-            '(tagClick)'='filterByTagId($event)',
+            '(tagClick)'='setFilter({tagId: $event})',
             '(changeRating)'='changeRating($event)',
             '(changeComment)'='changeComment($event)',)
-  tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='filter$.next($event)')
+  tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='setFilter($event)')
   tt-list('[items]'='items$ | async',
           '[tags]'='tags$ | async',
           '[isLoading]'='isLoading',
@@ -38,6 +38,26 @@ nav.panel
           '(delete)'='delete($event)',
           '(retryURLParsing)'='retryURLParsing($event)',
           '(loadMore)'='loadMore()',
-          '(tagClick)'='filterByTagId($event)',
+          '(tagClick)'='setFilter({tagId: $event})',
+          '(changeRating)'='changeRating($event)',
+          '(changeComment)'='changeComment($event)',)
+
+.you-were-reading('[class.hidden]'='filter$.value?.status === "opened"')
+  .title.with-actions
+    p.is-size-6 You were reading...
+    a.is-size-6.has-text-grey-light('(click)'='setFilter({status:"opened", isFavourite: false})') More
+  tt-list('[items]'='openedItem$ | async',
+          '[tags]'='tags$ | async',
+          '[isLoading]'='false',
+          '[areAllItemsLoaded]'='true',
+          '[hideTheEnd]'='true',
+          '(startReading)'='startReading($event)',
+          '(finishReading)'='finishReading($event)',
+          '(undoReading)'='undoReading($event)',
+          '(toggleTag)'='toggleTag($event)',
+          '(toggleFavourite)'='toggleFavourite($event)',
+          '(delete)'='delete($event)',
+          '(retryURLParsing)'='retryURLParsing($event)',
+          '(tagClick)'='setFilter({tagId: $event})',
           '(changeRating)'='changeRating($event)',
           '(changeComment)'='changeComment($event)',)

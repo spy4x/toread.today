@@ -96,6 +96,23 @@ export class ItemsComponent implements OnInit, OnDestroy {
       })
     );
 
+  openedItem$ = this.user$.pipe(
+      first(),
+      filter(v => !!v),
+      switchMap((user: User) => this.firestore
+        .collection('items', ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'opened').orderBy('openedAt', 'desc').limit(1))
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          takeUntil(this.userIsNotAuthenticated$),
+          takeUntil(this.componentDestroy$)
+        )),
+      catchError(error => {
+        this.error$.next(error.message);
+        this.logger.error('openedItem$ error', error);
+        return of([]);
+      })
+    );
+
   filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened', isFavourite: null });
   items$ = new BehaviorSubject<Item[]>([]);
   loadMoreItems$ = new BehaviorSubject<number>(0);
@@ -120,7 +137,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
             try {
               const data: Item = this.itemsService.scaffold(item);
               if (this.filter$.value.status !== 'new') {
-                this.filter$.next({ ...this.filter$.value, status: 'new' });
+                this.setFilter({status: 'new'});
               }
               await this.firestore
                 .collection('items')
@@ -250,8 +267,8 @@ export class ItemsComponent implements OnInit, OnDestroy {
     this.loadMoreItems$.next(newAmountOfItemsToLoad);
   }
 
-  filterByTagId(tagId: string): void {
-    this.filter$.next({ ...this.filter$.value, tagId });
+  setFilter(filter: Partial<Filter>): void {
+    this.filter$.next({...this.filter$.value, ...filter});
   }
 
   async changeRating(event: ChangeItemRatingEvent): Promise<void> {

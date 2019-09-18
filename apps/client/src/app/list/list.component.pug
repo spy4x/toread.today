@@ -21,7 +21,11 @@
               i.far.fa-thumbs-down.ml-2
             a('[ngClass]'='{"has-text-primary": item.withComment}', '(click)'='toggleComment(item.id)')
               i.far.fa-comment-alt.ml-3
-          .item--tags('*ngIf'='item.tags.length')
+            button.button.is-success.is-small.ml-3('*ngIf'='item.status === "opened"', '(click)'='finishReading.emit(item.id)')
+              span.icon
+                i.fas.fa-check
+              span Mark as Finished
+          .item--tags.tags('*ngIf'='item.tags.length')
             a.tag.mr-2(
             '*ngFor'='let tagId of item.tags',
             '(click)'='tagClick.emit(tagId)',
