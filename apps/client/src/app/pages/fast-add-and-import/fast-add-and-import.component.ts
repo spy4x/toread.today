@@ -10,6 +10,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BookmarksBookmark } from '../../helpers/bookmarks-parser/parser.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemSkeleton } from '../../interfaces/item.interface';
+import { environment } from '../../../environments/environment';
 
 type ImportBookmarksState = null | 'sending' | 'error' | 'success'
 
@@ -24,6 +25,7 @@ export class FastAddAndImportComponent implements OnDestroy {
   componentDestroy$ = new Subject<void>();
   error$ = new BehaviorSubject<string>(null);
   userId: null | string;
+  bookmarkletCode = this.getBookmarkletCode();
   youTubeCode = this.getYouTubeCode();
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
@@ -121,6 +123,11 @@ export class FastAddAndImportComponent implements OnDestroy {
   cancelImportBookmarks(): void {
     this.importState$.next(null);
     this.bookmarksImport$.next(null);
+  }
+
+  getBookmarkletCode(): SafeUrl {
+    const s = environment.production ? `https://toread-today.web.app` : `http://localhost:4200`;
+    return this.sanitizer.bypassSecurityTrustUrl(`javascript:location.href='${s}/items?url='+encodeURIComponent(location.href)`);
   }
 
   getYouTubeCode(): SafeUrl {

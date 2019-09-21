@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { Tag } from '../../interfaces/tag.interface';
 import { ToggleTagEvent } from '../items-list/list.component';
 import { isURL } from '../../helpers/isURL.helper';
+import { ActivatedRoute } from '@angular/router';
+import { first } from 'rxjs/operators';
 
 export interface ItemAddEvent {
   url: string,
@@ -21,6 +23,15 @@ export class ItemsAddComponent {
   inputValue = '';
   inputTags: string[] = [];
   errors: string[] = [];
+
+  constructor(private route: ActivatedRoute){
+    this.route.queryParams.pipe(first()).subscribe(params => {
+      const url = params['url'];
+      if(url){
+        this.inputValue = url;
+      }
+    })
+  }
 
   addItem(): void {
     if(!isURL(this.inputValue)) {

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.13.2",
-    "description": "Improve UI for some icons"
+    "version": "v1.14.0",
+    "description": "Add simple bookmarklet"
   },
   "assetGroups": [
     {
