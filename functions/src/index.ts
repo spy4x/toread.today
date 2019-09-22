@@ -4,6 +4,10 @@ import { httpsFunction } from './https';
 import { Item, ItemType } from './+utils/interfaces/item.interface';
 import { admin, firestore, functions } from './+utils/firebase/firebase';
 import { isUrl } from './+utils/common/isURL';
+import { RoadmapBrick } from './+utils/interfaces/roadmapBrick.interface';
+import { createNotification } from './+utils/common/createNotification';
+
+const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
 console.log('--- COLD START ---');
 
@@ -108,7 +112,7 @@ function getType(item: string): ItemType {
 const getTagRemovedData = (tagId: string): any => {
   return {
     tags: admin.firestore.FieldValue.arrayRemove(tagId)
-  }
+  };
 };
 const MAX_BATCH_OPERATIONS = 500;
 
@@ -144,6 +148,29 @@ export const onTagDelete = functions.firestore
     }
   });
 
+
+export const onRoadmapBrickCreate = functions.firestore
+  .document(`roadmapBricks/{id}`)
+  .onCreate(async doc => {
+    const brick = { ...doc.data(), id: doc.id } as RoadmapBrick;
+    await createNotification(`New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}`,
+      antonId);
+  });
+
+export const onRoadmapBrickUpdate = functions.firestore
+  .document(`roadmapBricks/{id}`)
+  .onUpdate(async change => {
+    const before = { ...change.before.data(), id: change.before.id } as RoadmapBrick;
+    const after = { ...change.after.data(), id: change.after.id } as RoadmapBrick;
+    const newLikeId = after.likedBy.find(userId => before.likedBy.indexOf(userId) === -1);
+    const newDislikeId = after.dislikedBy.find(userId => before.dislikedBy.indexOf(userId) === -1);
+    if (newLikeId) {
+      await createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}"`, antonId);
+    }
+    if (newDislikeId) {
+      await createNotification(`User ${newDislikeId} disliked roadmap brick ${after.id} "${after.title}"`, antonId);
+    }
+  });
 
 export const https = httpsFunction;
 export const onFileUpload = onFileUploadFunction;

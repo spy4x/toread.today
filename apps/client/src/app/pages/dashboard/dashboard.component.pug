@@ -5,7 +5,7 @@
     a.header__action(routerLink='/items')
       span More
       span.icon
-        i.fa-fw.fas.fa-chevron-right
+        i.fas.fa-chevron-right
   tt-list('[items]'='openedItems$ | async',
           '[tags]'='tags$ | async',
           '(startReading)'='itemsService.startReading($event)',
@@ -28,7 +28,7 @@
     a.header__action('(click)'='getNewRandom$.next()')
       span Shuffle
       span.icon
-        i.fa-fw.fas.fa-sync
+        i.fas.fa-sync
   tt-list('[items]'='randomItems$ | async',
           '[tags]'='tags$ | async',
           '(startReading)'='itemsService.startReading($event)',

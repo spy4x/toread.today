@@ -41,30 +41,30 @@
                 '*ngIf'='item.status !== "finished"',
                 '(click)'='finishReading.emit(item.id)')
               span.icon
-                i.fa-fw.fas.fa-check
+                i.fas.fa-check
               span Mark as Finished
             a.dropdown-item.has-text-info(
                 '*ngIf'='item.status !== "opened"',
                 '(click)'='startReading.emit(item.id)')
               span.icon
-                i.fa-fw.far.fa-envelope-open
+                i.far.fa-envelope-open
               span Mark as Opened
             a.dropdown-item(
                 '*ngIf'='item.status !== "new"',
                 '(click)'='undoReading.emit(item.id)')
               span.icon
-                i.fa-fw.far.fa-circle
+                i.far.fa-circle
               span Mark as New
             a.dropdown-item(
                 '*ngIf'='item.rating !== 0',
                 '(click)'='setRating(item, 0)')
               span.icon
-                i.fa-fw.far.fa-thumbs-up
+                i.far.fa-thumbs-up
               span Set rating to neutral
             hr.dropdown-divider
             a.dropdown-item.has-text-danger('(click)'='delete.emit(item.id)')
               span.icon
-                i.fa-fw.far.fa-trash-alt
+                i.far.fa-trash-alt
               span Delete
 
   .line.second

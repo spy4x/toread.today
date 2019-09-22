@@ -7,6 +7,7 @@ import * as XRegExp from 'xregexp';
 import { isUrl } from '../+utils/common/isURL';
 import { Tag } from '../+utils/interfaces/tag.interface';
 import { runTransaction } from '../+utils/firebase/runTransaction';
+import { createNotification } from '../+utils/common/createNotification';
 
 interface StorageFile {
   /**
@@ -91,19 +92,6 @@ const deleteFiles = async (localPathToFile: string, storageFile: StorageFile): P
   }
   await bucket.file(storageFile.path).delete(); // remove file in storage
   console.log('Files were removed');
-};
-
-const createNotification = async (message: string, userId: string): Promise<void> => {
-  console.log(`Creating notification "${message}"`);
-  const notification: Notification = {
-    status: 'new',
-    type: 'info',
-    text: message,
-    userId,
-    createdAt: new Date()
-  };
-  await firestore.collection('notifications').add(notification);
-  console.log(`Notification "${message}" created.`);
 };
 
 export const onFileUploadFunction = functions

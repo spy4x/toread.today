@@ -2,7 +2,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
   .navbar-brand
     a.navbar-item(routerLink='/', '(click)'='closeMenu()')
       span.icon.mr-1
-        i.fa-fw.far.fa-bookmark
+        i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
 
     tt-notifications.navbar-item.ml-auto('*ngIf'='isMobile$ | async', '[userId]'='user.uid')
@@ -21,19 +21,19 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
     .navbar-start
       a.navbar-item(routerLink='/dashboard', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
-          i.fa-fw.fas.fa-chart-line
+          i.fas.fa-chart-line
         span Dashboard
       a.navbar-item(routerLink='/items', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
-          i.fa-fw.fas.fa-list-ul
+          i.fas.fa-list-ul
         span Links
       a.navbar-item(routerLink='/tags', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
-          i.fa-fw.fas.fa-tags
+          i.fas.fa-tags
         span Tags
       a.navbar-item(routerLink='/fast-fast-add-and-import', routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
-          i.fa-fw.fas.fa-cloud-upload-alt
+          i.fas.fa-cloud-upload-alt
         span Fast Add & Import
 
     .navbar-end('*ngIf'='user')
@@ -41,13 +41,17 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
         a.navbar-item
           span.icon.mr-1
-            i.fa-fw.fas.fa-cat
+            i.fas.fa-cat
           span Hello, {{user.displayName || user.email}}
 
+        a.navbar-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
+          span.icon.mr-1
+            i.fas.fa-road
+          span Project roadmap
 
         a.navbar-item('(click)'='signOut.emit()')
           span.icon.mr-1
-            i.fa-fw.fas.fa-sign-out-alt
+            i.fas.fa-sign-out-alt
           span Sign out
 
       ng-template('#desktopMenu'='')
@@ -65,7 +69,11 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
                   .dropdown-item
                     span.icon.mr-1
                       i.fas.fa-cat
-                    | Hello, {{user.displayName || user.email}}
+                    span Hello, {{user.displayName || user.email}}
+                  a.dropdown-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
+                    span.icon.mr-1
+                      i.fas.fa-road
+                    span Project roadmap
                   hr.dropdown-divider
                   a.dropdown-item('(click)'='signOut.emit()')
                     span.icon.mr-1

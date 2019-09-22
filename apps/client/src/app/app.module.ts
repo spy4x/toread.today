@@ -31,6 +31,7 @@ import { ItemsService } from './services/items/items.service';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ROUTER_CONSTANTS } from './helpers/router.constants';
+import { RoadmapComponent } from './pages/roadmap/roadmap.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,10 @@ const routes: Routes = [
   {
     path: 'fast-fast-add-and-import',
     component: FastAddAndImportComponent
+  },
+  {
+    path: 'roadmap',
+    component: RoadmapComponent
   },
   {
     path: '**',
@@ -73,7 +78,8 @@ const routes: Routes = [
     FastAddAndImportComponent,
     ItemsImportComponent,
     ItemsImportListComponent,
-    DashboardComponent
+    DashboardComponent,
+    RoadmapComponent,
   ],
   imports: [
     BrowserModule,
