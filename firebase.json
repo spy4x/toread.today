@@ -20,7 +20,7 @@
       "**/node_modules/**"
     ],
     "predeploy": [
-      "yarn build --prod"
+      "yarn build"
     ],
     "rewrites": [
       {

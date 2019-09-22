@@ -76,7 +76,8 @@ export class AppComponent {
   }
 
   runTimerThatChecksForUpdate() {
-    interval(60 * 1000).subscribe(() => this.checkForUpdate());
+    const minutes = 10; // once in X minutes - check for update
+    interval(minutes * 60 * 1000).subscribe(() => this.checkForUpdate());
   }
 
   async checkForUpdate() {
