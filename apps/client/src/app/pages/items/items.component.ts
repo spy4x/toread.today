@@ -1,18 +1,29 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  map,
+  shareReplay,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import { Item } from '../../interfaces/item.interface';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
 import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
-import { Filter } from './filter/filter.interface';
+import { defaultFilter, Filter } from './filter/filter.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemAddEvent } from '../../common-components/items-add/items-add.component';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
+import { defaultPagination, Pagination } from './pagination.interface';
 
-const LOAD_ITEMS_LIMIT = 20;
+const LOAD_ITEMS_LIMIT = 10;
 
 @Component({
   selector: 'tt-items',
@@ -60,10 +71,10 @@ export class ItemsComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
-  filter$ = new BehaviorSubject<Filter>({ tagId: null, status: 'opened', isFavourite: null });
+  filter$ = new BehaviorSubject<Filter>(defaultFilter);
+  pagination$ = new BehaviorSubject<Pagination>(defaultPagination);
   items$ = new BehaviorSubject<Item[]>(null);
-  loadMoreItems$ = new BehaviorSubject<number>(0);
-  areAllItemsLoaded: boolean = false;
+  reloadItems$ = new BehaviorSubject<void>(void 0);
   existingItem$ = new BehaviorSubject<null | Item>(null);
 
   constructor(private auth: AngularFireAuth,
@@ -80,30 +91,36 @@ export class ItemsComponent implements OnInit, OnDestroy {
         this.setFilter({ tagId });
       }
     });
-    this.filter$
-      .pipe(
-        takeUntil(this.componentDestroy$)
-      )
-      .subscribe(() => {
-        this.areAllItemsLoaded = false;
-        this.loadMoreItems$.next(LOAD_ITEMS_LIMIT);
-      });
 
-    let items$Params: any;
-    combineLatest([this.user$, this.filter$, this.loadMoreItems$],
-      (user, filter, itemsToLoad) => ({ user, filter, itemsToLoad }))
+    this.reloadItems$.pipe(takeUntil(this.componentDestroy$)).subscribe(async () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    let items$ParamsForLogs: any;
+    combineLatest([this.user$, this.filter$, this.reloadItems$],
+      (user, filter, reloadItems) => ({ user, filter }))
       .pipe(
         takeUntil(this.componentDestroy$),
-        filter(v => !!v.user && !this.areAllItemsLoaded),
+        filter(v => !!v.user),
         tap(v => {
-          items$Params = v;
+          items$ParamsForLogs = v;
+          this.pagination$.next({ ...this.pagination$.value, isLoading: true });
         }),
-        switchMap((v: { user: User, filter: Filter, itemsToLoad: number }) => this.firestore
-          .collection<Item>('items',
-            ref => {
+        withLatestFrom(this.pagination$),
+        map(([v, pagination]) => ({ ...v, pagination })),
+        switchMap(async (v: { user: User, filter: Filter, pagination: Pagination }) => {
+          return {
+            ...v,
+            lastItemSnapshot: v.pagination.lastItemId ? await this.firestore.doc(
+              `items/${v.pagination.lastItemId}`).get().toPromise() : null
+          };
+        }),
+        switchMap(
+          (v: { user: User, filter: Filter, pagination: Pagination, lastItemSnapshot: null | DocumentSnapshot<any> }) => this.firestore
+            .collection<Item>('items', ref => {
               let query = ref
                 .where('createdBy', '==', v.user.uid)
-                .limit(v.itemsToLoad);
+                .limit(LOAD_ITEMS_LIMIT + 1);
               if (v.filter.status) {
                 query = query.where('status', '==', v.filter.status);
                 switch (v.filter.status) {
@@ -129,21 +146,45 @@ export class ItemsComponent implements OnInit, OnDestroy {
               if (v.filter.tagId) {
                 query = query.where('tags', 'array-contains', v.filter.tagId);
               }
+              if (v.lastItemSnapshot && v.lastItemSnapshot.exists) {
+                query = query.startAfter(v.lastItemSnapshot);
+              }
               return query;
             })
-          .valueChanges({ idField: 'id' })
-          .pipe(
-            takeUntil(this.userIsNotAuthenticated$),
-            takeUntil(this.componentDestroy$)
-          )
+            .valueChanges({ idField: 'id' })
+            .pipe(
+              takeUntil(this.userIsNotAuthenticated$),
+              takeUntil(this.componentDestroy$)
+            )
         ),
         tap((items: Item[]) => {
-          this.areAllItemsLoaded = items.length < this.loadMoreItems$.value;
+          if (!items.length && this.pagination$.value.page) {
+            // if suddenly no items on a page (deleted/changed)
+            this.pagination$.next(defaultPagination);
+            this.reloadItems$.next(null);
+            return;
+          }
+          this.pagination$.next({
+            ...this.pagination$.value,
+            isLoading: false,
+            nextItemsAvailable: items.length > LOAD_ITEMS_LIMIT
+          });
+        }),
+        map((items: Item[]) => {
+          if (items.length > LOAD_ITEMS_LIMIT) {
+            items.pop(); // remove last item, for example 21st (we need to show only 20)
+          }
+          return items;
         }),
         catchError(error => {
           this.error$.next(error.message);
           this.logger.error(
-            { messageForDev: 'items$ error', messageForUser: 'Failed to fetch items.', error, params: items$Params });
+            {
+              messageForDev: 'items$ error',
+              messageForUser: 'Failed to fetch items.',
+              error,
+              params: items$ParamsForLogs
+            });
           return of(null);
         })
       )
@@ -165,16 +206,24 @@ export class ItemsComponent implements OnInit, OnDestroy {
     this.existingItem$.next(existingItem);
   }
 
-  async loadMore() {
-    if (this.areAllItemsLoaded) {
-      return;
-    }
-    const newAmountOfItemsToLoad = this.loadMoreItems$.value + LOAD_ITEMS_LIMIT;
-    this.logger.debug('Load more items:', { newAmountOfItemsToLoad });
-    this.loadMoreItems$.next(newAmountOfItemsToLoad);
+  async loadPrev() {
+    this.pagination$.next({ ...defaultPagination, nextItemsAvailable: true });
+    this.reloadItems$.next(null);
+  }
+
+  async loadNext() {
+    const items = this.items$.value;
+    const lastItemId = items && items.length ? items[items.length - 1].id : null;
+    this.pagination$.next({
+      ...this.pagination$.value,
+      page: this.pagination$.value.page + 1,
+      lastItemId: lastItemId
+    });
+    this.reloadItems$.next(null);
   }
 
   setFilter(filter: Partial<Filter>): void {
+    this.pagination$.next(defaultPagination);
     this.filter$.next({ ...this.filter$.value, ...filter });
   }
 }

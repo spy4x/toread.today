@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 import { ListComponent } from './common-components/items-list/list.component';
 import { NavbarComponent } from './common-components/navbar/navbar.component';
 import { FilterComponent } from './pages/items/filter/filter.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { TagsEditorComponent } from './pages/tags/editor/tags-editor.component';
 import { TagSelectorComponent } from './common-components/tag-selector/tag-selector.component';
 import { ItemsAddComponent } from './common-components/items-add/items-add.component';
@@ -83,7 +82,6 @@ const routes: Routes = [
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireStorageModule,
-    InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule,
     HttpClientModule

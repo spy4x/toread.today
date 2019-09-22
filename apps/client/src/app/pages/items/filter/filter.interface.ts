@@ -5,3 +5,9 @@ export interface Filter {
   status: null | ItemStatus
   isFavourite: null | boolean
 }
+
+export const defaultFilter: Filter = {
+  tagId: null,
+  status: 'opened',
+  isFavourite: null,
+}

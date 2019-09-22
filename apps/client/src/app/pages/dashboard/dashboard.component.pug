@@ -8,8 +8,6 @@
         i.fa-fw.fas.fa-chevron-right
   tt-list('[items]'='openedItem$ | async',
           '[tags]'='tags$ | async',
-          '[areAllItemsLoaded]'='true',
-          '[hideTheEnd]'='true',
           '(startReading)'='itemsService.startReading($event)',
           '(finishReading)'='itemsService.finishReading($event)',
           '(undoReading)'='itemsService.markAsNew($event)',
@@ -32,8 +30,6 @@
         i.fa-fw.fas.fa-sync
   tt-list('[items]'='randomItems$ | async',
           '[tags]'='tags$ | async',
-          '[areAllItemsLoaded]'='true',
-          '[hideTheEnd]'='true',
           '(startReading)'='itemsService.startReading($event)',
           '(finishReading)'='itemsService.finishReading($event)',
           '(undoReading)'='itemsService.markAsNew($event)',

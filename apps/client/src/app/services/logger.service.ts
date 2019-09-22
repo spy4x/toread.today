@@ -79,7 +79,7 @@ export class LoggerService {
       Sentry.captureException(error);
     });
     if (messageForUser) {
-      this.lastErrorMessageSubject.next('Error happened: ' + messageForUser);
+      this.lastErrorMessageSubject.next(messageForUser);
     }
   }
 

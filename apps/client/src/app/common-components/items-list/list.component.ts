@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Item, ItemRating } from '../../interfaces/item.interface';
 import { Tag } from '../../interfaces/tag.interface';
+import { Pagination } from '../../pages/items/pagination.interface';
 
 
 export interface ToggleTagEvent {
@@ -37,8 +38,7 @@ export interface ChangeItemCommentEvent {
 export class ListComponent {
   @Input() items: Item[];
   @Input() tags: Tag[] = [];
-  @Input() areAllItemsLoaded: boolean = false;
-  @Input() hideTheEnd: boolean = false;
+  @Input() pagination: Pagination;
   @Output() startReading = new EventEmitter<string>();
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();
@@ -46,7 +46,8 @@ export class ListComponent {
   @Output() retryURLParsing = new EventEmitter<string>();
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
-  @Output() loadMore = new EventEmitter<void>();
+  @Output() loadPrev = new EventEmitter<void>();
+  @Output() loadNext = new EventEmitter<void>();
   @Output() tagClick = new EventEmitter<string>();
   @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
   @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();

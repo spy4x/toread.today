@@ -47,8 +47,8 @@
     "core-js": "^3.2.1",
     "firebase": "^6.4.0",
     "ng-cli-pug-loader": "^0.2.0",
-    "ngx-infinite-scroll": "^8.0.0",
     "rxjs": "^6.5.2",
+    "smoothscroll-polyfill": "^0.4.4",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {
