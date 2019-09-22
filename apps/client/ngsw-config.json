@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.15.1",
-    "description": "Fix autoupdate"
+    "version": "v1.15.2",
+    "description": "Polish UI"
   },
   "assetGroups": [
     {

@@ -72,3 +72,6 @@ nav.panel
 
     a.icon.is-small.ml-3.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
       i.far.fa-trash-alt
+
+  .buttons.is-centered.my-3('*ngIf'='!tags?.length')
+    span.button.is-static No tags yet.

@@ -31,6 +31,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   newNotifications$: Observable<Notification[]>;
   isAnyNewNotification$: Observable<boolean>;
 
+  recentlyDeletedIds: string[] = [];
+
 
   constructor(private firestore: AngularFirestore,
               private logger: LoggerService) { }
@@ -82,6 +84,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
 
   async markAsRead(id: string) {
+    if(this.recentlyDeletedIds.includes(id)){
+      return;
+    }
     const data: Partial<Notification> = {
       status: 'read'
     };
@@ -96,6 +101,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   async delete(id: string) {
     try {
+      this.recentlyDeletedIds.push(id);
       await this.firestore
         .doc('notifications/' + id)
         .delete();

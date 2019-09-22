@@ -85,10 +85,11 @@ export class DashboardComponent implements OnDestroy {
         this.logger.error(
           { messageForDev: 'randomItems$ error', messageForUser: 'Failed to fetch random items.', error });
         return of([]);
-      })
+      }),
+      shareReplay(1)
     );
 
-  openedItem$ = this.user$.pipe(
+  openedItems$ = this.user$.pipe(
     first(),
     filter(v => !!v),
     switchMap((user: User) => this.firestore
@@ -103,9 +104,10 @@ export class DashboardComponent implements OnDestroy {
     catchError(error => {
       this.error$.next(error.message);
       this.logger.error(
-        { messageForDev: 'openedItem$ error', messageForUser: 'Failed to fetch recently opened item.', error });
+        { messageForDev: 'openedItems$ error', messageForUser: 'Failed to fetch recently opened item.', error });
       return of([]);
-    })
+    }),
+    shareReplay(1)
   );
 
   constructor(private auth: AngularFireAuth,

@@ -19,3 +19,8 @@
         span.icon.mr-2('[ngStyle]'='{"color": tag.color || "#00d1b2"}')
           i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag) ? "visible" : "hidden"}')
         span.tag('[ngStyle]'='{"background-color": tag.color || "#00d1b2", "color": "white"}') {{ tag.title }}
+
+      .dropdown-item('*ngIf'='!tags?.length')
+        span(style='min-width: 85px') No tags yet.&nbsp;
+          br
+          a(routerLink='/tags') Create new
