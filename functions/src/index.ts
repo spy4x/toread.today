@@ -153,6 +153,9 @@ export const onRoadmapBrickCreate = functions.firestore
   .document(`roadmapBricks/{id}`)
   .onCreate(async doc => {
     const brick = { ...doc.data(), id: doc.id } as RoadmapBrick;
+    if (brick.createdBy === antonId) {
+      return;
+    }
     await createNotification(`New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}`,
       antonId);
   });
@@ -162,6 +165,9 @@ export const onRoadmapBrickUpdate = functions.firestore
   .onUpdate(async change => {
     const before = { ...change.before.data(), id: change.before.id } as RoadmapBrick;
     const after = { ...change.after.data(), id: change.after.id } as RoadmapBrick;
+    if (after.createdBy === antonId) {
+      return;
+    }
     const newLikeId = after.likedBy.find(userId => before.likedBy.indexOf(userId) === -1);
     const newDislikeId = after.dislikedBy.find(userId => before.dislikedBy.indexOf(userId) === -1);
     if (newLikeId) {

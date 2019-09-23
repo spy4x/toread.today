@@ -48,7 +48,6 @@ export class RoadmapComponent implements OnDestroy {
       }),
       shareReplay(1)
     );
-  @ViewChild('textarea', {static: false}) textarea: ElementRef;
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -59,30 +58,66 @@ export class RoadmapComponent implements OnDestroy {
     this.componentDestroy$.complete();
   }
 
-  async vote(id: string, rate: -1 | 1): Promise<void> {
+  async vote(brick: RoadmapBrick, rate: -1 | 1): Promise<void> {
     const add = firestore.FieldValue.arrayUnion(this.userId);
     const remove = firestore.FieldValue.arrayRemove(this.userId);
+    let scoreDiff: number = rate;
+    if (rate > 0) {
+      if (brick.likedBy.includes(this.userId)) {
+        return;
+      }
+      if (brick.dislikedBy.includes(this.userId)) {
+        scoreDiff = 2;
+      }
+    } else {
+      if (brick.likedBy.includes(this.userId)) {
+        scoreDiff = -2;
+      }
+      if (brick.dislikedBy.includes(this.userId)) {
+        return;
+      }
+    }
     const data = {
+      score: firestore.FieldValue.increment(scoreDiff),
       likedBy: rate > 0 ? add : remove,
-      dislikedBy: rate > 0 ? remove : add,
+      dislikedBy: rate > 0 ? remove : add
     };
     try {
       await this.firestore
-        .doc(`${collectionPath}/${id}`)
+        .doc(`${collectionPath}/${brick.id}`)
         .update(data);
     } catch (error) {
       this.logger.error(
-        { messageForDev: 'vote() error:', messageForUser: 'Failed to vote for roadmap.', error, params: { id, data } });
+        { messageForDev: 'vote() error:', messageForUser: 'Failed to vote for roadmap.', error, params: { brick, data } });
+    }
+  }
+
+  async remove(id: string): Promise<void> {
+    try {
+      await this.firestore
+        .doc(`${collectionPath}/${id}`)
+        .delete();
+    } catch (error) {
+      this.logger.error(
+        {
+          messageForDev: 'remove() error:',
+          messageForUser: 'Failed to delete suggestion.',
+          error,
+          params: { id }
+        });
     }
   }
 
   async add(title: string): Promise<void> {
+    const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
     const newBrick: RoadmapBrick = {
       ...defaultRoadmapBrick,
       title,
       createdBy: this.userId,
       createdAt: new Date(),
-      type: this.userId === "carcBWjBqlNUY9V2ekGQAZdwlTf2" ? 'feature' : 'suggestion'
+      score: this.userId === antonId ? 0 : 1,
+      likedBy: this.userId === antonId ? [] : [this.userId],
+      type: this.userId === antonId ? 'feature' : 'suggestion'
     };
     try {
       await this.firestore
