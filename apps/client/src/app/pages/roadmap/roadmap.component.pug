@@ -6,8 +6,9 @@ h1.title Project roadmap - {{(roadmapBricks$ | async)?.length}} bricks
       span.tags
         span.tag id: {{brick.id}}
         span.tag type: {{brick.type}}
-        span.tag status: {{brick.status}}
-        span.tag('*ngIf'='brick.startWorkingAt') scheduled: {{(brick.startWorkingAt.toDate() | date)}}
+        span.tag('[class.is-info]'='brick.status === "inProgress"', '[class.is-success]'='brick.status === "done"') status: {{brick.status}}
+        span.tag('*ngIf'='brick.startWorkingAt && !brick.releasedInVersion') scheduled: {{brick.startWorkingAt.toDate() | date}}
+        p('*ngIf'='brick.releasedInVersion') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in {{brick.releasedInVersion}}
 
     p.my-2 {{brick.title}}
 
