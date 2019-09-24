@@ -174,8 +174,11 @@ export const onRoadmapBrickUpdate = functions.firestore
     const newDislikeId = after.dislikedBy.find(userId => before.dislikedBy.indexOf(userId) === -1);
     if (newLikeId) {
       const promises = [];
-      promises.push(createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}".`, antonId));
-      if (after.createdBy !== antonId) {
+      if(newLikeId !== antonId) {
+        promises.push(
+          createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}".`, antonId));
+      }
+      if (after.createdBy !== antonId && after.createdBy !== newLikeId) {
         promises.push(
           createNotification(`Yahoo! Somebody liked your roadmap suggestion "${after.title}". 👍`, after.createdBy));
       }

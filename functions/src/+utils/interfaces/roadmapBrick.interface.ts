@@ -7,6 +7,7 @@ export interface RoadmapBrick {
   type: RoadmapBrickType
   title: string
   releasedInVersion: null | string
+  score: number
   likedBy: string[]
   dislikedBy: string[]
   startWorkingAt: null | Date
@@ -19,6 +20,7 @@ export const defaultRoadmapBrick: RoadmapBrick = {
   type: 'feature',
   title: '',
   releasedInVersion: null,
+  score: 0,
   likedBy: [],
   dislikedBy: [],
   startWorkingAt: null,
