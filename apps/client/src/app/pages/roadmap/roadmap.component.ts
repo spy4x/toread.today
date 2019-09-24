@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { catchError, filter, shareReplay, startWith, takeUntil, tap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -12,6 +12,11 @@ import {
 } from '../../interfaces/roadmapBrick.interface';
 import { firestore } from 'firebase/app';
 import { AppVersionInfo } from '../../../appVersionInfo.interface';
+import {
+  RoadmapBrickChangeStatusEvent,
+  RoadmapBrickChangeTitleEvent,
+  RoadmapBrickChangeTypeEvent
+} from './bricks-list/bricks-list.component';
 const { appData } = require('../../../../ngsw-config.json');
 
 
@@ -41,23 +46,54 @@ export class RoadmapComponent implements OnDestroy {
     }));
   userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
 
-  roadmapBricks$: Observable<RoadmapBrick[]> = this.firestore
+  features$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.orderBy('score', 'desc'))
+      ref => ref.where('type','==','feature').orderBy('score', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userIsNotAuthenticated$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
-          { messageForDev: 'roadmapBricks$ error', messageForUser: 'Failed to fetch roadmap.', error });
+          { messageForDev: 'features$ error', messageForUser: 'Failed to fetch features.', error });
         return of([]);
       }),
       shareReplay(1)
     );
-  bricksInEditMode: string[] = [];
+  suggestions$: Observable<RoadmapBrick[]> = this.firestore
+    .collection<RoadmapBrick>(collectionPath,
+      ref => ref.where('type','==','suggestion').orderBy('score', 'desc'))
+    .valueChanges({ idField: 'id' })
+    .pipe(
+      takeUntil(this.userIsNotAuthenticated$),
+      takeUntil(this.componentDestroy$),
+      catchError(error => {
+        this.logger.error(
+          { messageForDev: 'suggestions$ error', messageForUser: 'Failed to fetch suggestions.', error });
+        return of([]);
+      }),
+      shareReplay(1)
+    );
+  bugs$: Observable<RoadmapBrick[]> = this.firestore
+    .collection<RoadmapBrick>(collectionPath,
+      ref => ref.where('type','==','bug').orderBy('score', 'desc'))
+    .valueChanges({ idField: 'id' })
+    .pipe(
+      takeUntil(this.userIsNotAuthenticated$),
+      takeUntil(this.componentDestroy$),
+      catchError(error => {
+        this.logger.error(
+          { messageForDev: 'bugs$ error', messageForUser: 'Failed to fetch bugs.', error });
+        return of([]);
+      }),
+      shareReplay(1)
+    );
   antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
   appVersionInfo = appData as AppVersionInfo;
+
+  @ViewChild('features', {static: true}) featuresElRef: ElementRef;
+  @ViewChild('suggestions', {static: true}) suggestionsElRef: ElementRef;
+  @ViewChild('bugs', {static: true}) bugsElRef: ElementRef;
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -68,7 +104,7 @@ export class RoadmapComponent implements OnDestroy {
     this.componentDestroy$.complete();
   }
 
-  async vote(brick: RoadmapBrick, rate: -1 | 1): Promise<void> {
+  async vote({brick, rate}:{brick: RoadmapBrick, rate: -1 | 1}): Promise<void> {
     const add = firestore.FieldValue.arrayUnion(this.userId);
     const remove = firestore.FieldValue.arrayRemove(this.userId);
     let scoreDiff: number = rate;
@@ -126,10 +162,11 @@ export class RoadmapComponent implements OnDestroy {
     }
   }
 
-  async add(title: string): Promise<void> {
+  async add(title: string, type: RoadmapBrickType): Promise<void> {
     const newBrick: RoadmapBrick = {
       ...defaultRoadmapBrick,
       title,
+      type,
       createdBy: this.userId,
       createdAt: new Date(),
       score: this.userId === this.antonId ? 0 : 1,
@@ -145,12 +182,11 @@ export class RoadmapComponent implements OnDestroy {
     }
   }
 
-  async changeTitle(brick: RoadmapBrick, title: string): Promise<void> {
-    this.toggleEditMode(brick.id);
-    const data = { title };
+  async changeTitle(event: RoadmapBrickChangeTitleEvent): Promise<void> {
+    const data = { title: event.title };
     try {
       await this.firestore
-        .doc(`${collectionPath}/${brick.id}`)
+        .doc(`${collectionPath}/${event.brick.id}`)
         .update(data);
     } catch (error) {
       this.logger.error(
@@ -158,16 +194,16 @@ export class RoadmapComponent implements OnDestroy {
           messageForDev: 'changeTitle() error:',
           messageForUser: 'Failed to change title of suggestion.',
           error,
-          params: { brick, data }
+          params: { event, data }
         });
     }
   }
 
-  async changeType(id: string, type: RoadmapBrickType): Promise<void> {
-    const data = { type };
+  async changeType(event: RoadmapBrickChangeTypeEvent): Promise<void> {
+    const data = { type: event.type };
     try {
       await this.firestore
-        .doc(`${collectionPath}/${id}`)
+        .doc(`${collectionPath}/${event.brick.id}`)
         .update(data);
     } catch (error) {
       this.logger.error(
@@ -175,12 +211,13 @@ export class RoadmapComponent implements OnDestroy {
           messageForDev: 'changeType() error:',
           messageForUser: 'Failed to change type of roadmap brick.',
           error,
-          params: { id, data }
+          params: { event, data }
         });
     }
   }
 
-  async changeStatus(id: string, status: RoadmapBrickStatus): Promise<void> {
+  async changeStatus(event: RoadmapBrickChangeStatusEvent): Promise<void> {
+    const status = event.status
     const data: Partial<RoadmapBrick> = { status };
     if (status === 'inProgress' || status === 'done') {
       data.startWorkingAt = new Date();
@@ -190,7 +227,7 @@ export class RoadmapComponent implements OnDestroy {
     }
     try {
       await this.firestore
-        .doc(`${collectionPath}/${id}`)
+        .doc(`${collectionPath}/${event.brick.id}`)
         .update(data);
     } catch (error) {
       this.logger.error(
@@ -198,20 +235,16 @@ export class RoadmapComponent implements OnDestroy {
           messageForDev: 'changeStatus() error:',
           messageForUser: 'Failed to change status of roadmap brick.',
           error,
-          params: { id, data }
+          params: { event, data }
         });
     }
   }
 
-  toggleEditMode(id: string): void {
-    if (!this.bricksInEditMode.includes(id)) {
-      this.bricksInEditMode = [...this.bricksInEditMode, id];
-    } else {
-      this.bricksInEditMode = this.bricksInEditMode.filter(bid => bid !== id);
+  scrollTo(target: string): void {
+    const targetElRef = this[target+'ElRef'] as ElementRef;
+    if(!targetElRef || !targetElRef.nativeElement){
+      return;
     }
-  }
-
-  isInEditMode(id: string): boolean {
-    return this.bricksInEditMode.includes(id);
+    (targetElRef.nativeElement as HTMLElement).scrollIntoView({behavior: 'smooth'});
   }
 }

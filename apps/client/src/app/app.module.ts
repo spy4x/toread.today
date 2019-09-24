@@ -32,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ROUTER_CONSTANTS } from './helpers/router.constants';
 import { RoadmapComponent } from './pages/roadmap/roadmap.component';
+import { BricksListComponent } from './pages/roadmap/bricks-list/bricks-list.component';
 
 const routes: Routes = [
   {
@@ -80,6 +81,7 @@ const routes: Routes = [
     ItemsImportListComponent,
     DashboardComponent,
     RoadmapComponent,
+    BricksListComponent,
   ],
   imports: [
     BrowserModule,

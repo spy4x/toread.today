@@ -2,94 +2,78 @@
   .column.is-narrow
     .widget.add
       .header.mb-3
-        h2.header__title Add suggestion
+        h2.header__title Add
       .body
         form.mb-5
           .field
             .control
-              textarea.textarea('#textarea'='', placeholder='Enter description of your suggestion')
+              label.radio
+                input(type='radio', name='type', '#suggestion'='', checked, value='suggestion')
+                span.ml-1 Suggestion
+              label.radio.ml-1
+                input(type='radio', name='type', '#bug'='', value='bug')
+                span.ml-1 Bug
+
           .field
             .control
-              button.button.is-primary('(click)'='add(textarea.value); textarea.value = ""') Submit
+              textarea.textarea('#textarea'='', placeholder='Enter description (more details would help your idea to be implemented faster)')
+          .field
+            .control
+              button.button.is-primary('(click)'='add(textarea.value, suggestion.checked ? "suggestion" : "bug"); textarea.value = ""') Submit
   .column
+    .widget.statistics
+      .columns
+        .column
+          .widget
+            .header
+              a.header__title('(click)'='scrollTo("features")') {{(features$ | async)?.length}} Features
+                span.icon.ml-1
+                  i.fas.fa-arrow-down
+        .column
+          .widget
+            .header
+              a.header__title('(click)'='scrollTo("suggestions")') {{(suggestions$ | async)?.length}} Suggestions
+                span.icon.ml-1
+                  i.fas.fa-arrow-down
+        .column
+          .widget
+            .header
+              a.header__title('(click)'='scrollTo("bugs")') {{(bugs$ | async)?.length}} Bugs
+                span.icon.ml-1
+                  i.fas.fa-arrow-down
     .widget.bricks
       .header.mb-3
-        h2.header__title Project roadmap - {{(roadmapBricks$ | async)?.length}} bricks
+        h2.header__title('#features'='') {{(features$ | async)?.length}} Approved features
+          span.header__subtitle (things 100% to be implemented)
       .body
-        article.media('*ngFor'='let brick of roadmapBricks$ | async')
-          figure.media-left
-            span.button.is-static.is-fullwidth.mb-1 Score: {{ brick.score || 0 }}
-            .buttons.mb-0
-              button.button.mb-0(type='button', '(click)'='vote(brick, 1)', '[class.has-text-success]'='brick.likedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.likedBy.length', title='I need that')
-                span {{brick.likedBy.length}}
-                span.icon
-                  i.far.fa-thumbs-up
-              button.button.mb-0(type='button', '(click)'='vote(brick, -1)', '[class.has-text-danger]'='brick.dislikedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.dislikedBy.length', title='I do not need that')
-                span {{brick.dislikedBy.length}}
-                span.icon
-                  i.far.fa-thumbs-down
-
-          .media-content
-            .content
-              .line.first
-                span.tags.mb-0
-                  ng-container('*ngIf'='brick.type === "bug"')
-                    span.tag.is-danger(title='Reported bug')
-                      span.icon
-                        i.fas.fa-bug
-                  ng-container('*ngIf'='brick.type === "feature"')
-                    span.tag.is-primary(title='Approved feature')
-                      span.icon
-                        i.fas.fa-bolt
-                  ng-container('*ngIf'='brick.type === "suggestion"')
-                    span.tag.is-info(title='Suggestion')
-                      span.icon
-                        i.far.fa-lightbulb
-                  span.tag.is-info('*ngIf'='brick.createdBy === userId') My idea
-                  span.tag('*ngIf'='brick.status === "new" && (brick.type === "feature" || brick.type === "bug")') In queue
-                  span.tag('*ngIf'='brick.status === "new" && brick.type === "suggestion"', title="When idea gets more attention from users it increases it's chances to be implemented. If you need this - click on \"Like\" button.") Awaiting more likes from users
-                  span.tag.is-info('*ngIf'='brick.status === "inProgress"') In progress
-                  span.tag.is-success('*ngIf'='brick.status === "done"') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in v{{brick.releasedInVersion}}
-                .actions.ml-auto
-                  a.icon.is-small.mr-2.has-text-primary(
-                    '*ngIf'='userId === antonId || userId === brick.createdBy',
-                    title='Edit text',
-                    '(click)'='toggleEditMode(brick.id)')
-                      i.far.fa-edit
-                  a.icon.has-text-danger('*ngIf'='userId === antonId || (brick.createdBy === userId && brick.type === "suggestion")', '(click)'='remove(brick.id)', title='Delete suggestion')
-                    i.fas.fa-trash-alt
-              .line.second('*ngIf'='isInEditMode(brick.id)')
-                textarea.textarea(
-                placeholder='Suggestion text',
-                '#input'='',
-                '[value]'='brick.title')
-                .buttons.is-right.mt-1
-                  button.button.is-primary('(click)'='changeTitle(brick, input.value)', title='Save suggestion text')
-                    span.icon.is-small
-                      i.far.fa-save
-                    span Save
-                  button.button('(click)'='toggleEditMode(brick.id)', title='Cancel edit')
-                    span.icon.is-small
-                      i.fas.fa-times
-                    span Cancel
-              .line.third
-                p('*ngIf'='!isInEditMode(brick.id)') {{brick.title}}
-              .line.fourth('*ngIf'='userId === antonId')
-                .buttons.are-small.mt-2
-                  a.button('[href]'='"https://console.firebase.google.com/project/toread-today/database/firestore/data~2FroadmapBricks~2F" + brick.id', target="_blank")
-                    span.icon
-                      i.far.fa-edit
-                    span Edit in console
-                  button.button('*ngIf'='brick.type === "suggestion"', '(click)'='changeType(brick.id, "feature")')
-                    span.icon.mr-1
-                      i.fas.fa-bolt
-                    span Mark as "Feature"
-                  ng-container('*ngIf'='brick.type === "feature"')
-                    button.button('*ngIf'='brick.status === "new"', '(click)'='changeStatus(brick.id, "inProgress")')
-                      span.icon.mr-1
-                        i.fas.fa-bolt
-                      span Mark as "inProgress"
-                    button.button('*ngIf'='brick.status === "inProgress"', '(click)'='changeStatus(brick.id, "done")')
-                      span.icon.mr-1
-                        i.fas.fa-check
-                      span Mark as "done"
+        tt-bricks-list('[bricks]'='features$ | async',
+                        '[userId]'='userId',
+                        '(vote)'="vote($event)",
+                        '(changeTitle)'="changeTitle($event)",
+                        '(changeType)'="changeType($event)",
+                        '(changeStatus)'="changeStatus($event)",
+                        '(remove)'="remove($event)",)
+    .widget.bricks
+      .header.mb-3
+        h2.header__title('#suggestions'='') {{(suggestions$ | async)?.length}} Suggestions
+          span.header__subtitle (ideas that require other users' support/comments/likes)
+      .body
+        tt-bricks-list('[bricks]'='suggestions$ | async',
+                        '[userId]'='userId',
+                        '(vote)'="vote($event)",
+                        '(changeTitle)'="changeTitle($event)",
+                        '(changeType)'="changeType($event)",
+                        '(changeStatus)'="changeStatus($event)",
+                        '(remove)'="remove($event)",)
+    .widget.bricks
+      .header.mb-3
+        h2.header__title('#bugs'='') {{(bugs$ | async)?.length}} Bugs
+          span.header__subtitle (nasty glitches)
+      .body
+        tt-bricks-list('[bricks]'='bugs$ | async',
+                        '[userId]'='userId',
+                        '(vote)'="vote($event)",
+                        '(changeTitle)'="changeTitle($event)",
+                        '(changeType)'="changeType($event)",
+                        '(changeStatus)'="changeStatus($event)",
+                        '(remove)'="remove($event)",)
