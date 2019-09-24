@@ -156,9 +156,11 @@ export const onRoadmapBrickCreate = functions.firestore
     if (brick.createdBy === antonId) {
       return;
     }
-    const notifForAnton = createNotification(`New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}.`,
+    const notifForAnton = createNotification(
+      `New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}.`,
       antonId);
-    const notifForAuthor = createNotification(`Your roadmap suggestion has been registered! Thank you for your commitment. 🤟`,
+    const notifForAuthor = createNotification(
+      `Your roadmap suggestion has been registered! Thank you for your commitment. 🤟`,
       brick.createdBy);
     await Promise.all([notifForAnton, notifForAuthor]);
   });
@@ -169,12 +171,11 @@ export const onRoadmapBrickUpdate = functions.firestore
     const before = { ...change.before.data(), id: change.before.id } as RoadmapBrick;
     const after = { ...change.after.data(), id: change.after.id } as RoadmapBrick;
 
-    // Like/Dislike START
+    const promises = [];
+    // Like START
     const newLikeId = after.likedBy.find(userId => before.likedBy.indexOf(userId) === -1);
-    const newDislikeId = after.dislikedBy.find(userId => before.dislikedBy.indexOf(userId) === -1);
     if (newLikeId) {
-      const promises = [];
-      if(newLikeId !== antonId) {
+      if (newLikeId !== antonId && after.createdBy !== newLikeId) {
         promises.push(
           createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}".`, antonId));
       }
@@ -182,35 +183,32 @@ export const onRoadmapBrickUpdate = functions.firestore
         promises.push(
           createNotification(`Yahoo! Somebody liked your roadmap suggestion "${after.title}". 👍`, after.createdBy));
       }
-      await Promise.all(promises);
     }
-    if (newDislikeId) {
-      await createNotification(`User ${newDislikeId} disliked roadmap brick ${after.id} "${after.title}".`, antonId);
-    }
-    // Like/Dislike END
+    // Like END
 
     // Approved START
     if (before.type === 'suggestion' && after.type === 'feature' && after.createdBy !== antonId) {
-      await createNotification(
+      promises.push(createNotification(
         `Your roadmap suggestion "${after.title}" was approved and is going to be implemented. 👍 Thanks for your help!`,
-        after.createdBy);
+        after.createdBy));
     }
     // Approved END
 
     // inProgress START
     if (before.status === 'new' && after.status === 'inProgress' && after.createdBy !== antonId) {
-      await createNotification(
+      promises.push(createNotification(
         `Your roadmap suggestion "${after.title}" is in work. We'll update you once it's implemented. 😊`,
-        after.createdBy);
+        after.createdBy));
     }
     // Done END
 
     // Done START
     if (before.status !== 'done' && after.status === 'done' && after.createdBy !== antonId) {
-      await createNotification(`Your roadmap suggestion "${after.title}" is implemented. Check it out! 😉`,
-        after.createdBy);
+      const version = `${after.releasedInVersion ? `v${after.releasedInVersion}` : 'new version'}`;
+      promises.push(createNotification(`Your roadmap suggestion "${after.title}" is implemented. Check it out in ${version}! 😉`, after.createdBy));
     }
     // Done END
+    await Promise.all(promises);
   });
 
 export const https = httpsFunction;
