@@ -20,4 +20,9 @@ app.use(cors());
 app.use('/api', authMiddleware, apiRouter);
 app.use('*', (req, res) => res.status(404).send('Sorry... Nothing here.'));
 
-export const httpsFunction = functions.https.onRequest(app);
+export const httpsFunction = functions
+  .runWith({
+    memory: '2GB'
+  })
+  .https
+  .onRequest(app);
