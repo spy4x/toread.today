@@ -26,7 +26,7 @@ service cloud.firestore {
       allow list: if isAuthenticated();
       allow create: if isRoadmapBrick(getDocInc(), id);
       allow update: if isRoadmapBrick(getDocInc(), id);
-      allow delete: if isUser(getDoc().createdBy);
+      allow delete: if canDeleteRoadmapBrick(getDoc());
     }
   }
 }
@@ -83,6 +83,14 @@ function isRoadmapBrick(doc, id) {
       // && doc.createdAt is timestamp
 }
 
+function canDeleteRoadmapBrick(doc) {
+	return isAdmin() || (isUser(doc.createdBy) && doc.type == "suggestion");
+}
+
+function isAdmin() {
+	return getAuth().uid == "carcBWjBqlNUY9V2ekGQAZdwlTf2"; // Anton's id
+}
+
 // RESOURCE DATA ACCESS - START
 // Returns existing document data
 function getDoc(){
@@ -99,7 +107,7 @@ function getAuth() {
   return request.auth
 }
 function isAuthenticated() {
-  return getAuth()!=null;
+  return getAuth() != null;
 }
 function isUser(userId) {
   return getAuth().uid == userId;
