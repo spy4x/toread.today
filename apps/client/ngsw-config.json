@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "v1.16.1",
-    "description": "Polish \"Fast Add & Import\" page UI"
+    "version": "1.18.0",
+    "description": "Improve Roadmap UI even more"
   },
   "assetGroups": [
     {

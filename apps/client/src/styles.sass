@@ -64,3 +64,34 @@ i.fas, i.far
   // use styles of ".fa-fw" for all icons
   text-align: center
   width: 1.25em
+
+.widget
+  &+.widget
+    margin-top: 1rem
+  .header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    border-bottom: .5px solid $grey-light
+    padding: 0 12px
+    &__title
+      font-size: $size-4
+    &__subtitle
+      font-size: $size-6
+      color: $grey-lighter
+      margin-left: $size-7
+      @media (max-width: $tablet)
+        display: none
+    &__action
+      font-size: 1.2rem
+      color: $grey-light
+      > span:first-child
+        margin-right: .5rem
+  .body
+    @media (max-width: 768px)
+      padding: 0 1rem
+  .info
+    font-size: $size-4
+    color: $grey-light
+    text-align: center
+    margin: 3rem 1rem

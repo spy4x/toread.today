@@ -74,7 +74,7 @@
         i.far.fa-thumbs-down
       a.action.bigger-margin('[ngClass]'='{"has-text-primary": item.withComment}', '(click)'='toggleComment(item.id)')
         i.far.fa-comment-alt
-      button.button.finish.is-success.is-small.bigger-margin('*ngIf'='item.status === "opened"', '(click)'='finishReading.emit(item.id)')
+      button.button.finish.is-success.is-small.bigger-margin('*ngIf'='item.status !== "finished"', '(click)'='finishReading.emit(item.id)')
         span.icon
           i.fas.fa-check
         span Finish

@@ -1,41 +1,95 @@
-h1.title Project roadmap - {{(roadmapBricks$ | async)?.length}} bricks
+.columns
+  .column.is-narrow
+    .widget.add
+      .header.mb-3
+        h2.header__title Add suggestion
+      .body
+        form.mb-5
+          .field
+            .control
+              textarea.textarea('#textarea'='', placeholder='Enter description of your suggestion')
+          .field
+            .control
+              button.button.is-primary('(click)'='add(textarea.value); textarea.value = ""') Submit
+  .column
+    .widget.bricks
+      .header.mb-3
+        h2.header__title Project roadmap - {{(roadmapBricks$ | async)?.length}} bricks
+      .body
+        article.media('*ngFor'='let brick of roadmapBricks$ | async')
+          figure.media-left
+            span.button.is-static.is-fullwidth.mb-1 Score: {{ brick.score || 0 }}
+            .buttons.mb-0
+              button.button.mb-0(type='button', '(click)'='vote(brick, 1)', '[class.has-text-success]'='brick.likedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.likedBy.length', title='I need that')
+                span {{brick.likedBy.length}}
+                span.icon
+                  i.far.fa-thumbs-up
+              button.button.mb-0(type='button', '(click)'='vote(brick, -1)', '[class.has-text-danger]'='brick.dislikedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.dislikedBy.length', title='I do not need that')
+                span {{brick.dislikedBy.length}}
+                span.icon
+                  i.far.fa-thumbs-down
 
-.bricks
-  article.media('*ngFor'='let brick of roadmapBricks$ | async')
-    figure.media-left
-      span.button.is-static.is-fullwidth.mb-1 Score: {{ brick.score || 0 }}
-      .buttons.mb-0
-        button.button.mb-0(type='button', '(click)'='vote(brick, 1)', '[class.has-text-success]'='brick.likedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.likedBy.length', title='I need that')
-          span {{brick.likedBy.length}}
-          span.icon
-            i.far.fa-thumbs-up
-        button.button.mb-0(type='button', '(click)'='vote(brick, -1)', '[class.has-text-danger]'='brick.dislikedBy.includes(userId)', '[class.has-text-weight-bold]'='brick.dislikedBy.length', title='I do not need that')
-          span {{brick.dislikedBy.length}}
-          span.icon
-            i.far.fa-thumbs-down
-
-    .media-content
-      .content
-        span.tags.mb-0
-          span.tag id: {{brick.id}}
-          span.tag type: {{brick.type}}
-          span.tag('[class.is-info]'='brick.status === "inProgress"', '[class.is-success]'='brick.status === "done"') status: {{brick.status}}
-          span.tag('*ngIf'='brick.startWorkingAt && !brick.releasedInVersion') scheduled: {{brick.startWorkingAt.toDate() | date}}
-          span.tag('*ngIf'='brick.releasedInVersion') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in {{brick.releasedInVersion}}
-          span.tag.is-info('*ngIf'='brick.createdBy === userId') My idea
-        p {{brick.title}}
-    .media-right
-      a.icon('*ngIf'='brick.createdBy === userId && brick.type === "suggestion"', '(click)'='remove(brick.id)', title='Delete suggestion')
-        i.fas.fa-trash-alt
-
-form.my-5
-  h2.subtitle Add {{userId === 'carcBWjBqlNUY9V2ekGQAZdwlTf2' ? 'feature' : 'suggestion'}}
-  .field
-    label.label Title
-    .control
-      textarea.textarea('#textarea'='')
-  .field
-    .control
-      button.button.is-primary('(click)'='add(textarea.value); textarea.value = ""') Submit
-
-
+          .media-content
+            .content
+              .line.first
+                span.tags.mb-0
+                  ng-container('*ngIf'='brick.type === "bug"')
+                    span.tag.is-danger(title='Reported bug')
+                      span.icon
+                        i.fas.fa-bug
+                  ng-container('*ngIf'='brick.type === "feature"')
+                    span.tag.is-primary(title='Approved feature')
+                      span.icon
+                        i.fas.fa-bolt
+                  ng-container('*ngIf'='brick.type === "suggestion"')
+                    span.tag.is-info(title='Suggestion')
+                      span.icon
+                        i.far.fa-lightbulb
+                  span.tag.is-info('*ngIf'='brick.createdBy === userId') My idea
+                  span.tag('*ngIf'='brick.status === "new" && (brick.type === "feature" || brick.type === "bug")') In queue
+                  span.tag('*ngIf'='brick.status === "new" && brick.type === "suggestion"', title="When idea gets more attention from users it increases it's chances to be implemented. If you need this - click on \"Like\" button.") Awaiting more likes from users
+                  span.tag.is-info('*ngIf'='brick.status === "inProgress"') In progress
+                  span.tag.is-success('*ngIf'='brick.status === "done"') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in v{{brick.releasedInVersion}}
+                .actions.ml-auto
+                  a.icon.is-small.mr-2.has-text-primary(
+                    '*ngIf'='userId === antonId || userId === brick.createdBy',
+                    title='Edit text',
+                    '(click)'='toggleEditMode(brick.id)')
+                      i.far.fa-edit
+                  a.icon.has-text-danger('*ngIf'='userId === antonId || (brick.createdBy === userId && brick.type === "suggestion")', '(click)'='remove(brick.id)', title='Delete suggestion')
+                    i.fas.fa-trash-alt
+              .line.second('*ngIf'='isInEditMode(brick.id)')
+                textarea.textarea(
+                placeholder='Suggestion text',
+                '#input'='',
+                '[value]'='brick.title')
+                .buttons.is-right.mt-1
+                  button.button.is-primary('(click)'='changeTitle(brick, input.value)', title='Save suggestion text')
+                    span.icon.is-small
+                      i.far.fa-save
+                    span Save
+                  button.button('(click)'='toggleEditMode(brick.id)', title='Cancel edit')
+                    span.icon.is-small
+                      i.fas.fa-times
+                    span Cancel
+              .line.third
+                p('*ngIf'='!isInEditMode(brick.id)') {{brick.title}}
+              .line.fourth('*ngIf'='userId === antonId')
+                .buttons.are-small.mt-2
+                  a.button('[href]'='"https://console.firebase.google.com/project/toread-today/database/firestore/data~2FroadmapBricks~2F" + brick.id', target="_blank")
+                    span.icon
+                      i.far.fa-edit
+                    span Edit in console
+                  button.button('*ngIf'='brick.type === "suggestion"', '(click)'='changeType(brick.id, "feature")')
+                    span.icon.mr-1
+                      i.fas.fa-bolt
+                    span Mark as "Feature"
+                  ng-container('*ngIf'='brick.type === "feature"')
+                    button.button('*ngIf'='brick.status === "new"', '(click)'='changeStatus(brick.id, "inProgress")')
+                      span.icon.mr-1
+                        i.fas.fa-bolt
+                      span Mark as "inProgress"
+                    button.button('*ngIf'='brick.status === "inProgress"', '(click)'='changeStatus(brick.id, "done")')
+                      span.icon.mr-1
+                        i.fas.fa-check
+                      span Mark as "done"

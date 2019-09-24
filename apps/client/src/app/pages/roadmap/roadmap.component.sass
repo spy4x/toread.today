@@ -1,3 +1,12 @@
 tt-roadmap
-  .title, form, .bricks
-    padding: 0 1rem
+  .widget.add
+    position: sticky
+    top: 2rem
+    @media (min-width: 768px) // TODO: magic numbers should be variables
+      max-width: 300px
+
+  .widget.bricks
+    .line
+      &.first
+        display: flex
+

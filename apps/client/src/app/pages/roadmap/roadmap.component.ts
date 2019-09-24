@@ -1,11 +1,18 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { catchError, filter, shareReplay, startWith, takeUntil, tap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
 import { LoggerService } from '../../services/logger.service';
-import { defaultRoadmapBrick, RoadmapBrick } from '../../interfaces/roadmapBrick.interface';
+import {
+  defaultRoadmapBrick,
+  RoadmapBrick,
+  RoadmapBrickStatus,
+  RoadmapBrickType
+} from '../../interfaces/roadmapBrick.interface';
 import { firestore } from 'firebase/app';
+import { AppVersionInfo } from '../../../appVersionInfo.interface';
+const { appData } = require('../../../../ngsw-config.json');
 
 
 const collectionPath = 'roadmapBricks';
@@ -36,7 +43,7 @@ export class RoadmapComponent implements OnDestroy {
 
   roadmapBricks$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.orderBy('startWorkingAt', 'desc'))
+      ref => ref.orderBy('score', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userIsNotAuthenticated$),
@@ -48,6 +55,9 @@ export class RoadmapComponent implements OnDestroy {
       }),
       shareReplay(1)
     );
+  bricksInEditMode: string[] = [];
+  antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
+  appVersionInfo = appData as AppVersionInfo;
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -88,11 +98,19 @@ export class RoadmapComponent implements OnDestroy {
         .update(data);
     } catch (error) {
       this.logger.error(
-        { messageForDev: 'vote() error:', messageForUser: 'Failed to vote for roadmap.', error, params: { brick, data } });
+        {
+          messageForDev: 'vote() error:',
+          messageForUser: 'Failed to vote for roadmap.',
+          error,
+          params: { brick, data }
+        });
     }
   }
 
   async remove(id: string): Promise<void> {
+    if (!confirm('Are you sure you want to completely delete this suggestion?')) {
+      return;
+    }
     try {
       await this.firestore
         .doc(`${collectionPath}/${id}`)
@@ -109,15 +127,13 @@ export class RoadmapComponent implements OnDestroy {
   }
 
   async add(title: string): Promise<void> {
-    const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
     const newBrick: RoadmapBrick = {
       ...defaultRoadmapBrick,
       title,
       createdBy: this.userId,
       createdAt: new Date(),
-      score: this.userId === antonId ? 0 : 1,
-      likedBy: this.userId === antonId ? [] : [this.userId],
-      type: this.userId === antonId ? 'feature' : 'suggestion'
+      score: this.userId === this.antonId ? 0 : 1,
+      likedBy: this.userId === this.antonId ? [] : [this.userId]
     };
     try {
       await this.firestore
@@ -127,5 +143,75 @@ export class RoadmapComponent implements OnDestroy {
       this.logger.error(
         { messageForDev: 'add() error:', messageForUser: 'Failed to add roadmap brick.', error, params: { newBrick } });
     }
+  }
+
+  async changeTitle(brick: RoadmapBrick, title: string): Promise<void> {
+    this.toggleEditMode(brick.id);
+    const data = { title };
+    try {
+      await this.firestore
+        .doc(`${collectionPath}/${brick.id}`)
+        .update(data);
+    } catch (error) {
+      this.logger.error(
+        {
+          messageForDev: 'changeTitle() error:',
+          messageForUser: 'Failed to change title of suggestion.',
+          error,
+          params: { brick, data }
+        });
+    }
+  }
+
+  async changeType(id: string, type: RoadmapBrickType): Promise<void> {
+    const data = { type };
+    try {
+      await this.firestore
+        .doc(`${collectionPath}/${id}`)
+        .update(data);
+    } catch (error) {
+      this.logger.error(
+        {
+          messageForDev: 'changeType() error:',
+          messageForUser: 'Failed to change type of roadmap brick.',
+          error,
+          params: { id, data }
+        });
+    }
+  }
+
+  async changeStatus(id: string, status: RoadmapBrickStatus): Promise<void> {
+    const data: Partial<RoadmapBrick> = { status };
+    if (status === 'inProgress' || status === 'done') {
+      data.startWorkingAt = new Date();
+    }
+    if (status === 'done') {
+      data.releasedInVersion = prompt(`Enter version name:`, this.appVersionInfo.version);
+    }
+    try {
+      await this.firestore
+        .doc(`${collectionPath}/${id}`)
+        .update(data);
+    } catch (error) {
+      this.logger.error(
+        {
+          messageForDev: 'changeStatus() error:',
+          messageForUser: 'Failed to change status of roadmap brick.',
+          error,
+          params: { id, data }
+        });
+    }
+  }
+
+  toggleEditMode(id: string): void {
+    if (!this.bricksInEditMode.includes(id)) {
+      this.bricksInEditMode = [...this.bricksInEditMode, id];
+    } else {
+      this.bricksInEditMode = this.bricksInEditMode.filter(bid => bid !== id);
+    }
+  }
+
+  isInEditMode(id: string): boolean {
+    return this.bricksInEditMode.includes(id);
   }
 }

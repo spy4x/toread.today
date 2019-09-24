@@ -35,6 +35,10 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
         span.icon.mr-1
           i.fas.fa-cloud-upload-alt
         span Fast Add & Import
+      a.navbar-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
+        span.icon.mr-1
+          i.fas.fa-road
+        span Project roadmap
 
     .navbar-end('*ngIf'='user')
       //- mobile menu
@@ -43,11 +47,6 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
           span.icon.mr-1
             i.fas.fa-cat
           span Hello, {{user.displayName || user.email}}
-
-        a.navbar-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
-          span.icon.mr-1
-            i.fas.fa-road
-          span Project roadmap
 
         a.navbar-item('(click)'='signOut.emit()')
           span.icon.mr-1
@@ -70,10 +69,6 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
                     span.icon.mr-1
                       i.fas.fa-cat
                     span Hello, {{user.displayName || user.email}}
-                  a.dropdown-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
-                    span.icon.mr-1
-                      i.fas.fa-road
-                    span Project roadmap
                   hr.dropdown-divider
                   a.dropdown-item('(click)'='signOut.emit()')
                     span.icon.mr-1
