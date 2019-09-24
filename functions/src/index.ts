@@ -156,8 +156,11 @@ export const onRoadmapBrickCreate = functions.firestore
     if (brick.createdBy === antonId) {
       return;
     }
-    await createNotification(`New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}`,
+    const notifForAnton = createNotification(`New roadmap brick has been created: ${brick.id} ${brick.title} by ${brick.createdBy}.`,
       antonId);
+    const notifForAuthor = createNotification(`Your roadmap suggestion has been registered! Thank you for your commitment. 🤟`,
+      brick.createdBy);
+    await Promise.all([notifForAnton, notifForAuthor]);
   });
 
 export const onRoadmapBrickUpdate = functions.firestore
@@ -165,17 +168,46 @@ export const onRoadmapBrickUpdate = functions.firestore
   .onUpdate(async change => {
     const before = { ...change.before.data(), id: change.before.id } as RoadmapBrick;
     const after = { ...change.after.data(), id: change.after.id } as RoadmapBrick;
-    if (after.createdBy === antonId) {
-      return;
-    }
+
+    // Like/Dislike START
     const newLikeId = after.likedBy.find(userId => before.likedBy.indexOf(userId) === -1);
     const newDislikeId = after.dislikedBy.find(userId => before.dislikedBy.indexOf(userId) === -1);
     if (newLikeId) {
-      await createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}"`, antonId);
+      const promises = [];
+      promises.push(createNotification(`User ${newLikeId} liked roadmap brick ${after.id} "${after.title}".`, antonId));
+      if (after.createdBy !== antonId) {
+        promises.push(
+          createNotification(`Yahoo! Somebody liked your roadmap suggestion "${after.title}". 👍`, after.createdBy));
+      }
+      await Promise.all(promises);
     }
     if (newDislikeId) {
-      await createNotification(`User ${newDislikeId} disliked roadmap brick ${after.id} "${after.title}"`, antonId);
+      await createNotification(`User ${newDislikeId} disliked roadmap brick ${after.id} "${after.title}".`, antonId);
     }
+    // Like/Dislike END
+
+    // Approved START
+    if (before.type === 'suggestion' && after.type === 'feature' && after.createdBy !== antonId) {
+      await createNotification(
+        `Your roadmap suggestion "${after.title}" was approved and is going to be implemented. 👍 Thanks for your help!`,
+        after.createdBy);
+    }
+    // Approved END
+
+    // inProgress START
+    if (before.status === 'new' && after.status === 'inProgress' && after.createdBy !== antonId) {
+      await createNotification(
+        `Your roadmap suggestion "${after.title}" is in work. We'll update you once it's implemented. 😊`,
+        after.createdBy);
+    }
+    // Done END
+
+    // Done START
+    if (before.status !== 'done' && after.status === 'done' && after.createdBy !== antonId) {
+      await createNotification(`Your roadmap suggestion "${after.title}" is implemented. Check it out! 😉`,
+        after.createdBy);
+    }
+    // Done END
   });
 
 export const https = httpsFunction;
