@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.20.0",
-    "description": "Links - Add \"All\" filter option"
+    "version": "1.21.0",
+    "description": "Notifications - Don't mark as read automatically. User could miss a message."
   },
   "assetGroups": [
     {

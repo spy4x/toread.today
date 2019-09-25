@@ -15,6 +15,10 @@
           span Ignore and show notifications
       ng-template('#notifications'='')
         ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
+          a.dropdown-item.mark-all-as-read('[class.is-hidden]'='!(isAnyNewNotification$ | async)', '(click)'='markNewAsRead()')
+            span.icon.mr-1
+              i.fas.fa-check
+            span Mark as read
           ng-container('*ngFor'='let notification of notifications; last as isLast')
             .dropdown-item.notif
               .indicator('[class.has-background-primary]'='notification.status === "new"')

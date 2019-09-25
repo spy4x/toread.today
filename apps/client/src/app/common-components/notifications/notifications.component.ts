@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { catchError, delay, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import { catchError, delay, first, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { Notification } from '../../interfaces/notification.interface';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LoggerService } from '../../services/logger.service';
@@ -60,10 +60,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.isAnyNewNotification$ = this.newNotifications$.pipe(
       map((notifications: Notification[]) => !!notifications.length)
     );
-    this.newNotifications$.pipe(
-      delay(5000),
-      tap((notifications: Notification[]) => notifications.forEach(n => this.markAsRead(n.id)))
-    ).subscribe();
 
     this.error$.pipe(takeUntil(this.componentDestroy$)).subscribe(error => {
       if (error) {
@@ -82,6 +78,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.componentDestroy$.complete();
   }
 
+  markNewAsRead(): void {
+    this.newNotifications$.pipe(first()).subscribe((notifications: Notification[]) =>{
+      notifications.forEach(n => this.markAsRead(n.id));
+    });
+  }
 
   async markAsRead(id: string) {
     if(this.recentlyDeletedIds.includes(id)){
