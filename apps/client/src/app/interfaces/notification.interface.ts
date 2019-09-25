@@ -1,5 +1,5 @@
 export type NotificationStatus = 'new' | 'read'
-export type NotificationType = 'info'
+export type NotificationType = 'info' | 'roadmap' | 'admin'
 
 export interface Notification {
   id?: string

@@ -3,7 +3,7 @@
     a
       span.icon.is-white.has-text-white.px-3
         i.far.fa-bell
-
+      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async)')
   .dropdown-menu(role='notifications')
     .dropdown-content
       //- Error

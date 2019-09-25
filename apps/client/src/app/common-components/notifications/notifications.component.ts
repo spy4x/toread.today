@@ -1,13 +1,14 @@
 import {
   ChangeDetectionStrategy,
-  Component, ElementRef,
+  Component,
+  ElementRef,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { catchError, delay, first, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, takeUntil } from 'rxjs/operators';
 import { Notification } from '../../interfaces/notification.interface';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LoggerService } from '../../services/logger.service';
@@ -22,7 +23,7 @@ import { Observable, of, Subject } from 'rxjs';
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
   @Input() userId: string;
-  @ViewChild('dropdown', {static: true}) dropdown: ElementRef;
+  @ViewChild('dropdown', { static: true }) dropdown: ElementRef;
   componentDestroy$ = new Subject<void>();
   error$ = this.logger.lastErrorMessage$;
   dateFormat = 'd MMM yyyy HH:mm';
@@ -42,6 +43,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       .collection<Notification>('notifications', ref =>
         ref
           .where('userId', '==', this.userId)
+          .where('type', '==', 'info')
           .orderBy('createdAt', 'desc')
           .limit(5)
       )
@@ -50,7 +52,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         takeUntil(this.componentDestroy$),
         shareReplay(1),
         catchError(error => {
-          this.logger.error({messageForDev: 'notifications$ error',messageForUser:'Failed to fetch notifications.', error});
+          this.logger.error(
+            { messageForDev: 'notifications$ error', messageForUser: 'Failed to fetch notifications.', error });
           return of([]);
         })
       );
@@ -66,8 +69,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         // make sure dropdown has class "is-active"
         const el = this.dropdown.nativeElement as HTMLElement;
         const cssClass = 'is-active';
-        if(!el.classList.contains(cssClass)) {
-          el.classList.add(cssClass)
+        if (!el.classList.contains(cssClass)) {
+          el.classList.add(cssClass);
         }
       }
     });
@@ -79,13 +82,13 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   markNewAsRead(): void {
-    this.newNotifications$.pipe(first()).subscribe((notifications: Notification[]) =>{
+    this.newNotifications$.pipe(first()).subscribe((notifications: Notification[]) => {
       notifications.forEach(n => this.markAsRead(n.id));
     });
   }
 
   async markAsRead(id: string) {
-    if(this.recentlyDeletedIds.includes(id)){
+    if (this.recentlyDeletedIds.includes(id)) {
       return;
     }
     const data: Partial<Notification> = {
@@ -96,7 +99,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         .doc('notifications/' + id)
         .update(data);
     } catch (error) {
-      this.logger.error({messageForDev: 'markAsRead() error:', messageForUser:'Failed to mark notification as read.', error, params: { id, data }});
+      this.logger.error({
+        messageForDev: 'markAsRead() error:',
+        messageForUser: 'Failed to mark notification as read.',
+        error,
+        params: { id, data }
+      });
     }
   }
 
@@ -107,7 +115,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         .doc('notifications/' + id)
         .delete();
     } catch (error) {
-      this.logger.error({messageForDev: 'delete() error:', messageForUser: 'Failed to delete notification.', error, params: { id }});
+      this.logger.error(
+        { messageForDev: 'delete() error:', messageForUser: 'Failed to delete notification.', error, params: { id } });
     }
   }
 
