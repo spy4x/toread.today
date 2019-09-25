@@ -21,11 +21,11 @@ export class FilterComponent {
     this.changed.emit({ ...this.filter, tagId: event.isSelected ? event.tagId : null });
   }
 
-  setStatus(status: ItemStatus) {
-    this.changed.emit({ ...this.filter, status: status, isFavourite: null });
+  setStatus(status: null | ItemStatus) {
+    this.changed.emit({ ...this.filter, status, isFavourite: null });
   }
 
-  isStatus(status: ItemStatus): boolean {
+  isStatus(status: null | ItemStatus): boolean {
     return this.filter.status === status;
   }
 
