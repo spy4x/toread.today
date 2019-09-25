@@ -1,18 +1,18 @@
 import { Notification } from '../interfaces/notification.interface';
 import { firestore } from '../firebase/firebase';
 
-export const createNotification = async (message: string, userId: string): Promise<void> => {
+export const createNotification = async (notification: Partial<Notification>): Promise<void> => {
+  const n: Notification = {
+    status: 'new',
+    type: notification.type || 'info',
+    text: notification.text,
+    userId: notification.userId,
+    createdAt: new Date()
+  };
   try {
-    const notification: Notification = {
-      status: 'new',
-      type: 'info',
-      text: message,
-      userId,
-      createdAt: new Date()
-    };
-    await firestore.collection('notifications').add(notification);
-    console.log(`Notification "${message}" for user "${userId}" has been created.`);
-  } catch(error) {
-    console.error(`Creating notification failed:`, error, {userId, message});
+    await firestore.collection('notifications').add(n);
+    console.log(`Notification type:"${n.type}", "${n.text}" for user "${n.userId}" has been created.`);
+  } catch (error) {
+    console.error(`Creating notification failed:`, error, { notification, n });
   }
 };

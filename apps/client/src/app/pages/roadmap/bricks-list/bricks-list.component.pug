@@ -38,7 +38,7 @@ article.media('*ngFor'='let brick of bricks')
           title='Edit text',
           '(click)'='toggleEditMode(brick.id)')
             i.far.fa-edit
-          a.icon.has-text-danger('*ngIf'='userId === antonId || (brick.createdBy === userId && brick.type === "suggestion")', '(click)'='remove.emit(brick.id)', title='Delete suggestion')
+          a.icon.has-text-danger('*ngIf'='userId === antonId || (brick.createdBy === userId && brick.type !== "features" && brick.status === "new")', '(click)'='remove.emit(brick.id)', title='Delete')
             i.fas.fa-trash-alt
       .line.second('*ngIf'='isInEditMode(brick.id)')
         textarea.textarea(

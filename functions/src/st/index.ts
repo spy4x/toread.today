@@ -137,12 +137,12 @@ export const onFileUploadFunction = functions
       const bulk: { items: ItemSkeleton[], tags: string[] } = JSON.parse(fileBuffer.toString());
       console.log('File has been read successfully', {items: bulk.items.length, tags: bulk.tags.length});
 
-      await createNotification(`Parsing file with ${bulk.items.length} items`, userId);
+      await createNotification({text:`Parsing file with ${bulk.items.length} items`, userId});
 
       // TODO: Do I still need 'async-parallel' library if this operation is sequential?
       await every(bulk.items, async (itemSkeleton: ItemSkeleton, index: number) => {
         if (index && index % 100 === 0) {
-          await createNotification(`${index} lines of ${bulk.items.length} parsed`, userId);
+          await createNotification({text:`${index} lines of ${bulk.items.length} parsed`, userId});
         }
         statistics.total++;
         if (!isUrl(itemSkeleton.url)) {
@@ -203,10 +203,10 @@ export const onFileUploadFunction = functions
       if (statistics.notValid) {
         message += `${statistics.notValid} not valid. `;
       }
-      await createNotification(message, userId);
+      await createNotification({text:message, userId});
     } catch (error) {
       console.error('onFileUploadFunction', error);
       await deleteFiles(localPathToFile, storageFile);
-      await createNotification('Parsing failed. Try again or notify developer', userId);
+      await createNotification({text:'Parsing failed. Try again or notify developer', userId});
     }
   });

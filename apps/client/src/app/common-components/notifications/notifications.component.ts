@@ -27,6 +27,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   componentDestroy$ = new Subject<void>();
   error$ = this.logger.lastErrorMessage$;
   dateFormat = 'd MMM yyyy HH:mm';
+  notificationsLimit = 5;
 
   allNotifications$: Observable<Notification[]>;
   newNotifications$: Observable<Notification[]>;
@@ -45,7 +46,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
           .where('userId', '==', this.userId)
           .where('type', '==', 'info')
           .orderBy('createdAt', 'desc')
-          .limit(5)
+          .limit(this.notificationsLimit)
       )
       .valueChanges({ idField: 'id' })
       .pipe(

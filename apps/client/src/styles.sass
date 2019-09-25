@@ -95,3 +95,28 @@ i.fas, i.far
     color: $grey-light
     text-align: center
     margin: 3rem 1rem
+
+.notification-messages
+  >.mark-all-as-read
+    font-size: $size-6
+    color: $cyan
+    display: flex
+    justify-content: center
+
+  >.notif
+    >.line
+      &.second
+        display: flex
+        align-items: center
+        > .indicator
+          width: 10px
+          height: 10px
+          flex: 0 0 10px
+          border-radius: 50%
+          margin-right: 0.5rem
+  >hr
+    margin: .5rem 0
+  >.last-items-shown
+    color: $grey
+    text-align: center
+    margin-top: .5rem

@@ -84,7 +84,7 @@ function isRoadmapBrick(doc, id) {
 }
 
 function canDeleteRoadmapBrick(doc) {
-	return isAdmin() || (isUser(doc.createdBy) && doc.type == "suggestion");
+	return isAdmin() || (isUser(doc.createdBy) && doc.type != "feature" && doc.status == "new");
 }
 
 function isAdmin() {
