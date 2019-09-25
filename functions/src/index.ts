@@ -213,5 +213,12 @@ export const onRoadmapBrickUpdate = functions.firestore
     await Promise.all(promises);
   });
 
+export const onUserSignUp = functions.auth
+  .user()
+  .onCreate(async (userRecord) => {
+    await createNotification(`User "${userRecord.displayName}" with email "${userRecord.email}" has signed up`, antonId);
+  });
+
+
 export const https = httpsFunction;
 export const onFileUpload = onFileUploadFunction;
