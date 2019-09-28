@@ -69,9 +69,9 @@ article.media('*ngFor'='let brick of bricks')
           ng-container('*ngIf'='brick.type === "feature" || brick.type === "bug"')
             button.button('*ngIf'='brick.status === "new"', '(click)'='changeStatus.emit({brick: brick, status:"inProgress"})')
               span.icon.mr-1
-                i.fas.fa-bolt
-              span Mark as "inProgress"
+                i.fas.fa-play
+              span Start working
             button.button('*ngIf'='brick.status === "inProgress"', '(click)'='changeStatus.emit({brick: brick, status:"done"})')
               span.icon.mr-1
                 i.fas.fa-check
-              span Mark as "done"
+              span Complete
