@@ -10,68 +10,66 @@
     .dropdown.is-hoverable.is-right.button
       .dropdown-trigger
         a.color-circle('[ngStyle]'='{"background-color": newTagColor}')
-      .dropdown-menu.dropdown-menu--w-none(role='menu')
+      .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
         .dropdown-content
           a.dropdown-item(
               '*ngFor'='let color of colors',
               '(click)'='newTagColor = color',)
-            span.icon.mr-2('[ngStyle]'='{"color": color || "#00d1b2"}')
+            span.icon.mr-1([style.color]="color")
               i.fas.fa-check('[ngStyle]'='{"visibility": newTagColor === color ? "visible" : "hidden"}')
-            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{newTagTitle || 'New tag'}}
+            span([style.color]="color") {{newTagTitle || 'New tag'}}
 
   .control
-    button.button.has-text-grey('(click)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""', title='Create tag')
+    button.button.is-primary('(click)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""', title='Create tag')
       span.icon
         i.fas.fa-plus
 
 
 
-nav.panel
 
-  .tag-item.panel-block('*ngFor'='let tag of tags')
 
-    .tag-item--title
+.tag-item('*ngFor'='let tag of tags')
 
-      span.tag(
-          '*ngIf'='!isInEditMode(tag.id)',
-          '[ngStyle]'='{"background-color": tag.color || "#209cee", "color": "white"}') {{tag.title}}
-      .field.has-addons('*ngIf'='isInEditMode(tag.id)')
-        p.control
-          input.input(
-          type='text',
-          placeholder='Tag title',
-          '#input'='',
-          '[value]'='tag.title'
-          '(keydown.enter)'='setTitle(tag, input.value)')
-        p.control
-          button.button.is-primary('(click)'='setTitle(tag, input.value)', title='Save tag title')
-            span.icon.is-small
-              i.far.fa-save
-        p.control
-          button.button('(click)'='toggleEditMode(tag)', title='Cancel edit')
-            span.icon.is-small
-              i.fas.fa-times
+  .tag-item--title
+    span('*ngIf'='!isInEditMode(tag.id)', [style.color]="tag.color") {{tag.title}}
+    .field.has-addons('*ngIf'='isInEditMode(tag.id)')
+      p.control
+        input.input(
+        type='text',
+        placeholder='Tag title',
+        '#input'='',
+        '[value]'='tag.title'
+        '(keydown.enter)'='setTitle(tag, input.value)')
+      p.control
+        button.button.is-primary('(click)'='setTitle(tag, input.value)', title='Save tag title')
+          span.icon.is-small
+            i.far.fa-save
+      p.control
+        button.button('(click)'='toggleEditMode(tag)', title='Cancel edit')
+          span.icon.is-small
+            i.fas.fa-times
 
-    .dropdown.is-hoverable.is-right.ml-3
-      .dropdown-trigger
-        a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
-      .dropdown-menu.dropdown-menu--w-none(role='menu')
-        .dropdown-content
-          a.dropdown-item(
-              '*ngFor'='let color of colors',
-              '(click)'='setColor(tag, color)',)
-            span.icon.mr-2('[ngStyle]'='{"color": tag.color || "#00d1b2"}')
-              i.fas.fa-check('[ngStyle]'='{"visibility": isColor(tag, color) ? "visible" : "hidden"}')
-            span.tag('[ngStyle]'='{"background-color": color, "color": "white"}') {{ tag.title }}
-
+  .tag-item--actions
     a.icon.is-small.ml-3.has-text-primary(
         '*ngIf'='!isInEditMode(tag.id)',
         title='Edit tag',
         '(click)'='toggleEditMode(tag)')
       i.far.fa-edit
 
+    .dropdown.is-hoverable.is-right.ml-3
+      .dropdown-trigger
+        a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
+      .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+        .dropdown-content
+          a.dropdown-item(
+              '*ngFor'='let color of colors',
+              '(click)'='setColor(tag, color)',)
+            span.icon.mr-1([style.color]="tag.color")
+              i.fas.fa-check([style.visibility]="isColor(tag, color) ? 'visible' : 'hidden'")
+            span([style.color]="color") {{ tag.title }}
+
     a.icon.is-small.ml-3.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
       i.far.fa-trash-alt
 
-  .buttons.is-centered.my-3('*ngIf'='!tags?.length')
-    span.button.is-static No tags yet.
+.buttons.is-centered.my-3('*ngIf'='!tags?.length')
+  span.button.is-static No tags yet.

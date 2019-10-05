@@ -1,6 +1,7 @@
 tt-tags-editor
   .tag-item    
-    padding: 12px
+    padding: .5rem 12px
+    display: flex
     &:nth-child(even)
       background: hsl(0, 0%, 98%)
       border-radius: 4px
@@ -10,3 +11,8 @@ tt-tags-editor
       align-items: center
       .field
         margin-bottom: 0 !important
+    &--actions
+      display: flex
+      align-items: center
+      > *
+        margin-left: .75rem

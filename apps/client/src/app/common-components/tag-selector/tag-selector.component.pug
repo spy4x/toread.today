@@ -6,7 +6,7 @@
         span.icon
           i.fas.fa-angle-down(aria-hidden='true')
     ng-content
-  .dropdown-menu.dropdown-menu--w-none(role='menu')
+  .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
     .dropdown-content
       a.dropdown-item.has-text-grey-dark('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
         span.icon.mr-2
@@ -16,9 +16,9 @@
       a.dropdown-item(
           '*ngFor'='let tag of tags' href='javascript:;',
           '(click)'='toggleTag(tag)')
-        span.icon.mr-2('[ngStyle]'='{"color": tag.color || "#00d1b2"}')
+        span.icon.mr-1([style.color]="tag.color")
           i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag) ? "visible" : "hidden"}')
-        span.tag('[ngStyle]'='{"background-color": tag.color || "#00d1b2", "color": "white"}') {{ tag.title }}
+        span([style.color]="tag.color") {{ tag.title }}
 
       .dropdown-item('*ngIf'='!tags?.length')
         span(style='min-width: 85px') No tags yet.&nbsp;
