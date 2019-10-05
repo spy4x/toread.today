@@ -6,6 +6,7 @@ import { admin, firestore, functions } from './+utils/firebase/firebase';
 import { isUrl } from './+utils/common/isURL';
 import { RoadmapBrick } from './+utils/interfaces/roadmapBrick.interface';
 import { createNotification } from './+utils/common/createNotification';
+import { BatchSwarm } from './+utils/firebase/batchSwarm';
 
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
@@ -114,7 +115,6 @@ const getTagRemovedData = (tagId: string): any => {
     tags: admin.firestore.FieldValue.arrayRemove(tagId)
   };
 };
-const MAX_BATCH_OPERATIONS = 500;
 
 export const onTagDelete = functions.firestore
   .document(`tags/{id}`)
@@ -128,20 +128,14 @@ export const onTagDelete = functions.firestore
         .get();
       console.log('onTagDelete - Found items:', items.docs.length);
 
-      let batchIndex = 0;
-      const batches = [];
-      batches[batchIndex] = firestore.batch();
+      const batch = new BatchSwarm();
       items.docs.forEach((itemDoc, index) => {
-        const indexForCreatingNewBatch = MAX_BATCH_OPERATIONS * (batchIndex + 1);
-        if (index === indexForCreatingNewBatch) {
-          ++batchIndex;
-          batches[batchIndex] = firestore.batch();
-        }
         const itemRef = firestore.doc('items/' + itemDoc.id);
         const data = getTagRemovedData(tag.id);
-        batches[batchIndex].update(itemRef, data);
+        batch.update(itemRef, data);
       });
-      await Promise.all(batches.map(b => b.commit()));
+      await batch.commit();
+
       console.log('onTagDelete - Success');
     } catch (error) {
       console.error('onTagDelete', tag, error);
