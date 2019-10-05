@@ -8,6 +8,6 @@ export interface Filter {
 
 export const defaultFilter: Filter = {
   tagId: null,
-  status: 'opened',
+  status: 'new',
   isFavourite: null,
 }

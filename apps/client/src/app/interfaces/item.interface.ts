@@ -8,6 +8,7 @@ export interface ItemSkeleton {
   url: string
   tags: string[]
   title: null | string
+  rating: ItemRating
 }
 
 export interface Item extends ItemSkeleton{
@@ -15,7 +16,6 @@ export interface Item extends ItemSkeleton{
   createdBy: string
   createdAt: Date
   priority: ItemPriority
-  rating: ItemRating
   comment: string
   withComment: boolean
   isFavourite: boolean

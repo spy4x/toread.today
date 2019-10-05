@@ -16,6 +16,7 @@ export class TagSelectorComponent {
   @Input() isTitleStatic: boolean = false;
   @Input() isTitleCustom: boolean = false;
   @Input() isAllTagsVisible: boolean = true;
+  @Input() isDropdownRight: boolean = true;
   @Output() toggle = new EventEmitter<ToggleTagEvent>();
 
   isSelected(tag: Tag): boolean {

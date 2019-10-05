@@ -1,15 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  catchError,
-  filter,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  takeUntil,
-  tap,
-  withLatestFrom
-} from 'rxjs/operators';
+import { catchError, filter, map, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Item } from '../../interfaces/item.interface';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -23,7 +13,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
 import { defaultPagination, Pagination } from './pagination.interface';
 
-const LOAD_ITEMS_LIMIT = 10;
+const LOAD_ITEMS_LIMIT = 20;
 
 @Component({
   selector: 'tt-items',
@@ -38,10 +28,8 @@ export class ItemsComponent implements OnInit, OnDestroy {
   userId: null | string;
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
-    startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
-      localStorage.setItem('tt-user', JSON.stringify(user));
       this.logger.setUser(user);
     }),
     catchError(error => {
@@ -86,9 +74,13 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.pipe<Params>(takeUntil(this.componentDestroy$)).subscribe(params => {
-      const tagId = params[ROUTER_CONSTANTS.items.params.filterByTag];
+      const tagId = params[ROUTER_CONSTANTS.items.params.tagId];
+      const filter: Partial<Filter> = {};
       if (tagId) {
-        this.setFilter({ tagId });
+        filter.tagId = tagId;
+      }
+      if (JSON.stringify(filter) !== JSON.stringify({})) {
+        this.setFilter(filter);
       }
     });
 

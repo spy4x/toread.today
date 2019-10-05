@@ -67,6 +67,10 @@ export class ItemsService {
                 if (results.length) {
                   return results[0];
                 }
+                if(item.rating !== 0){
+                  item.finishedAt = new Date();
+                  item.status = 'finished';
+                }
                 try {
                   await this.firestore
                     .collection('items')

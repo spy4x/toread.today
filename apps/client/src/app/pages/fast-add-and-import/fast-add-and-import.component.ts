@@ -29,10 +29,8 @@ export class FastAddAndImportComponent implements OnDestroy {
   youTubeCode = this.getYouTubeCode();
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
-    startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
-      localStorage.setItem('tt-user', JSON.stringify(user));
       this.logger.setUser(user);
     }),
     catchError(error => {
@@ -104,7 +102,8 @@ export class FastAddAndImportComponent implements OnDestroy {
     const items: ItemSkeleton[] = bookmarks.map(b => ({
       title: b.title,
       tags: b.tags,
-      url: b.url
+      url: b.url,
+      rating: 0,
     }));
     this.importState$.next('sending');
     this.itemsService.bulkCreate(items, tags).pipe(

@@ -15,7 +15,7 @@
           '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
           '(delete)'='itemsService.remove($event)',
           '(retryURLParsing)'='itemsService.retryURLParsing($event)',
-          '(tagClick)'='showItemsWithTag($event)',
+          '(tagClick)'='showItemsWithFilter({tagId:$event})',
           '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
           '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
   .info('*ngIf'='!(openedItems$ | async)?.length') You don't have unfinished items. Good job! 👍
@@ -38,7 +38,7 @@
           '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
           '(delete)'='itemsService.remove($event)',
           '(retryURLParsing)'='itemsService.retryURLParsing($event)',
-          '(tagClick)'='showItemsWithTag($event)',
+          '(tagClick)'='showItemsWithFilter({tagId:$event})',
           '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
           '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
   .info('*ngIf'='!(randomItems$ | async)?.length')

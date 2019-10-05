@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.22.0",
-    "description": "Show notifications related to roadmap only on roadmap page as \"Activity\""
+    "version": "1.22.1",
+    "description": "UI improvements for list of Links"
   },
   "assetGroups": [
     {

@@ -13,7 +13,6 @@ import { TagsEditorComponent } from './pages/tags/editor/tags-editor.component';
 import { TagSelectorComponent } from './common-components/tag-selector/tag-selector.component';
 import { ItemsAddComponent } from './common-components/items-add/items-add.component';
 import { TagTitleByIdPipe } from './common-components/tag-title-by-id/tag-title-by-id.pipe';
-import { GetIconByItemTypePipe } from './common-components/get-icon-by-item-type/get-icon-by-item-type.pipe';
 import { DropdownDirective } from './common-components/dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './services/connection-status/connection-status.service';
@@ -34,6 +33,7 @@ import { ROUTER_CONSTANTS } from './helpers/router.constants';
 import { RoadmapComponent } from './pages/roadmap/roadmap.component';
 import { BricksListComponent } from './pages/roadmap/bricks-list/bricks-list.component';
 import { RoadmapActivityComponent } from './pages/roadmap/activity/activity.component';
+import { UIService } from './services/ui.service';
 
 const routes: Routes = [
   {
@@ -72,7 +72,6 @@ const routes: Routes = [
     TagSelectorComponent,
     ItemsAddComponent,
     TagTitleByIdPipe,
-    GetIconByItemTypePipe,
     DropdownDirective,
     ItemsComponent,
     TagsComponent,
@@ -100,6 +99,7 @@ const routes: Routes = [
     ConnectionStatusService,
     LoggerService,
     ItemsService,
+    UIService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

@@ -1,15 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import {
-  catchError,
-  filter,
-  first,
-  shareReplay,
-  startWith,
-  switchMap,
-  takeUntil,
-  tap,
-  throttleTime
-} from 'rxjs/operators';
+import { catchError, debounceTime, filter, first, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -17,6 +7,7 @@ import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { ItemsService } from '../../services/items/items.service';
 import { Router } from '@angular/router';
+import { Filter } from '../items/filter/filter.interface';
 
 
 @Component({
@@ -32,10 +23,8 @@ export class DashboardComponent implements OnDestroy {
   userId: null | string;
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
-    startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
-      localStorage.setItem('tt-user', JSON.stringify(user));
       this.logger.setUser(user);
     }),
     catchError(error => {
@@ -76,7 +65,8 @@ export class DashboardComponent implements OnDestroy {
             'status', '==', 'new').limit(3))
         .valueChanges({ idField: 'id' })
         .pipe(
-          throttleTime(1000), // fixes bug related to that "where('__name__', '>=', v.randomId)" returns 1-2 emits instead of just 1
+          debounceTime(500), // fixes bug related to that "where('__name__', '>=', v.randomId)" returns 1-2 emits
+          // instead of just 1
           takeUntil(this.userIsNotAuthenticated$),
           takeUntil(this.componentDestroy$)
         )),
@@ -121,7 +111,7 @@ export class DashboardComponent implements OnDestroy {
     this.componentDestroy$.complete();
   }
 
-  showItemsWithTag(id: string): void {
-    this.router.navigate([`/items`], {queryParams: {filterByTag:id}})
+  showItemsWithFilter(filter: Partial<Filter>): void {
+    this.router.navigate([`/items`], { queryParams: { ...filter } });
   }
 }

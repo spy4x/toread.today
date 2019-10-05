@@ -8,7 +8,7 @@
       input.input(
           placeholder='Enter URL',
           '[(ngModel)]'='inputValue',
-          '(keydown.enter)'='addItem()',)
+          '(keydown.enter)'='addItem(0)',)
 
     .control
       tt-tag-selector(
@@ -18,9 +18,26 @@
           '[isTitleCustom]'='true',
           '[isAllTagsVisible]'='false',)
         a.button.has-text-info
-          i.fas.fa-hashtag(aria-hidden='true')
+          span.icon
+            i.fas.fa-hashtag(aria-hidden='true')
 
     .control
-      button.button.has-text-grey('(click)'='addItem()', title='Add')
+      button.button--add-as-finished.button.dropdown.is-hoverable.is-right.button--add-as-finished
+        .dropdown-trigger
+          span.icon.has-text-grey-light
+            i.fas.fa-caret-down
+        .dropdown-menu.dropdown-menu--w-none(role='menu')
+          .dropdown-content
+            a.dropdown-item((click)="addItem(1)")
+              span.icon.has-text-success
+                i.far.fa-thumbs-up
+              span Add as finished & useful
+            a.dropdown-item((click)="addItem(-1)")
+              span.icon.has-text-danger
+                i.far.fa-thumbs-down
+              span Add as finished & useless
+
+    .control
+      button.button.is-primary('(click)'='addItem(0)', title='Add')
         span.icon
           i.fas.fa-plus

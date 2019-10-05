@@ -5,7 +5,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
 
-    tt-notifications.navbar-item.ml-auto('*ngIf'='isMobile$ | async', '[userId]'='user.uid')
+    tt-notifications.navbar-item.ml-auto('*ngIf'='uiService.isMobile$ | async', '[userId]'='user.uid')
 
     a.navbar-burger.burger.is-marginless(
         role='button',
@@ -56,7 +56,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
       ng-template('#desktopMenu'='')
         .navbar-item
           .navbar-item
-            tt-notifications('*ngIf'='!(isMobile$ | async)', '[userId]'='user.uid')
+            tt-notifications('*ngIf'='!(uiService.isMobile$ | async)', '[userId]'='user.uid')
           .navbar-item
             .dropdown.is-hoverable.is-right
               .dropdown-trigger

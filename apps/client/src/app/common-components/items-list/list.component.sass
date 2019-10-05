@@ -1,4 +1,16 @@
 tt-list
+  display: block
+  position: relative
+  min-height: 100px
+  .loading-indicator
+    z-index: 1
+    position: absolute
+    right: 0
+    width: 36px
+    border: none
+    background: none
+    &--visible
+      transform: translateY(70px)
   .item
     padding: 12px
     &:nth-child(even)
@@ -6,29 +18,29 @@ tt-list
       border-radius: 4px
 
     .line
-      &.first
-        margin-bottom: 0
-        > .column
-          padding-bottom: 0
-          &.actions
-            > *
-              margin-left: .75rem
       &.second
         display: flex
         flex-wrap: wrap
         align-items: center
-        > *
-          margin-right: .5rem
-          margin-top: .3rem // margin from ".line.first" and for case where many tags goes multiple lines
+
         .bigger-margin
           margin-left: .25rem
           margin-right: .75rem
-        .button.finish
-          font-size: .68rem
         .action
           color: #b5b5b5
-          &:hover
-            opacity: .6
+          margin-right: .5rem
+          margin-top: .3rem // margin from ".line.first" and for case where many tags goes multiple lines
+        .tiny-tag
+          margin-top: 0.3rem
+          &:after
+            content: ','
+          &:last-of-type:after
+            content: ''
+          + .tiny-tag
+            margin-left: 0.25rem
+        .actions
+          > *
+            margin-left: .75rem
       &.third
         margin-top: .3rem
         .buttons

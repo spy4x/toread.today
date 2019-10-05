@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { Item, ItemRating } from '../../interfaces/item.interface';
 import { Tag } from '../../interfaces/tag.interface';
 import { Pagination } from '../../pages/items/pagination.interface';
-
+import { UIService } from '../../services/ui.service';
 
 export interface ToggleTagEvent {
   tagId: string
@@ -53,6 +53,8 @@ export class ListComponent {
   @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
   openedComments: {[id: string]: boolean} = {};
 
+  constructor(public uiService: UIService){}
+
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
   }
@@ -66,8 +68,8 @@ export class ListComponent {
     this.toggleFavourite.emit(event);
   }
 
-  setRating(item: Item, rating: ItemRating): void {
-    this.changeRating.emit({ id: item.id, rating });
+  setRating(id: string, rating: ItemRating): void {
+    this.changeRating.emit({ id, rating });
   }
 
   read(item: Item): void {
@@ -84,5 +86,10 @@ export class ListComponent {
 
   toggleComment(id: string, show?: boolean): void {
     this.openedComments[id] = typeof show === 'undefined' ? !this.openedComments[id] : show;
+  }
+
+  finishReadingHandler(id: string, rating: ItemRating): void {
+    this.setRating(id, rating);
+    this.finishReading.emit(id);
   }
 }

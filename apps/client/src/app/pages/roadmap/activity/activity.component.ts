@@ -22,10 +22,8 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
   userId: null | string;
   user$ = this.auth.authState.pipe(
     takeUntil(this.componentDestroy$),
-    startWith(JSON.parse(localStorage.getItem('tt-user'))),
     tap(user => {
       this.userId = user ? user.uid : null;
-      localStorage.setItem('tt-user', JSON.stringify(user));
       this.logger.setUser(user);
     }),
     catchError(error => {

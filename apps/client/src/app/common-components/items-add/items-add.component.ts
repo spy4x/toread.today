@@ -4,10 +4,12 @@ import { ToggleTagEvent } from '../items-list/list.component';
 import { isURL } from '../../helpers/isURL.helper';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { ItemRating } from '../../interfaces/item.interface';
 
 export interface ItemAddEvent {
-  url: string,
+  url: string
   tags: string[]
+  rating: ItemRating
 }
 
 @Component({
@@ -24,23 +26,27 @@ export class ItemsAddComponent {
   inputTags: string[] = [];
   errors: string[] = [];
 
-  constructor(private route: ActivatedRoute){
+  constructor(private route: ActivatedRoute) {
     this.route.queryParams.pipe(first()).subscribe(params => {
       const url = params['url'];
-      if(url){
+      if (url) {
         this.inputValue = url;
       }
-    })
+    });
   }
 
-  addItem(): void {
-    if(!isURL(this.inputValue)) {
+  addItem(rating: number): void {
+    if (!this.inputValue) {
+      return;
+    }
+    if (!isURL(this.inputValue)) {
       this.errors = [...this.errors, `${this.inputValue} is not a valid URL`];
       return;
     }
     const item: ItemAddEvent = {
       url: this.inputValue,
-      tags: this.inputTags
+      tags: this.inputTags,
+      rating: rating as ItemRating || 0
     };
     this.add.emit(item);
     this.inputValue = '';
