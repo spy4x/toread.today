@@ -1,6 +1,6 @@
 .loading-indicator.button.is-loading([class.is-hidden]="!pagination || !pagination.isLoading || !items || !items.length")
 
-.item('*ngFor'='let item of items')
+.item('*ngFor'='let item of items; trackBy: trackByFn()')
   .line.first
     a([href]='item.url',
       target='_blank',

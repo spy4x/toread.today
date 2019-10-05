@@ -61,8 +61,11 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
   }
 
   onWindowClick(event: MouseEvent): void {
-    const isClosestToTrigger = this.isClosest(event.target as HTMLElement, this.triggerEl);
-    if (!isClosestToTrigger && this.isActive) {
+    if(!this.isActive){
+      return;
+    }
+    const isClosestToTrigger = this.isClosest(event.target as HTMLElement, this.dropdownEl);
+    if (!isClosestToTrigger) {
       this.triggerIsActive();
     }
   }

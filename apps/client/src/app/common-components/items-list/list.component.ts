@@ -3,6 +3,7 @@ import { Item, ItemRating } from '../../interfaces/item.interface';
 import { Tag } from '../../interfaces/tag.interface';
 import { Pagination } from '../../pages/items/pagination.interface';
 import { UIService } from '../../services/ui.service';
+import { trackByFn } from '../../helpers/trackBy.helper';
 
 export interface ToggleTagEvent {
   tagId: string
@@ -51,9 +52,10 @@ export class ListComponent {
   @Output() tagClick = new EventEmitter<string>();
   @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
   @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
-  openedComments: {[id: string]: boolean} = {};
+  openedComments: { [id: string]: boolean } = {};
+  trackByFn = trackByFn;
 
-  constructor(public uiService: UIService){}
+  constructor(public uiService: UIService) {}
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
@@ -80,7 +82,7 @@ export class ListComponent {
   }
 
   setComment(id: string, comment: string): void {
-    this.changeComment.emit({id, comment});
+    this.changeComment.emit({ id, comment });
     this.toggleComment(id, false);
   }
 
