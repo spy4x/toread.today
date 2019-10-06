@@ -45,7 +45,6 @@ export class BricksListComponent {
   isInEditMode(id: string): boolean {
     return this.bricksInEditMode.includes(id);
   }
-  // @Input() pagination: Pagination;
   @Output() vote = new EventEmitter<RoadmapBrickVoteEvent>();
   @Output() changeTitle = new EventEmitter<RoadmapBrickChangeTitleEvent>();
   @Output() changeType = new EventEmitter<RoadmapBrickChangeTypeEvent>();
@@ -57,49 +56,4 @@ export class BricksListComponent {
     this.toggleEditMode(brick.id);
     this.changeTitle.emit({brick, title});
   }
-  // @Output() finishReading = new EventEmitter<string>();
-  // @Output() undoReading = new EventEmitter<string>();
-  // @Output() delete = new EventEmitter<string>();
-  // @Output() retryURLParsing = new EventEmitter<string>();
-  // @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
-  // @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
-  // @Output() loadPrev = new EventEmitter<void>();
-  // @Output() loadNext = new EventEmitter<void>();
-  // @Output() tagClick = new EventEmitter<string>();
-  // @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
-  // @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
-  // openedComments: {[id: string]: boolean} = {};
-
-  // toggleTagHandler(event: ToggleTagEvent, item: Item) {
-  //   this.toggleTag.emit({ ...event, itemId: item.id });
-  // }
-  //
-  // isZeroItems(): boolean {
-  //   return this.bricks && !this.bricks.length;
-  // }
-  //
-  // toggleFavouriteHandler(item: Item): void {
-  //   const event: ToggleItemFavouriteEvent = { id: item.id, isFavourite: !item.isFavourite };
-  //   this.toggleFavourite.emit(event);
-  // }
-  //
-  // setRating(item: Item, rating: ItemRating): void {
-  //   this.changeRating.emit({ id: item.id, rating });
-  // }
-  //
-  // read(item: Item): void {
-  //   if (item.status !== 'new') {
-  //     return;
-  //   }
-  //   this.startReading.emit(item.id);
-  // }
-  //
-  // setComment(id: string, comment: string): void {
-  //   this.changeComment.emit({id, comment});
-  //   this.toggleComment(id, false);
-  // }
-  //
-  // toggleComment(id: string, show?: boolean): void {
-  //   this.openedComments[id] = typeof show === 'undefined' ? !this.openedComments[id] : show;
-  // }
 }

@@ -102,29 +102,43 @@ export class RoadmapComponent implements OnDestroy {
     this.componentDestroy$.complete();
   }
 
-  async vote({brick, rate}:{brick: RoadmapBrick, rate: -1 | 1}): Promise<void> {
+  async vote({ brick, rate }: { brick: RoadmapBrick, rate: -1 | 1 }): Promise<void> {
+    let scoreDiff: number = rate;
+    let likedBy: firestore.FieldValue;
+    let dislikedBy: firestore.FieldValue;
     const add = firestore.FieldValue.arrayUnion(this.userId);
     const remove = firestore.FieldValue.arrayRemove(this.userId);
-    let scoreDiff: number = rate;
     if (rate > 0) {
       if (brick.likedBy.includes(this.userId)) {
-        return;
-      }
-      if (brick.dislikedBy.includes(this.userId)) {
-        scoreDiff = 2;
+        // double click on already voted button means - remove my vote
+        scoreDiff = -1;
+        likedBy = remove;
+        dislikedBy = remove;
+      } else {
+        likedBy = add;
+        dislikedBy = remove;
+        if (brick.dislikedBy.includes(this.userId)) {
+          scoreDiff = 2;
+        }
       }
     } else {
-      if (brick.likedBy.includes(this.userId)) {
-        scoreDiff = -2;
-      }
       if (brick.dislikedBy.includes(this.userId)) {
-        return;
+        // double click on already voted button means - remove my vote
+        scoreDiff = 1;
+        likedBy = remove;
+        dislikedBy = remove;
+      }else{
+        likedBy = remove;
+        dislikedBy = add;
+        if (brick.likedBy.includes(this.userId)) {
+          scoreDiff = -2;
+        }
       }
     }
     const data = {
       score: firestore.FieldValue.increment(scoreDiff),
-      likedBy: rate > 0 ? add : remove,
-      dislikedBy: rate > 0 ? remove : add
+      likedBy,
+      dislikedBy
     };
     try {
       await this.firestore
