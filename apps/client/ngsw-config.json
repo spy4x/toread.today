@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.3",
-    "description": "Roadmap bricks - Split view into new/in progress/done and simplify UI"
+    "version": "1.24.4",
+    "description": "Roadmap - Improve UI a bit"
   },
   "assetGroups": [
     {

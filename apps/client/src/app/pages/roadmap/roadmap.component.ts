@@ -243,6 +243,9 @@ export class RoadmapComponent implements OnDestroy {
     if (status === 'done') {
       data.releasedAt = new Date();
       data.releasedInVersion = prompt(`Enter version name:`, this.appVersionInfo.version);
+      if (!data.releasedInVersion) {
+        return; // if user clicked "Cancel" in popup
+      }
     }
     try {
       await this.firestore

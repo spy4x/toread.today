@@ -1,18 +1,23 @@
 .brick('*ngFor'='let brick of bricks')
 
-  .line.first
-    ng-container(*ngIf="brick.type === 'bug'")
-      span.tag.is-danger(title="Reported bug")
-        span.icon
-          i.fas.fa-bug
-    ng-container(*ngIf="brick.type === 'feature'")
-      span.tag.is-primary(title="Approved feature")
-        span.icon
-          i.fas.fa-bolt
-    ng-container(*ngIf="brick.type === 'suggestion'")
-      span.tag.is-info(title="Suggestion")
-        span.icon
-          i.far.fa-lightbulb
+  .line.text
+    p(*ngIf='!isInEditMode(brick.id)') {{brick.title}}
+    span.tag(*ngIf='brick.status === "done"') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in v{{brick.releasedInVersion}}
+  .line.editor(*ngIf='isInEditMode(brick.id)')
+    textarea.textarea(
+    placeholder='Suggestion text',
+    '#input'='',
+    '[value]'='brick.title')
+    .buttons.is-right.mt-2
+      button.button('(click)'='toggleEditMode(brick.id)', title='Cancel edit')
+        span.icon.is-small
+          i.fas.fa-times
+        span Cancel
+      button.button.is-primary.mr-0('(click)'='changeTitleHandler(brick, input.value)', title='Save suggestion text')
+        span.icon.is-small
+          i.far.fa-save
+        span Save
+  .line.actions
     button.button.is-small(type="button",
                                     (click)="vote.emit({brick: brick, rate: 1})",
                                     [class.has-text-success]="brick.likedBy.includes(userId)",
@@ -21,6 +26,7 @@
       span {{brick.likedBy.length}}
       span.icon.is-small
         i.far.fa-thumbs-up
+
     button.button.is-small(type="button",
                                     (click)="vote.emit({brick: brick, rate: -1})",
                                     [class.has-text-danger]="brick.dislikedBy.includes(userId)",
@@ -29,7 +35,18 @@
       span {{brick.dislikedBy.length}}
       span.icon.is-small
         i.far.fa-thumbs-down
-    span.tag.is-info(*ngIf="brick.createdBy === userId") My idea
+
+    ng-container(*ngIf="brick.type === 'bug'")
+      span.icon.has-text-danger(title="Reported bug")
+        i.fas.fa-bug
+    ng-container(*ngIf="brick.type === 'feature'")
+      span.icon.has-text-primary(title="Approved feature")
+        i.fas.fa-bolt
+    ng-container(*ngIf="brick.type === 'suggestion'")
+      span.icon.has-text-info(title="Suggestion")
+        i.far.fa-lightbulb
+
+    span.is-size-7(*ngIf="brick.createdBy === userId") My idea
 
     .dropdown.is-hoverable.is-right.ml-auto.mr-0
       .dropdown-trigger
@@ -52,6 +69,10 @@
               span.icon.mr-1.has-text-info
                 i.far.fa-edit
               span Edit in console
+            a.dropdown-item(*ngIf='brick.type === "feature"', '(click)'='changeType.emit({brick: brick, type: "suggestion"})')
+              span.icon.mr-1.has-text-warning
+                i.far.fa-lightbulb
+              span Mark as "Suggestion"
             a.dropdown-item(*ngIf='brick.type === "suggestion"', '(click)'='changeType.emit({brick: brick, type: "feature"})')
               span.icon.mr-1.has-text-primary
                 i.fas.fa-bolt
@@ -73,21 +94,4 @@
                 span.icon.mr-1.has-text-success
                   i.fas.fa-check
                 span Complete
-  .line.second(*ngIf='isInEditMode(brick.id)')
-    textarea.textarea(
-    placeholder='Suggestion text',
-    '#input'='',
-    '[value]'='brick.title')
-    .buttons.is-right.mt-2
-      button.button.is-primary('(click)'='changeTitleHandler(brick, input.value)', title='Save suggestion text')
-        span.icon.is-small
-          i.far.fa-save
-        span Save
-      button.button.mr-0('(click)'='toggleEditMode(brick.id)', title='Cancel edit')
-        span.icon.is-small
-          i.fas.fa-times
-        span Cancel
-  .line.third
-    p(*ngIf='!isInEditMode(brick.id)') {{brick.title}}
-    span.tag(*ngIf='brick.status === "done"') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in v{{brick.releasedInVersion}}
 
