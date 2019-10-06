@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.2",
-    "description": "Roadmap like/dislike - click on same button now removes your previous vote"
+    "version": "1.24.3",
+    "description": "Roadmap bricks - Split view into new/in progress/done and simplify UI"
   },
   "assetGroups": [
     {

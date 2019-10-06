@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, shareReplay, startWith, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
@@ -7,7 +7,6 @@ import { LoggerService } from '../../services/logger.service';
 import {
   defaultRoadmapBrick,
   RoadmapBrick,
-  RoadmapBrickStatus,
   RoadmapBrickType
 } from '../../interfaces/roadmapBrick.interface';
 import { firestore } from 'firebase/app';
@@ -44,44 +43,44 @@ export class RoadmapComponent implements OnDestroy {
     }));
   userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
 
-  features$: Observable<RoadmapBrick[]> = this.firestore
+  bricksNew$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('type','==','feature').orderBy('score', 'desc'))
+      ref => ref.where('status','==','new').orderBy('type').orderBy('score', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userIsNotAuthenticated$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
-          { messageForDev: 'features$ error', messageForUser: 'Failed to fetch features.', error });
+          { messageForDev: 'features$ error', messageForUser: 'Failed to fetch new roadmap bricks.', error });
         return of([]);
       }),
       shareReplay(1)
     );
-  suggestions$: Observable<RoadmapBrick[]> = this.firestore
+  bricksInProgress$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('type','==','suggestion').orderBy('score', 'desc'))
+      ref => ref.where('status','==','inProgress').orderBy('startWorkingAt', 'asc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userIsNotAuthenticated$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
-          { messageForDev: 'suggestions$ error', messageForUser: 'Failed to fetch suggestions.', error });
+          { messageForDev: 'suggestions$ error', messageForUser: 'Failed to fetch roadmap bricks in progress.', error });
         return of([]);
       }),
       shareReplay(1)
     );
-  bugs$: Observable<RoadmapBrick[]> = this.firestore
+  bricksDone$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('type','==','bug').orderBy('score', 'desc'))
+      ref => ref.where('status','==','done').orderBy('releasedAt', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userIsNotAuthenticated$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
-          { messageForDev: 'bugs$ error', messageForUser: 'Failed to fetch bugs.', error });
+          { messageForDev: 'bugs$ error', messageForUser: 'Failed to fetch done roadmap bricks', error });
         return of([]);
       }),
       shareReplay(1)
@@ -229,12 +228,20 @@ export class RoadmapComponent implements OnDestroy {
   }
 
   async changeStatus(event: RoadmapBrickChangeStatusEvent): Promise<void> {
-    const status = event.status
+    const status = event.status;
     const data: Partial<RoadmapBrick> = { status };
-    if (status === 'inProgress' || status === 'done') {
+    if (status === 'new') {
+      data.startWorkingAt = null;
+      data.releasedAt = null;
+      data.releasedInVersion = null;
+    }
+    if (status === 'inProgress') {
       data.startWorkingAt = new Date();
+      data.releasedAt = null;
+      data.releasedInVersion = null;
     }
     if (status === 'done') {
+      data.releasedAt = new Date();
       data.releasedInVersion = prompt(`Enter version name:`, this.appVersionInfo.version);
     }
     try {
@@ -250,13 +257,5 @@ export class RoadmapComponent implements OnDestroy {
           params: { event, data }
         });
     }
-  }
-
-  scrollTo(target: string): void {
-    const targetElRef = this[target+'ElRef'] as ElementRef;
-    if(!targetElRef || !targetElRef.nativeElement){
-      return;
-    }
-    (targetElRef.nativeElement as HTMLElement).scrollIntoView({behavior: 'smooth'});
   }
 }

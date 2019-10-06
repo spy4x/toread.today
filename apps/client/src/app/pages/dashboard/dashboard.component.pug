@@ -1,54 +1,56 @@
 .widget.you-were-reading
-  .header
-    h2.header__title You were reading...
-      span.header__subtitle (recently opened)
-    a.header__action(routerLink='/items')
+  .widget__header
+    h2.widget__header__title You were reading...
+      span.widget__header__subtitle (recently opened)
+    a.widget__header__action(routerLink="/items")
       span More
       span.icon
         i.fas.fa-chevron-right
-  tt-list('[items]'='openedItems$ | async',
-          '[tags]'='tags$ | async',
-          '(startReading)'='itemsService.startReading($event)',
-          '(finishReading)'='itemsService.finishReading($event)',
-          '(undoReading)'='itemsService.markAsNew($event)',
-          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
-          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
-          '(delete)'='itemsService.remove($event)',
-          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
-          '(tagClick)'='showItemsWithFilter({tagId:$event})',
-          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
-          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
-  .info('*ngIf'='!(openedItems$ | async)?.length') You don't have unfinished items. Good job! 👍
+  tt-list(*ngIf="(openedItems$ | async)?.length",
+          [items]="openedItems$ | async",
+          [tags]="tags$ | async",
+          (startReading)="itemsService.startReading($event)",
+          (finishReading)="itemsService.finishReading($event)",
+          (undoReading)="itemsService.markAsNew($event)",
+          (toggleTag)="itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+          (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
+          (delete)="itemsService.remove($event)",
+          (retryURLParsing)="itemsService.retryURLParsing($event)",
+          (tagClick)="showItemsWithFilter({tagId:$event})",
+          (changeRating)="itemsService.changeRating($event.id, $event.rating)",
+          (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
+  .widget__info(*ngIf="!(openedItems$ | async)?.length") You don't have unfinished items. Good job! 👍
 
 
 .widget.read-today
-  .header
-    h2.header__title Read Today
-      span.header__subtitle (random items)
-    a.header__action('(click)'='getNewRandom$.next()')
+  .widget__header
+    h2.widget__header__title Read Today
+      span.widget__header__subtitle (random items)
+    a.widget__header__action((click)="getNewRandom$.next()")
       span Shuffle
       span.icon
         i.fas.fa-sync
-  tt-list('[items]'='randomItems$ | async',
-          '[tags]'='tags$ | async',
-          '(startReading)'='itemsService.startReading($event)',
-          '(finishReading)'='itemsService.finishReading($event)',
-          '(undoReading)'='itemsService.markAsNew($event)',
-          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
-          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
-          '(delete)'='itemsService.remove($event)',
-          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
-          '(tagClick)'='showItemsWithFilter({tagId:$event})',
-          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
-          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',)
-  .info('*ngIf'='!(randomItems$ | async)?.length')
+  tt-list(*ngIf="(randomItems$ | async)?.length",
+          [items]="randomItems$ | async",
+          [tags]="tags$ | async",
+          (startReading)="itemsService.startReading($event)",
+          (finishReading)="itemsService.finishReading($event)",
+          (undoReading)="itemsService.markAsNew($event)",
+          (toggleTag)="itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+          (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
+          (delete)="itemsService.remove($event)",
+          (retryURLParsing)="itemsService.retryURLParsing($event)",
+          (tagClick)="showItemsWithFilter({tagId:$event})",
+          (changeRating)="itemsService.changeRating($event.id, $event.rating)",
+          (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
+  .widget__info(*ngIf="!(randomItems$ | async)?.length")
     span You have nothing to read yet.&nbsp;
-    a(routerLink='/items') Add something by URL 🔗
+    a(routerLink="/items") Add something by URL 🔗
     span &nbsp;or&nbsp;
-    a(routerLink='/fast-fast-add-and-import') Import your bookmarks 🔖
+    a(routerLink="/fast-fast-add-and-import") Import your bookmarks 🔖
 
 .widget.statistics
-  .header
-    h2.header__title Statistics
-      span.header__subtitle (do you read or just save?)
-  .info Coming soon...
+  .widget__header
+    h2.widget__header__title Statistics
+      span.widget__header__subtitle (do you read or just save?)
+  .widget__info Coming soon...

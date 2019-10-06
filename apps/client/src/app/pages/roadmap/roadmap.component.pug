@@ -1,33 +1,12 @@
-.widget.statistics
-  .columns
-    .column
-      .widget
-        .header
-          a.header__title('(click)'='scrollTo("features")') {{(features$ | async)?.length}} Features
-            span.icon.ml-1
-              i.fas.fa-arrow-down
-    .column
-      .widget
-        .header
-          a.header__title('(click)'='scrollTo("suggestions")') {{(suggestions$ | async)?.length}} Suggestions
-            span.icon.ml-1
-              i.fas.fa-arrow-down
-    .column
-      .widget
-        .header
-          a.header__title('(click)'='scrollTo("bugs")') {{(bugs$ | async)?.length}} Bugs
-            span.icon.ml-1
-              i.fas.fa-arrow-down
-
-.widget
+.widget.mb-3
   .columns
     .column.is-6
       .widget.add
-        .header.mb-3
-          h2.header__title Add
-            span.header__subtitle (share your idea / report a bug)
-        .body
-          form.mb-5
+        .widget__header.mb-3
+          h2.widget__header__title Add
+            span.widget__header__subtitle (share your idea / report a bug)
+        .widget__body
+          form.mb-3
             .field
               .control
                 label.radio
@@ -45,45 +24,46 @@
                 button.button.is-primary('(click)'='add(textarea.value, suggestion.checked ? "suggestion" : "bug"); textarea.value = ""') Submit
     .column.is-6
       .widget.activity
-        .header.mb-3
-          h2.header__title Activity
-            span.header__subtitle (for your ideas, bugs or liked items)
-        .body
+        .widget__header.mb-3
+          h2.widget__header__title Activity
+            span.widget__header__subtitle (for your ideas, bugs or liked items)
+        .widget__body
           tt-roadmap-activity
 
-.widget.bricks
-  .header.mb-3
-    h2.header__title('#features'='') {{(features$ | async)?.length}} Approved features
-      span.header__subtitle (things 100% to be implemented)
-  .body
-    tt-bricks-list('[bricks]'='features$ | async',
-    '[userId]'='userId',
-    '(vote)'="vote($event)",
-    '(changeTitle)'="changeTitle($event)",
-    '(changeType)'="changeType($event)",
-    '(changeStatus)'="changeStatus($event)",
-    '(remove)'="remove($event)",)
-.widget.bricks
-  .header.mb-3
-    h2.header__title('#suggestions'='') {{(suggestions$ | async)?.length}} Suggestions
-      span.header__subtitle (ideas that require other users' support/comments/likes)
-  .body
-    tt-bricks-list('[bricks]'='suggestions$ | async',
-    '[userId]'='userId',
-    '(vote)'="vote($event)",
-    '(changeTitle)'="changeTitle($event)",
-    '(changeType)'="changeType($event)",
-    '(changeStatus)'="changeStatus($event)",
-    '(remove)'="remove($event)",)
-.widget.bricks
-  .header.mb-3
-    h2.header__title('#bugs'='') {{(bugs$ | async)?.length}} Bugs
-      span.header__subtitle (nasty glitches)
-  .body
-    tt-bricks-list('[bricks]'='bugs$ | async',
-    '[userId]'='userId',
-    '(vote)'="vote($event)",
-    '(changeTitle)'="changeTitle($event)",
-    '(changeType)'="changeType($event)",
-    '(changeStatus)'="changeStatus($event)",
-    '(remove)'="remove($event)",)
+.columns
+  .column.is-one-third
+    .widget
+      .widget__header
+        h2.widget__header__title New
+        .widget__header__action {{(bricksNew$ | async)?.length}}
+      tt-bricks-list('[bricks]'='bricksNew$ | async',
+        '[userId]'='userId',
+        '(vote)'="vote($event)",
+        '(changeTitle)'="changeTitle($event)",
+        '(changeType)'="changeType($event)",
+        '(changeStatus)'="changeStatus($event)",
+        '(remove)'="remove($event)",)
+  .column.is-one-third
+    .widget
+      .widget__header
+        h2.widget__header__title In Progress
+        .widget__header__action {{(bricksInProgress$ | async)?.length}}
+      tt-bricks-list('[bricks]'='bricksInProgress$ | async',
+        '[userId]'='userId',
+        '(vote)'="vote($event)",
+        '(changeTitle)'="changeTitle($event)",
+        '(changeType)'="changeType($event)",
+        '(changeStatus)'="changeStatus($event)",
+        '(remove)'="remove($event)",)
+  .column.is-one-third
+    .widget
+      .widget__header
+        h2.widget__header__title Done
+        .widget__header__action {{(bricksDone$ | async)?.length}}
+      tt-bricks-list('[bricks]'='bricksDone$ | async',
+        '[userId]'='userId',
+        '(vote)'="vote($event)",
+        '(changeTitle)'="changeTitle($event)",
+        '(changeType)'="changeType($event)",
+        '(changeStatus)'="changeStatus($event)",
+        '(remove)'="remove($event)",)

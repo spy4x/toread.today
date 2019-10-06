@@ -24,6 +24,15 @@
                 [ngStyle]='{"color": (tagId | tagById:tags)?.color}') {{(tagId | tagById:tags)?.title || 'Tag not found'}}
 
     .actions.ml-auto
+      .icon.is-small.has-text-info(
+      *ngIf='item.urlParseStatus === "notStarted"',
+      title='URL parsing is in progress..')
+        i.fas.fa-sync
+      a.icon.is-small.has-text-danger(
+          *ngIf='item.urlParseStatus === "error"',
+          '(click)'='retryURLParsing.emit(item.id)'
+          '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
+        i.fas.fa-exclamation-triangle
       a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='item.url', target='_blank', (click)='read(item)')
         span.icon
           i.fas.fa-play
@@ -61,15 +70,6 @@
               span.icon.has-text-danger
                 i.far.fa-thumbs-down
               span ... & useless
-      .icon.is-small.has-text-info(
-      *ngIf='item.urlParseStatus === "notStarted"',
-      title='URL parsing is in progress..')
-        i.fas.fa-sync
-      a.icon.is-small.has-text-danger(
-          *ngIf='item.urlParseStatus === "error"',
-          '(click)'='retryURLParsing.emit(item.id)'
-          '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
-        i.fas.fa-exclamation-triangle
       .dropdown.is-hoverable.is-right
         .dropdown-trigger
           a

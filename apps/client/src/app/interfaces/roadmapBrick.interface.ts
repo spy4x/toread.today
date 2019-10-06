@@ -7,6 +7,7 @@ export interface RoadmapBrick {
   type: RoadmapBrickType
   title: string
   releasedInVersion: null | string
+  releasedAt: null | Date
   score: number
   likedBy: string[]
   dislikedBy: string[]
@@ -21,6 +22,7 @@ export const defaultRoadmapBrick: RoadmapBrick = {
   type: 'suggestion',
   title: '',
   releasedInVersion: null,
+  releasedAt: null,
   score: 0,
   likedBy: [],
   dislikedBy: [],

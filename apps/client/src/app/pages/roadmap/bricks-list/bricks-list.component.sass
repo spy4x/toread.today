@@ -1,4 +1,15 @@
 tt-bricks-list
-  .line
-    &.first
-      display: flex
+  .brick
+    padding: .5rem .8rem
+    &:nth-child(even)
+      background: hsl(0, 0%, 98%)
+      border-radius: 4px
+    .line
+      &.first
+        display: flex
+        align-items: center
+        > *
+          margin: 0 .3rem .5rem 0
+        > button
+          font-size: .7rem
+
