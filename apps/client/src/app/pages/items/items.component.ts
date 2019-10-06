@@ -9,7 +9,7 @@ import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { defaultFilter, Filter } from './filter/filter.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemAddEvent } from '../../common-components/items-add/items-add.component';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
 import { defaultPagination, Pagination } from './pagination.interface';
 
@@ -69,19 +69,29 @@ export class ItemsComponent implements OnInit, OnDestroy {
               private firestore: AngularFirestore,
               private logger: LoggerService,
               public itemsService: ItemsService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private router: Router) { }
 
 
   ngOnInit(): void {
     this.route.queryParams.pipe<Params>(takeUntil(this.componentDestroy$)).subscribe(params => {
       const tagId = params[ROUTER_CONSTANTS.items.params.tagId];
-      const filter: Partial<Filter> = {};
+      const status = params[ROUTER_CONSTANTS.items.params.status];
+      const isFavourite = params[ROUTER_CONSTANTS.items.params.isFavourite];
+
+      const filter: Filter = { ...defaultFilter };
       if (tagId) {
         filter.tagId = tagId;
       }
-      if (JSON.stringify(filter) !== JSON.stringify({})) {
-        this.setFilter(filter);
+      if (status) {
+        filter.status = status;
       }
+      if (isFavourite) {
+        filter.isFavourite = isFavourite === 'true';
+        filter.status = null;
+      }
+      this.pagination$.next(defaultPagination);
+      this.filter$.next(filter);
     });
 
     this.reloadItems$.pipe(takeUntil(this.componentDestroy$)).subscribe(async () => {
@@ -107,6 +117,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
               `items/${v.pagination.lastItemId}`).get().toPromise() : null
           };
         }),
+        // tap(params => console.log('Loading items with params:', params)),
         switchMap(
           (v: { user: User, filter: Filter, pagination: Pagination, lastItemSnapshot: null | DocumentSnapshot<any> }) => this.firestore
             .collection<Item>('items', ref => {
@@ -215,7 +226,12 @@ export class ItemsComponent implements OnInit, OnDestroy {
   }
 
   setFilter(filter: Partial<Filter>): void {
-    this.pagination$.next(defaultPagination);
-    this.filter$.next({ ...this.filter$.value, ...filter });
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: { ...filter },
+        queryParamsHandling: 'merge'
+      });
   }
 }

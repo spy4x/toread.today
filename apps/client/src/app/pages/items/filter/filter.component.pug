@@ -5,8 +5,6 @@
         a
           span.icon.has-text-warning
             i.fas.fa-star
-      li('[class.is-active]'='isStatus(null) && !isFavourite()', '(click)'='setStatus(null)')
-        a All
       li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
         a {{status}}
   tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)')

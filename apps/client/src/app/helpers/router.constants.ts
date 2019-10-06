@@ -3,6 +3,8 @@ export const ROUTER_CONSTANTS = {
     path: 'items',
     params: {
       tagId: 'tagId',
+      status: 'status',
+      isFavourite: 'isFavourite'
     }
-  },
+  }
 };
