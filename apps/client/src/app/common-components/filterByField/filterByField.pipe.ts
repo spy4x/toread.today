@@ -10,9 +10,18 @@ export class FilterByFieldPipe implements PipeTransform {
     }
     return items.filter(item => {
       const notMatchingField = filters.find(filter => {
+        if(!item){
+          return true;
+        }
+        const itemValue = item[filter.field];
         switch(filter.match){
-          case 'exact': return item[filter.field] !== filter.value;
-          case 'includesString': return (item[filter.field] as string).indexOf(filter.value) === -1;
+          case 'exact': return itemValue !== filter.value;
+          case 'includesString': {
+            if(typeof itemValue !== 'string' || typeof filter.value !== 'string'){
+              return true;
+            }
+            return (itemValue as string).toLowerCase().indexOf(filter.value.toLowerCase()) === -1;
+          }
         }
       });
       return !notMatchingField; // true if matches all fields

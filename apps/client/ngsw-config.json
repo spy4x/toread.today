@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.23.0",
-    "description": "Add search for tags"
+    "version": "1.23.1",
+    "description": "Make search for tags case-insensitive"
   },
   "assetGroups": [
     {
