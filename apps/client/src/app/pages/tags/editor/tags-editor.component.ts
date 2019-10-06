@@ -57,6 +57,7 @@ export class TagsEditorComponent {
       createdBy: null
     };
     this.create.emit(newTag);
+    this.newTagTitle = '';
   }
 
   toggleEditMode(tag: Tag): void {

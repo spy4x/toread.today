@@ -34,6 +34,7 @@ import { RoadmapComponent } from './pages/roadmap/roadmap.component';
 import { BricksListComponent } from './pages/roadmap/bricks-list/bricks-list.component';
 import { RoadmapActivityComponent } from './pages/roadmap/activity/activity.component';
 import { UIService } from './services/ui.service';
+import { FilterByFieldPipe } from './common-components/filterByField/filterByField.pipe';
 
 const routes: Routes = [
   {
@@ -83,6 +84,7 @@ const routes: Routes = [
     RoadmapComponent,
     BricksListComponent,
     RoadmapActivityComponent,
+    FilterByFieldPipe,
   ],
   imports: [
     BrowserModule,

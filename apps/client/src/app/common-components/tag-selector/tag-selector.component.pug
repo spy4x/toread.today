@@ -13,9 +13,13 @@
           i.fas.fa-check('[ngStyle]'='{"visibility": getSelected().length ? "hidden" : "visible"}')
         span All tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
+      .dropdown-item
+        input.input.is-small(placeholder="Search", [(ngModel)]="searchText")
+      hr.dropdown-divider
       a.dropdown-item(
-          '*ngFor'='let tag of tags' href='javascript:;',
-          '(click)'='toggleTag(tag)')
+          *ngFor="let tag of tags | filterByField:[{field: 'title', value: searchText, match: 'includesString'}]",
+          href="javascript:;",
+          (click)="toggleTag(tag)")
         span.icon.mr-1([style.color]="tag.color")
           i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag) ? "visible" : "hidden"}')
         span([style.color]="tag.color") {{ tag.title }}

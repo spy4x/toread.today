@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.22.3",
-    "description": "Fix bug with tags dropdown closing after tag selection"
+    "version": "1.23.0",
+    "description": "Add search for tags"
   },
   "assetGroups": [
     {

@@ -1,10 +1,9 @@
 .field.has-addons.is-fullwidth.top-control
   .control.is-expanded
     input.input(
-        placeholder='Add new tag',
-        '#newTagTitleInput'='',
-        '(input)'='newTagTitle = newTagTitleInput.value',
-        '(keydown.enter)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""')
+        placeholder='Add new tag or filter existing tags',
+        [(ngModel)]="newTagTitle"
+        '(keydown.enter)'='createHandler(newTagTitle, newTagColor)')
 
   .control
     .dropdown.is-hoverable.is-right.button
@@ -20,7 +19,7 @@
             span([style.color]="color") {{newTagTitle || 'New tag'}}
 
   .control
-    button.button.is-primary('(click)'='createHandler(newTagTitle, newTagColor);newTagTitleInput.value="";newTagTitle=""', title='Create tag')
+    button.button.is-primary('(click)'='createHandler(newTagTitle, newTagColor)', title='Create tag')
       span.icon
         i.fas.fa-plus
 
@@ -28,7 +27,7 @@
 
 
 
-.tag-item('*ngFor'='let tag of tags')
+.tag-item(*ngFor="let tag of tags | filterByField:[{field: 'title', value: newTagTitle, match: 'includesString'}]")
 
   .tag-item--title
     span('*ngIf'='!isInEditMode(tag.id)', [style.color]="tag.color") {{tag.title}}
