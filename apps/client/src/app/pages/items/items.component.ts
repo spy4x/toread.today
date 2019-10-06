@@ -9,9 +9,10 @@ import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { defaultFilter, Filter } from './filter/filter.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemAddEvent } from '../../common-components/items-add/items-add.component';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
 import { defaultPagination, Pagination } from './pagination.interface';
+import { RouterHelperService } from '../../services/routerHelper.service';
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -70,7 +71,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
               private logger: LoggerService,
               public itemsService: ItemsService,
               private route: ActivatedRoute,
-              private router: Router) { }
+              public routerHelper: RouterHelperService) { }
 
 
   ngOnInit(): void {
@@ -203,7 +204,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
     const existingItem = await this.itemsService.create({ ...item, title: null });
     if (!existingItem) {
       if (this.filter$.value.status !== 'new') {
-        this.setFilter({ status: 'new' });
+        this.routerHelper.toItemsWithFilter({ status: 'new' });
       }
     }
     this.existingItem$.next(existingItem);
@@ -223,15 +224,5 @@ export class ItemsComponent implements OnInit, OnDestroy {
       lastItemId: lastItemId
     });
     this.reloadItems$.next(null);
-  }
-
-  setFilter(filter: Partial<Filter>): void {
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.route,
-        queryParams: { ...filter },
-        queryParamsHandling: 'merge'
-      });
   }
 }

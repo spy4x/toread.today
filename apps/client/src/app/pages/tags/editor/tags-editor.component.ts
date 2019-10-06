@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Tag } from '../../../interfaces/tag.interface';
+import { RouterHelperService } from '../../../services/routerHelper.service';
 
 export interface TagUpdateEvent {
   id: string
@@ -32,6 +33,8 @@ export class TagsEditorComponent {
   ];
   newTagColor: string = this.colors[0];
   newTagTitle: string = '';
+
+  constructor(public routerHelper: RouterHelperService){}
 
   setTitle(tag: Tag, title: string): void {
     this.update.emit({ id: tag.id, change: { title } });

@@ -35,6 +35,7 @@ import { BricksListComponent } from './pages/roadmap/bricks-list/bricks-list.com
 import { RoadmapActivityComponent } from './pages/roadmap/activity/activity.component';
 import { UIService } from './services/ui.service';
 import { FilterByFieldPipe } from './common-components/filterByField/filterByField.pipe';
+import { RouterHelperService } from './services/routerHelper.service';
 
 const routes: Routes = [
   {
@@ -102,6 +103,7 @@ const routes: Routes = [
     LoggerService,
     ItemsService,
     UIService,
+    RouterHelperService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

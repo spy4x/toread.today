@@ -7,8 +7,7 @@ import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { ItemsService } from '../../services/items/items.service';
 import { Router } from '@angular/router';
-import { Filter } from '../items/filter/filter.interface';
-
+import { RouterHelperService } from '../../services/routerHelper.service';
 
 @Component({
   selector: 'tt-dashboard',
@@ -104,14 +103,10 @@ export class DashboardComponent implements OnDestroy {
               private firestore: AngularFirestore,
               private logger: LoggerService,
               public itemsService: ItemsService,
-              public router: Router) { }
+              public routerHelper: RouterHelperService) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();
     this.componentDestroy$.complete();
-  }
-
-  showItemsWithFilter(filter: Partial<Filter>): void {
-    this.router.navigate([`/items`], { queryParams: { ...filter } });
   }
 }

@@ -16,7 +16,7 @@
           (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
           (delete)="itemsService.remove($event)",
           (retryURLParsing)="itemsService.retryURLParsing($event)",
-          (tagClick)="showItemsWithFilter({tagId:$event})",
+          (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
           (changeRating)="itemsService.changeRating($event.id, $event.rating)",
           (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
   .widget__info(*ngIf="!(openedItems$ | async)?.length") You don't have unfinished items. Good job! 👍
@@ -40,7 +40,7 @@
           (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
           (delete)="itemsService.remove($event)",
           (retryURLParsing)="itemsService.retryURLParsing($event)",
-          (tagClick)="showItemsWithFilter({tagId:$event})",
+          (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
           (changeRating)="itemsService.changeRating($event.id, $event.rating)",
           (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
   .widget__info(*ngIf="!(randomItems$ | async)?.length")

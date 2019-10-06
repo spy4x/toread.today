@@ -3,7 +3,7 @@
   "index": "/index.html",
   "appData": {
     "version": "1.24.4",
-    "description": "Roadmap - Improve UI a bit"
+    "description": "Tags - click on tag to see all links with that tag"
   },
   "assetGroups": [
     {

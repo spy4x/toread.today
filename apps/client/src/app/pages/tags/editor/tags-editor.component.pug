@@ -30,7 +30,7 @@
 .tag-item(*ngFor="let tag of tags | filterByField:[{field: 'title', value: newTagTitle, match: 'includesString'}]")
 
   .tag-item--title
-    span('*ngIf'='!isInEditMode(tag.id)', [style.color]="tag.color") {{tag.title}}
+    a(*ngIf="!isInEditMode(tag.id)", [style.color]="tag.color", (click)="routerHelper.toItemsWithFilter({tagId:tag.id})") {{tag.title}}
     .field.has-addons('*ngIf'='isInEditMode(tag.id)')
       p.control
         input.input(
