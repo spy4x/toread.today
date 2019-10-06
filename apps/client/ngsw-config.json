@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.0",
-    "description": "Save links filter params to URL"
+    "version": "1.24.1",
+    "description": "Improve UI of Splash/Sign-in screen"
   },
   "assetGroups": [
     {
