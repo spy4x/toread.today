@@ -1,3 +1,5 @@
+import { BaseEntity } from './baseEntity.interface';
+
 export type ItemStatus = 'new' | 'opened' | 'finished'
 export type ItemType = null | 'website' | 'video' | 'article' | 'profile'
 export type ItemURLParseStatus = 'notStarted' | 'done' | 'error'
@@ -11,8 +13,7 @@ export interface ItemSkeleton {
   rating: ItemRating
 }
 
-export interface Item extends ItemSkeleton{
-  id?: string
+export interface Item extends ItemSkeleton, BaseEntity{
   createdBy: string
   createdAt: Date
   priority: ItemPriority

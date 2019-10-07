@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewEncapsulation
+} from '@angular/core';
 import { catchError, filter, first, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
 import { LoggerService } from '../../../services/logger.service';
 import { Notification } from '../../../interfaces/notification.interface';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { User } from 'firebase';
+import { User as FirebaseUser } from 'firebase';
+import { User } from '../../../interfaces/user.interface';
 
 @Component({
   selector: 'tt-roadmap-activity',
@@ -15,6 +25,8 @@ import { User } from 'firebase';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoadmapActivityComponent implements OnInit, OnDestroy {
+  @Input() user: User;
+  @Output() setSettingSendRoadmapActivityPushNotifications = new EventEmitter<boolean>();
   componentDestroy$ = new Subject<void>();
   dateFormat = 'd MMM yyyy HH:mm';
   notificationsLimit = 5;
@@ -34,7 +46,7 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
 
   allNotifications$: Observable<Notification[]> = this.user$.pipe(
     filter(v => !!v),
-    switchMap((user: User) =>
+    switchMap((user: FirebaseUser) =>
       this.firestore
         .collection<Notification>('notifications', ref =>
           ref

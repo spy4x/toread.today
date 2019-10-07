@@ -27,8 +27,21 @@
         .widget__header.mb-3
           h2.widget__header__title Activity
             span.widget__header__subtitle (for your ideas, bugs or liked items)
+          .widget__header__action.dropdown.is-hoverable.is-right
+            .dropdown-trigger
+              a.has-text-grey-light
+                span.icon
+                  i.fas.fa-ellipsis-v(aria-hidden='true')
+            .dropdown-menu.dropdown-menu--w-none(role='menu')
+              .dropdown-content
+                .dropdown-item
+                  label.checkbox
+                    input(type='checkbox', [ngModel]="(userService.user$ | async).sendRoadmapActivityPushNotifications", (ngModelChange)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
+                    span Send push notifications
+
         .widget__body
-          tt-roadmap-activity
+          tt-roadmap-activity([user]="userService.user$ | async",
+                              (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
 
 .columns
   .column.is-one-third

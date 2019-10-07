@@ -36,6 +36,7 @@ import { RoadmapActivityComponent } from './pages/roadmap/activity/activity.comp
 import { UIService } from './services/ui.service';
 import { FilterByFieldPipe } from './common-components/filterByField/filterByField.pipe';
 import { RouterHelperService } from './services/routerHelper.service';
+import { UserService } from './services/user.service';
 
 const routes: Routes = [
   {
@@ -104,6 +105,7 @@ const routes: Routes = [
     ItemsService,
     UIService,
     RouterHelperService,
+    UserService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

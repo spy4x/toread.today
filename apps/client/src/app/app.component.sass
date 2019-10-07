@@ -2,11 +2,18 @@
   .logo
     font-size: 5rem
   .text
-    animation: 2s fadeIn
-    @keyframes fadeIn
+    animation: 2s fadeInSlow
+    @keyframes fadeInSlow
       from
         opacity: 0
       30%
+        opacity: 0
+      to
+        opacity: 1
+  .welcome-back
+    animation: 1s fadeInFast
+    @keyframes fadeInFast
+      from
         opacity: 0
       to
         opacity: 1

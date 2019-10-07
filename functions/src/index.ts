@@ -7,7 +7,9 @@ import { isUrl } from './+utils/common/isURL';
 import { RoadmapBrick } from './+utils/interfaces/roadmapBrick.interface';
 import { createNotification } from './+utils/common/createNotification';
 import { BatchSwarm } from './+utils/firebase/batchSwarm';
-
+import { runTransaction } from './+utils/firebase/runTransaction';
+import { User } from './+utils/interfaces/user.interface';
+import {auth} from 'firebase-admin';
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
 console.log('--- COLD START ---');
@@ -224,12 +226,32 @@ export const onRoadmapBrickUpdate = functions.firestore
 export const onUserSignUp = functions.auth
   .user()
   .onCreate(async (userRecord) => {
-    await createNotification({
+    const promise1 = createNotification({
       text: `User "${userRecord.displayName}" with email "${userRecord.email}" has signed up`,
       userId: antonId,
       type: 'roadmap'
     });
+    const promise2 = createUserInDB(userRecord);
+    return Promise.all([promise1, promise2]);
   });
+
+async function createUserInDB(user: auth.UserRecord): Promise<void> {
+  try {
+    await runTransaction(async transaction => {
+      const dbUser: User = {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        createdAt: new Date(),
+        sendRoadmapActivityPushNotifications: null
+      };
+      return transaction.create(firestore.doc(`users/${user.uid}`), dbUser);
+    }, { logPrefix: 'createUserInDB' });
+    console.log('createUserInDB(): Success.', {user});
+  } catch (error) {
+    console.error('createUserInDB(): Failed to create a user in DB.', error, { user });
+  }
+}
 
 
 export const https = httpsFunction;

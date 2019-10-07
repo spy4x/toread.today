@@ -1,3 +1,4 @@
+
 ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
   .notification-messages
 
@@ -21,8 +22,13 @@ ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
 
     .last-items-shown('*ngIf'='notifications.length === notificationsLimit') Last {{notificationsLimit}} items shown
 
-    span('*ngIf'='!notifications.length') No activity yet
+    .has-text-centered.mb-3('*ngIf'='!notifications.length') No activity yet
 
 ng-template('#loading'='')
-  span Loading...
+  .has-text-centered.mb-3 Loading...
 
+.notification.is-small(*ngIf="user.sendRoadmapActivityPushNotifications === null")
+  p Do you want to be updated about your roadmap items changes via push notifications?
+  .buttons.is-right.mt-2.are-small
+    button.button((click)="setSettingSendRoadmapActivityPushNotifications.emit(false)") No
+    button.button.is-primary((click)="setSettingSendRoadmapActivityPushNotifications.emit(true)") Yes, please send

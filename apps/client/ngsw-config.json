@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.4",
-    "description": "Tags - click on tag to see all links with that tag"
+    "version": "1.24.5",
+    "description": "Roadmap - Notifications settings"
   },
   "assetGroups": [
     {

@@ -16,6 +16,7 @@ import {
   RoadmapBrickChangeTitleEvent,
   RoadmapBrickChangeTypeEvent
 } from './bricks-list/bricks-list.component';
+import { UserService } from '../../services/user.service';
 const { appData } = require('../../../../ngsw-config.json');
 
 
@@ -88,13 +89,10 @@ export class RoadmapComponent implements OnDestroy {
   antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
   appVersionInfo = appData as AppVersionInfo;
 
-  @ViewChild('features', {static: true}) featuresElRef: ElementRef;
-  @ViewChild('suggestions', {static: true}) suggestionsElRef: ElementRef;
-  @ViewChild('bugs', {static: true}) bugsElRef: ElementRef;
-
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
-              private logger: LoggerService) { }
+              private logger: LoggerService,
+              public userService: UserService) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();

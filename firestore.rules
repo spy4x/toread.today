@@ -28,6 +28,13 @@ service cloud.firestore {
       allow update: if isRoadmapBrick(getDocInc(), id);
       allow delete: if canDeleteRoadmapBrick(getDoc());
     }
+    match /users/{id} {
+      allow get: if isUser(id);
+      allow list: if false;
+      allow create: if false;
+      allow update: if isUserDoc(getDocInc(), id);
+      allow delete: if false;
+    }
   }
 }
 
@@ -80,6 +87,19 @@ function isRoadmapBrick(doc, id) {
   		// && doc.status is string && doc.status in ["new", "inProgress", "done"]
   		// &&
       // isUser(doc.createdBy)
+      // && doc.createdAt is timestamp
+}
+
+function isUserDoc(doc, id) {
+  return
+  		// doc.size() == 7
+  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
+  		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
+  		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]
+  		// && doc.status is string && doc.status in ["new", "inProgress", "done"]
+  		// &&
+      isUser(id)
       // && doc.createdAt is timestamp
 }
 

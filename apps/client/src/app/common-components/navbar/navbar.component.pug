@@ -5,7 +5,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
         i.far.fa-bookmark
       span Toread.today {{appVersionInfo?.version}}
 
-    tt-notifications.navbar-item.ml-auto('*ngIf'='uiService.isMobile$ | async', '[userId]'='user.uid')
+    tt-notifications.navbar-item.ml-auto('*ngIf'='uiService.isMobile$ | async', '[userId]'='user.id')
 
     a.navbar-burger.burger.is-marginless(
         role='button',
@@ -40,13 +40,13 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
           i.fas.fa-road
         span Project roadmap
 
-    .navbar-end('*ngIf'='user')
+    .navbar-end
       //- mobile menu
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
         a.navbar-item
           span.icon.mr-1
             i.fas.fa-cat
-          span Hello, {{user.displayName || user.email}}
+          span Hello, {{user.displayName || user.email || 'Anonymous'}}
 
         a.navbar-item('(click)'='signOut.emit()')
           span.icon.mr-1
@@ -56,7 +56,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
       ng-template('#desktopMenu'='')
         .navbar-item
           .navbar-item
-            tt-notifications('*ngIf'='!(uiService.isMobile$ | async)', '[userId]'='user.uid')
+            tt-notifications('*ngIf'='!(uiService.isMobile$ | async)', '[userId]'='user.id')
           .navbar-item
             .dropdown.is-hoverable.is-right
               .dropdown-trigger

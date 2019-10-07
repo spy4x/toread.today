@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { User } from 'firebase';
 import { AppVersionInfo } from '../../../appVersionInfo.interface';
 import { UIService } from '../../services/ui.service';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'tt-navbar',

@@ -42,11 +42,6 @@ export class ItemsService {
     return setStateProperties(defaults, item);
   }
 
-  getBody(item: Partial<Item>): Partial<Item> {
-    const { id, ...body } = item;
-    return body;
-  }
-
   /**
    * Returns "null" in case of successful creation, "Item" in case of Item exists.
    * @param skeleton
@@ -74,7 +69,7 @@ export class ItemsService {
                 try {
                   await this.firestore
                     .collection('items')
-                    .add(this.getBody(item));
+                    .add(this.getBodyWithoutId(item));
                 } catch (error) {
                   this.logger.error({
                     messageForDev: 'add():',
@@ -165,25 +160,31 @@ export class ItemsService {
     return this.update({ id, comment, withComment: !!comment }, 'Failed to change item comment.');
   }
 
-  private async update(item: Partial<Item>, errorMessageForUser?: string): Promise<void> {
-    if (!item || !item.id) {
+  private async update(data: Partial<Item>, errorMessageForUser?: string): Promise<void> {
+    if (!data || !data.id) {
       this.logger.error(
-        { messageForDev: 'ItemsService.update(): "item" or "item.id" is not provided', messageForUser: errorMessageForUser || 'Failed to' +
-            ' update item', params: { item } });
+        { messageForDev: 'ItemsService.update(): "data" or "data.id" is not provided', messageForUser: errorMessageForUser || 'Failed to' +
+            ' update item.', params: { data } });
       return;
     }
-    const id = item.id;
-    const body = this.getBody(item);
+    const body = this.getBodyWithoutId(data);
     try {
       await this.firestore
-        .doc(this.getPathForId(id))
+        .doc(this.getPathForId(data.id))
         .update(body);
     } catch (error) {
       this.logger.error({
-        messageForDev: 'ItemsService.update():', messageForUser: errorMessageForUser || 'Failed to' +
-          ' update item', error, params: { id, body, item }
+        messageForDev: 'ItemsService.update():',
+        messageForUser: errorMessageForUser || 'Failed to update item',
+        error,
+        params: { data }
       });
     }
+  }
+
+  private getBodyWithoutId(item: Partial<Item>): Partial<Item> {
+    const { id, ...body } = item;
+    return body;
   }
 
   private getPathForId(id: string): string {

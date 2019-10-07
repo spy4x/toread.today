@@ -80,9 +80,9 @@ i.fas, i.far
     &__title
       font-size: $size-4
     &__subtitle
-      font-size: $size-6
+      font-size: $size-7
       color: $grey-light
-      margin-left: $size-7
+      margin-left: .3rem
       @media (max-width: $tablet)
         display: none
     &__action
@@ -122,3 +122,13 @@ i.fas, i.far
     color: $grey
     text-align: center
     margin-top: .5rem
+
+.notification
+  &.is-small
+    padding: .5rem
+
+.checkbox
+  display: flex
+  align-items: center
+  input[type="checkbox"] + span
+    margin-left: .3rem

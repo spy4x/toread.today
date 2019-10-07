@@ -1,8 +1,9 @@
+import { BaseEntity } from './baseEntity.interface';
+
 export type RoadmapBrickStatus = 'new' | 'inProgress' | 'done';
 export type RoadmapBrickType = 'feature' | 'bug' | 'suggestion';
 
-export interface RoadmapBrick {
-  id?: string
+export interface RoadmapBrick extends BaseEntity {
   status: RoadmapBrickStatus
   type: RoadmapBrickType
   title: string

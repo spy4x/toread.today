@@ -1,12 +1,12 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { interval, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { interval } from 'rxjs';
 import { auth } from 'firebase/app';
 import { ConnectionStatusService } from './services/connection-status/connection-status.service';
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
 import { LoggerService } from './services/logger.service';
+import { UserService } from './services/user.service';
 
 const { appData } = require('../../ngsw-config.json');
 
@@ -18,14 +18,6 @@ const { appData } = require('../../ngsw-config.json');
 })
 export class AppComponent {
   error$ = this.logger.lastErrorMessage$;
-  user$ = this.angularFireAuth.authState.pipe(
-    tap(user => {
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.logger.error({ messageForDev: 'user$ error', messageForUser: 'Unable to resolve user information.', error });
-      return of(null);
-    }));
 
   isOnline: boolean;
   isNewVersionAvailable: boolean;
@@ -35,7 +27,8 @@ export class AppComponent {
   constructor(private angularFireAuth: AngularFireAuth,
               private connectionStatus: ConnectionStatusService,
               private swUpdate: SwUpdate,
-              private logger: LoggerService) {
+              private logger: LoggerService,
+              public userService: UserService) {
     if (appData) {this.logger.setVersion(appData.version);}
     this.connectionStatus.isOnline().subscribe(value => {
       this.isOnline = value;
