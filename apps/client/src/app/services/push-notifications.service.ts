@@ -10,7 +10,7 @@ export class PushNotificationsService {
   }
 
   isSupported(): boolean {
-    return !!Notification;
+    return 'Notification' in window;
   }
 
   isDenied(): boolean {

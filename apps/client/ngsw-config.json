@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.7",
-    "description": "Display clearer authentication progress on splash screen"
+    "version": "1.24.8",
+    "description": "Fix bug with app crashes on iOS"
   },
   "assetGroups": [
     {
