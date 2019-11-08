@@ -17,7 +17,7 @@ service cloud.firestore {
     match /notifications/{id} {
       allow get: if isUser(getDoc().userId);
       allow list: if isUser(getDoc().userId);
-      allow create: if false;
+      allow create: if isUser(getDocInc().userId);
       allow update: if isNotification(getDocInc(), id);
       allow delete: if isUser(getDoc().userId);
     }

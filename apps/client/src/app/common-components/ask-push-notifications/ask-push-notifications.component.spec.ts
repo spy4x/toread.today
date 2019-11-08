@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NavbarComponent } from './navbar.component';
+import { AskPushNotificationsComponent } from './ask-push-notifications.component';
 
 describe('AskPushNotificationsComponent', () => {
-  let component: NavbarComponent;
-  let fixture: ComponentFixture<NavbarComponent>;
+  let component: AskPushNotificationsComponent;
+  let fixture: ComponentFixture<AskPushNotificationsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavbarComponent ]
+      declarations: [ AskPushNotificationsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NavbarComponent);
+    fixture = TestBed.createComponent(AskPushNotificationsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

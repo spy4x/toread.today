@@ -7,6 +7,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
 import { LoggerService } from './services/logger.service';
 import { UserService } from './services/user.service';
+import { PushNotificationsService } from './services/push-notifications.service';
 
 const { appData } = require('../../ngsw-config.json');
 
@@ -28,7 +29,8 @@ export class AppComponent {
               private connectionStatus: ConnectionStatusService,
               private swUpdate: SwUpdate,
               private logger: LoggerService,
-              public userService: UserService) {
+              public userService: UserService,
+              private pushNotificationsService: PushNotificationsService) {
     if (appData) {this.logger.setVersion(appData.version);}
     this.connectionStatus.isOnline().subscribe(value => {
       this.isOnline = value;
@@ -44,6 +46,7 @@ export class AppComponent {
 
     this.checkForUpdateOnWindowFocus();
     this.runTimerThatChecksForUpdate();
+    this.subscribeToNotifications();
   }
 
   checkForUpdateOnWindowFocus() {
@@ -95,5 +98,12 @@ export class AppComponent {
 
   signOut() {
     this.angularFireAuth.auth.signOut();
+  }
+
+  subscribeToNotifications(): void {
+    if (!this.pushNotificationsService.isGranted()) {
+      return;
+    }
+    this.userService.activatePushNotifications();
   }
 }

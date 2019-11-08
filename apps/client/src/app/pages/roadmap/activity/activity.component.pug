@@ -27,8 +27,3 @@ ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
 ng-template('#loading'='')
   .has-text-centered.mb-3 Loading...
 
-.notification.is-small(*ngIf="user.sendRoadmapActivityPushNotifications === null")
-  p Do you want to be updated about your roadmap items changes via push notifications?
-  .buttons.is-right.mt-2.are-small
-    button.button((click)="setSettingSendRoadmapActivityPushNotifications.emit(false)") No
-    button.button.is-primary((click)="setSettingSendRoadmapActivityPushNotifications.emit(true)") Yes, please send

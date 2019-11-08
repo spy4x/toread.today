@@ -17,6 +17,7 @@ import {
   RoadmapBrickChangeTypeEvent
 } from './bricks-list/bricks-list.component';
 import { UserService } from '../../services/user.service';
+import { PushNotificationsService } from '../../services/push-notifications.service';
 const { appData } = require('../../../../ngsw-config.json');
 
 
@@ -92,7 +93,8 @@ export class RoadmapComponent implements OnDestroy {
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
               private logger: LoggerService,
-              public userService: UserService) { }
+              public userService: UserService,
+              public messagingService: PushNotificationsService) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();

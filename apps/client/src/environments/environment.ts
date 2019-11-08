@@ -5,15 +5,16 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: 'AIzaSyDjFPSNysgx9G-LjAJx5qWD4X_sVEBmcsI',
-    authDomain: 'toread-today.firebaseapp.com',
-    databaseURL: 'https://toread-today.firebaseio.com',
-    projectId: 'toread-today',
-    storageBucket: 'toread-today.appspot.com',
-    messagingSenderId: '565165890761'
+    apiKey: 'AIzaSyCSX5FpQc9UN3BvzfDHsN8PPYjcMfvnilk',
+    authDomain: 'toread-today-staging.firebaseapp.com',
+    databaseURL: 'https://toread-today-staging.firebaseio.com',
+    projectId: 'toread-today-staging',
+    storageBucket: 'toread-today-staging.appspot.com',
+    messagingSenderId: '95014496389',
+    appId: '1:95014496389:web:b2e97188906c31fe1c61ec'
   },
   sentry: '',
-  apiPath: 'https://toread-today.web.app/api/'
+  apiPath: 'https://toread-today-staging.web.app/api/'
 };
 
 /*

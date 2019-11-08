@@ -37,6 +37,11 @@ import { UIService } from './services/ui.service';
 import { FilterByFieldPipe } from './common-components/filterByField/filterByField.pipe';
 import { RouterHelperService } from './services/routerHelper.service';
 import { UserService } from './services/user.service';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { PushNotificationsService } from './services/push-notifications.service';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { NotificationsService } from './services/notifications.service';
+import { AskPushNotificationsComponent } from './common-components/ask-push-notifications/ask-push-notifications.component';
 
 const routes: Routes = [
   {
@@ -58,6 +63,10 @@ const routes: Routes = [
   {
     path: 'roadmap',
     component: RoadmapComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
   },
   {
     path: '**',
@@ -87,6 +96,8 @@ const routes: Routes = [
     BricksListComponent,
     RoadmapActivityComponent,
     FilterByFieldPipe,
+    ProfileComponent,
+    AskPushNotificationsComponent,
   ],
   imports: [
     BrowserModule,
@@ -95,6 +106,7 @@ const routes: Routes = [
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireStorageModule,
+    AngularFireMessagingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
     FormsModule,
     HttpClientModule
@@ -106,6 +118,8 @@ const routes: Routes = [
     UIService,
     RouterHelperService,
     UserService,
+    PushNotificationsService,
+    NotificationsService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

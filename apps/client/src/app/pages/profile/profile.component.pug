@@ -1,0 +1,33 @@
+.widget
+  .widget__header
+    h2.widget__header__title Roadmap
+  .widget__body.mt-2
+    label.checkbox.mb-1
+      input(type='checkbox',
+            [ngModel]="(userService.user$ | async).sendRoadmapActivityPushNotifications",
+            (ngModelChange)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
+      span Send push notifications for related Roadmap activity
+
+      span.icon.has-text-success.ml-1(
+          *ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications && messagingService.isGranted()",
+          title="Push notifications are activated for this browser")
+        i.far.fa-check-circle
+
+
+    .mt-2(*ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications")
+
+      button.button.is-info.is-small.ml-1(
+          *ngIf="messagingService.isDefault()",
+          (click)="userService.activatePushNotifications()")
+        span Activate for this browser
+
+      span(*ngIf="!messagingService.isSupported()") This browser doesn't support push notifications.
+
+      .notification.is-small(*ngIf="messagingService.isDenied()")
+        span.icon.mr-1
+          i.fas.fa-exclamation-triangle
+        span Push notifications were denied for this browser. To activate them go to browser settings. Here are some instructions:
+        .buttons.mt-1.are-small
+          a.button(href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DAndroid&oco=1", target="_blank") Chrome for Android
+          a.button(href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DDesktop&oco=1", target="_blank") Chrome for Desktop
+          a.button(href="https://support.apple.com/en-gb/guide/safari/sfri40734/mac", target="_blank") Safari for Desktop

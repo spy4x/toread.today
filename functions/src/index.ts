@@ -2,14 +2,16 @@ import { onFileUploadFunction } from './st';
 import * as ogs from 'open-graph-scraper';
 import { httpsFunction } from './https';
 import { Item, ItemType } from './+utils/interfaces/item.interface';
-import { admin, firestore, functions } from './+utils/firebase/firebase';
+import { admin, config, firestore, functions } from './+utils/firebase/firebase';
 import { isUrl } from './+utils/common/isURL';
 import { RoadmapBrick } from './+utils/interfaces/roadmapBrick.interface';
 import { createNotification } from './+utils/common/createNotification';
 import { BatchSwarm } from './+utils/firebase/batchSwarm';
 import { runTransaction } from './+utils/firebase/runTransaction';
 import { User } from './+utils/interfaces/user.interface';
-import {auth} from 'firebase-admin';
+import { auth, messaging } from 'firebase-admin';
+import { Notification } from './+utils/interfaces/notification.interface';
+
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
 console.log('--- COLD START ---');
@@ -229,7 +231,7 @@ export const onUserSignUp = functions.auth
     const promise1 = createNotification({
       text: `User "${userRecord.displayName}" with email "${userRecord.email}" has signed up`,
       userId: antonId,
-      type: 'roadmap'
+      type: 'info'
     });
     const promise2 = createUserInDB(userRecord);
     return Promise.all([promise1, promise2]);
@@ -243,16 +245,89 @@ async function createUserInDB(user: auth.UserRecord): Promise<void> {
         email: user.email,
         photoURL: user.photoURL,
         createdAt: new Date(),
-        sendRoadmapActivityPushNotifications: null
+        sendRoadmapActivityPushNotifications: null,
+        fcmTokens: []
       };
       return transaction.create(firestore.doc(`users/${user.uid}`), dbUser);
     }, { logPrefix: 'createUserInDB' });
-    console.log('createUserInDB(): Success.', {user});
+    console.log('createUserInDB(): Success.', { user });
   } catch (error) {
     console.error('createUserInDB(): Failed to create a user in DB.', error, { user });
   }
 }
 
+
+export const onNotificationCreate = functions.firestore
+  .document(`notifications/{id}`)
+  .onCreate(async doc => {
+    const notification = { ...doc.data(), id: doc.id } as Notification;
+    await sendPushNotification(notification);
+  });
+
+async function sendPushNotification(notification: Notification): Promise<void> {
+  try {
+    if (notification.type !== 'roadmap') {
+      console.log('sendPushNotification(): Notification type is not "roadmap". Break.', JSON.stringify(notification, null, 2));
+      return;
+    }
+    // fetch user doc
+    const userDocSnapshot = await firestore.doc(`users/${notification.userId}`).get();
+    if (!userDocSnapshot.exists) {
+      console.error('sendPushNotification(): User doesn\'t exist. Break.', JSON.stringify(notification, null, 2));
+      return;
+    }
+    const user = { ...userDocSnapshot.data(), id: userDocSnapshot.id } as User;
+
+    // check if he wants to get push notifications
+    if (!user.sendRoadmapActivityPushNotifications) {
+      console.log(`sendPushNotification(): User doesn't want to receive push notifications about roadmap activity. Break.`, JSON.stringify({
+        notification,
+        user
+      }, null, 2));
+      return;
+    }
+    const tokens = user.fcmTokens.map(fcmToken => fcmToken.token);
+    if (!tokens.length) {
+      console.log('sendPushNotification(): User has no "fcmTokens" to send to. Break.', JSON.stringify({notification, user}, null, 2));
+      return;
+    }
+
+    // use admin.messaging() to send pushes
+    const payload: messaging.MessagingPayload = {
+      notification: {
+        title: 'Update in related roadmap activity',
+        body: notification.text,
+        icon: config.frontend.url + 'favicon.ico',
+        clickAction: config.frontend.url + 'roadmap'
+      }
+    };
+
+    // Send notifications to all tokens.
+    const response = await admin.messaging().sendToDevice(tokens, payload);
+    console.log(`Push notifications sent to user.`, JSON.stringify({notification, user}, null, 2));
+    // For each message check if there was an error.
+    const tokensToRemove: (null | string)[] = response.results.map((result, index) => {
+      const error = result.error;
+      if (error) {
+        console.error('Failure sending notification to', tokens[index], error);
+        // Cleanup the tokens who are not registered anymore.
+        if (error.code === 'messaging/invalid-registration-token' ||
+          error.code === 'messaging/registration-token-not-registered') {
+          return tokens[index];
+        }
+      }
+      return null;
+    });
+    const fcmTokens = user.fcmTokens.filter(fcmToken => tokensToRemove.indexOf(fcmToken.token) === -1);
+    if (fcmTokens.length !== user.fcmTokens.length) {
+      const update: Partial<User> = { fcmTokens };
+      await userDocSnapshot.ref.update(update);
+      console.log('User updated with new fcmTokens:', JSON.stringify({ user, fcmTokens }, null, 2));
+    }
+  } catch (error) {
+    console.error('sendPushNotification() failed.', error, JSON.stringify(notification, null, 2));
+  }
+}
 
 export const https = httpsFunction;
 export const onFileUpload = onFileUploadFunction;

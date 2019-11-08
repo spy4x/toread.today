@@ -32,6 +32,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   allNotifications$: Observable<Notification[]>;
   newNotifications$: Observable<Notification[]>;
   isAnyNewNotification$: Observable<boolean>;
+  isAnyUnreadRoadmapNotifications$: Observable<boolean>;
 
   recentlyDeletedIds: string[] = [];
 
@@ -64,6 +65,27 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.isAnyNewNotification$ = this.newNotifications$.pipe(
       map((notifications: Notification[]) => !!notifications.length)
     );
+
+    this.isAnyUnreadRoadmapNotifications$ = this.firestore
+      .collection<Notification>('notifications', ref =>
+        ref
+          .where('userId', '==', this.userId)
+          .where('type', '==', 'roadmap')
+          .where('status', '==', 'new')
+          .orderBy('createdAt', 'desc')
+          .limit(1)
+      )
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        map((notifications: Notification[]) => !!notifications.length),
+        takeUntil(this.componentDestroy$),
+        shareReplay(1),
+        catchError(error => {
+          this.logger.error(
+            { messageForDev: 'notifications$ error', messageForUser: 'Failed to fetch notifications.', error });
+          return of(false);
+        })
+      );
 
     this.error$.pipe(takeUntil(this.componentDestroy$)).subscribe(error => {
       if (error) {

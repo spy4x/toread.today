@@ -19,6 +19,7 @@ ng-template('#notSignedIn'='')
 
         .notification.is-warning('*ngIf'='error$ | async as error')
           | {{error}}
+
 ng-container('*ngIf'='userService.user$ | async as user; else notSignedIn')
   tt-navbar('[user]'='user', '(signOut)'='signOut()', '[appVersionInfo]'='appVersionInfo')
 
@@ -34,5 +35,6 @@ ng-container('*ngIf'='userService.user$ | async as user; else notSignedIn')
           p('*ngIf'='appUpdateInfo') {{appUpdateInfo.version}}: {{appUpdateInfo.description}}
         button.button('(click)'='update()') Update
 
-      router-outlet
+      tt-ask-push-notifications
 
+      router-outlet

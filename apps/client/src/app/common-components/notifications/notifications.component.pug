@@ -3,7 +3,7 @@
     a
       span.icon.is-white.has-text-white.px-3
         i.far.fa-bell
-      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async)')
+      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async) && !(isAnyUnreadRoadmapNotifications$ | async)')
   .dropdown-menu(role='notifications')
     .dropdown-content.notification-messages
       //- Error
@@ -34,9 +34,15 @@
 
           .last-items-shown('*ngIf'='notifications.length === notificationsLimit') Last {{notificationsLimit}} items shown
 
-          .dropdown-item.notif('*ngIf'='!notifications.length')
+          a.dropdown-item.has-text-info(*ngIf="isAnyUnreadRoadmapNotifications$ | async", routerLink="/roadmap")
+            span.icon
+              i.fab.fa-dev
+            span You have unread roadmap activity
+
+          .dropdown-item.notif('*ngIf'='!notifications.length && !(isAnyUnreadRoadmapNotifications$ | async)')
             span No notifications yet&nbsp;
             span.ml-auto ※\(^o^)/※
+
 
 
         ng-template('#loading'='')

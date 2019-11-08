@@ -1,5 +1,10 @@
 import { BaseEntity } from './baseEntity.interface';
 
+export interface FCMToken {
+  token: string
+  createdAt: Date
+}
+
 export interface User extends BaseEntity {
   displayName: null | string
   email: null | string
@@ -8,4 +13,5 @@ export interface User extends BaseEntity {
 
   // settings
   sendRoadmapActivityPushNotifications: null | boolean
+  fcmTokens: FCMToken[]
 }

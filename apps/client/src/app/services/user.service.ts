@@ -1,21 +1,32 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { BehaviorSubject, of } from 'rxjs';
-import { User } from '../interfaces/user.interface';
+import { FCMToken, User } from '../interfaces/user.interface';
 import { User as FirebaseUser } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { catchError, filter, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { LoggerService } from './logger.service';
+import { PushNotificationsService } from './push-notifications.service';
+import { NotificationsService } from './notifications.service';
+
 
 @Injectable()
 export class UserService {
   collectionPath = `users`;
   private _firebaseUser$ = new BehaviorSubject<null | FirebaseUser>(null);
+  firebaseUser$ = this._firebaseUser$.asObservable();
+  isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
+  signedIn$ = this._firebaseUser$.pipe(filter(v => !!v));
+  signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
   private _userDoc$ = new BehaviorSubject<null | AngularFirestoreDocument<User>>(null);
   private _user$ = new BehaviorSubject<null | User>(null);
+  user$ = this._user$.asObservable();
+  isAuthorized$ = this._user$.pipe(map(v => !!v));
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
+              private pushNotificationsService: PushNotificationsService,
+              private notificationsService: NotificationsService,
               private logger: LoggerService) {
     this.auth.authState.pipe(
       tap(user => this.logger.setUser(user)),
@@ -73,13 +84,6 @@ export class UserService {
     this.signedOut$.pipe(map(() => null)).subscribe(this._user$);
   }
 
-  firebaseUser$ = this._firebaseUser$.asObservable();
-  user$ = this._user$.asObservable();
-  isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
-  isAuthorized$ = this._user$.pipe(map(v => !!v));
-  signedIn$ = this._firebaseUser$.pipe(filter(v => !!v));
-  signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
-
   get user(): null | User {
     return this._user$.value;
   }
@@ -97,11 +101,59 @@ export class UserService {
   }
 
   async setSettingSendRoadmapActivityPushNotifications(value: boolean): Promise<void> {
-    return this.update({ sendRoadmapActivityPushNotifications: value }, 'Failed to update push notification setting.');
+    await this.update({ sendRoadmapActivityPushNotifications: value }, 'Failed to update push notification setting.');
+    if (value) {
+      this.activatePushNotifications();
+      this.notificationsService.create({
+        userId: this.user.id,
+        text: 'Push notifications for related Roadmap activity were activated.'
+      });
+    }
+  }
+
+  activatePushNotifications(): void {
+    this.user$
+      .pipe(
+        filter(v => !!v),
+        first(),
+        switchMap(() => this
+          .pushNotificationsService
+          .getToken$()
+          .pipe(
+            filter(v => !!v),
+            first(),
+            switchMap((token: string) => this.saveFCMToken(token)),
+            catchError(error => {
+              this.logger.error({
+                error,
+                messageForUser: 'Failed to activate push notifications.',
+                messageForDev: 'UserService.activatePushNotifications(): Failed.'
+              });
+              return of(null);
+            })
+          )
+        )
+      )
+      .subscribe();
+  }
+
+  async saveFCMToken(token: string): Promise<void> {
+    let fcmTokens = this.user.fcmTokens;
+    if (fcmTokens.find(fcmt => fcmt.token === token)) {
+      return; // token already exists
+    }
+    const newToken: FCMToken = {
+      token,
+      createdAt: new Date()
+    };
+    fcmTokens = [...fcmTokens, newToken];
+    await this.update(
+      { fcmTokens },
+      'Failed to save push notifications token.'
+    );
   }
 
   private async update(data: Partial<User>, errorMessageForUser?: string): Promise<void> {
-    console.log('DEBUG:', data);
     const messageForUser = errorMessageForUser || 'Failed to update user';
     if (!data) {
       this.logger.error({

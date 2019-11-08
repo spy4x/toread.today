@@ -43,10 +43,10 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
     .navbar-end
       //- mobile menu
       ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
-        a.navbar-item
+        a.navbar-item(routerLink='/profile', routerLinkActive='is-active', '(click)'='closeMenu()')
           span.icon.mr-1
-            i.fas.fa-cat
-          span Hello, {{user.displayName || user.email || 'Anonymous'}}
+            i.fas.fa-cog
+          span Profile settings
 
         a.navbar-item('(click)'='signOut.emit()')
           span.icon.mr-1
@@ -65,10 +65,10 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
                     img.is-rounded('[src]'='user.photoURL')
               .dropdown-menu(role='menu')
                 .dropdown-content
-                  .dropdown-item
+                  a.dropdown-item(routerLink='/profile', routerLinkActive='is-active', '(click)'='closeMenu()')
                     span.icon.mr-1
-                      i.fas.fa-cat
-                    span Hello, {{user.displayName || user.email}}
+                      i.fas.fa-cog
+                    span Profile settings
                   hr.dropdown-divider
                   a.dropdown-item('(click)'='signOut.emit()')
                     span.icon.mr-1
