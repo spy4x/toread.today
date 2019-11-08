@@ -6,7 +6,7 @@ import { ConnectionStatusService } from './services/connection-status/connection
 import { SwUpdate } from '@angular/service-worker';
 import { AppVersionInfo } from '../appVersionInfo.interface';
 import { LoggerService } from './services/logger.service';
-import { UserService } from './services/user.service';
+import { AuthStates, UserService } from './services/user.service';
 import { PushNotificationsService } from './services/push-notifications.service';
 
 const { appData } = require('../../ngsw-config.json');
@@ -24,6 +24,7 @@ export class AppComponent {
   isNewVersionAvailable: boolean;
   appUpdateInfo: AppVersionInfo;
   appVersionInfo = appData as AppVersionInfo;
+  AuthStates = AuthStates;
 
   constructor(private angularFireAuth: AngularFireAuth,
               private connectionStatus: ConnectionStatusService,

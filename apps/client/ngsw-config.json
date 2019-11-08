@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.24.6",
-    "description": "Add push notifications about roadmap activity (if enabled in User Profile's settings)"
+    "version": "1.24.7",
+    "description": "Display clearer authentication progress on splash screen"
   },
   "assetGroups": [
     {

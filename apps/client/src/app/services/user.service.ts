@@ -9,6 +9,12 @@ import { LoggerService } from './logger.service';
 import { PushNotificationsService } from './push-notifications.service';
 import { NotificationsService } from './notifications.service';
 
+export enum AuthStates {
+  authenticating = 'authenticating',
+  notAuthenticated = 'notAuthenticated',
+  authorising = 'authorising',
+  authorized = 'authorized',
+}
 
 @Injectable()
 export class UserService {
@@ -18,6 +24,8 @@ export class UserService {
   isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
   signedIn$ = this._firebaseUser$.pipe(filter(v => !!v));
   signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
+  private _authState$ = new BehaviorSubject<AuthStates>(AuthStates.authenticating);
+  authState$ = this._authState$.asObservable();
   private _userDoc$ = new BehaviorSubject<null | AngularFirestoreDocument<User>>(null);
   private _user$ = new BehaviorSubject<null | User>(null);
   user$ = this._user$.asObservable();
@@ -29,7 +37,10 @@ export class UserService {
               private notificationsService: NotificationsService,
               private logger: LoggerService) {
     this.auth.authState.pipe(
-      tap(user => this.logger.setUser(user)),
+      tap(user => {
+        this.logger.setUser(user);
+        this._authState$.next(user ? AuthStates.authorising : AuthStates.notAuthenticated);
+      }),
       catchError(error => {
         this.logger.error({
           messageForDev: 'Failed to authenticate user',
@@ -66,7 +77,8 @@ export class UserService {
             .pipe(
               takeUntil(this.signedOut$),
               filter(v => !!v),
-              map((user: User) => ({ ...user, id: doc.ref.id }))
+              map((user: User) => ({ ...user, id: doc.ref.id })),
+              tap(() => this._authState$.next(AuthStates.authorized)),
             )
         ),
         catchError(error => {
