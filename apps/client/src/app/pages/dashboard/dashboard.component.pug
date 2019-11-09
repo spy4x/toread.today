@@ -2,7 +2,7 @@
   .widget__header
     h2.widget__header__title You were reading...
       span.widget__header__subtitle (recently opened)
-    a.widget__header__action(routerLink="/items")
+    a.widget__header__action(routerLink="/items", [queryParams]="{status: 'opened'}")
       span More
       span.icon
         i.fas.fa-chevron-right

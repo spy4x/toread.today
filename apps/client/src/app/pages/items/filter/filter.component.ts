@@ -15,7 +15,7 @@ export class FilterComponent {
   @Input() tags: Tag[];
   @Input() filter: Filter;
   @Output() changed = new EventEmitter<Filter>();
-  statuses: ItemStatus[] = ['opened', 'new', 'finished'];
+  statuses: ItemStatus[] = ['new', 'opened', 'finished'];
 
   toggleTagId(event: ToggleTagEvent) {
     this.changed.emit({ ...this.filter, tagId: event.isSelected ? event.tagId : null });

@@ -1,10 +1,10 @@
 .panel-block.is-flex.has-border-bottom.p-0
   .tabs
     ul
+      li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
+        a {{status}}
       li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()')
         a
           span.icon.has-text-warning
             i.fas.fa-star
-      li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
-        a {{status}}
-  tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)')
+  tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)', activeItemPrefix='Filter by: ')

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.25.0",
-    "description": "Links - If URL already exists - show full information about it, with controls."
+    "version": "1.25.1",
+    "description": "Minor UI improvements."
   },
   "assetGroups": [
     {

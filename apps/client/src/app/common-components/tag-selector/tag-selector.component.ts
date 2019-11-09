@@ -13,6 +13,7 @@ export class TagSelectorComponent {
   @Input() tags: Tag[] = [];
   @Input() selectedIds: string[] = [];
   @Input() title: string = 'All Tags';
+  @Input() activeItemPrefix: string = '';
   @Input() searchText: string = '';
   @Input() isTitleStatic: boolean = false;
   @Input() isTitleCustom: boolean = false;
@@ -37,6 +38,6 @@ export class TagSelectorComponent {
   }
 
   getActiveTitle(): string {
-    return this.isTitleStatic ? this.title : (this.getSelected().map(t=> t.title).join(',') || this.title)
+    return this.isTitleStatic ? this.title : (this.getSelected().length ? this.activeItemPrefix + this.getSelected().map(t=> t.title).join(',') : this.title);
   }
 }
