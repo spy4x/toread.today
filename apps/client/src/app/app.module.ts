@@ -42,6 +42,7 @@ import { PushNotificationsService } from './services/push-notifications.service'
 import { ProfileComponent } from './pages/profile/profile.component';
 import { NotificationsService } from './services/notifications.service';
 import { AskPushNotificationsComponent } from './common-components/ask-push-notifications/ask-push-notifications.component';
+import { ListItemComponent } from './common-components/items-list/items-list-item/list-item.component';
 
 const routes: Routes = [
   {
@@ -78,6 +79,7 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     ListComponent,
+    ListItemComponent,
     NavbarComponent,
     FilterComponent,
     TagsEditorComponent,

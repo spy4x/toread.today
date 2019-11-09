@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { Item, ItemRating } from '../../interfaces/item.interface';
 import { Tag } from '../../interfaces/tag.interface';
 import { Pagination } from '../../pages/items/pagination.interface';
-import { UIService } from '../../services/ui.service';
 import { trackByFn } from '../../helpers/trackBy.helper';
 
 export interface ToggleTagEvent {
@@ -47,51 +46,14 @@ export class ListComponent {
   @Output() retryURLParsing = new EventEmitter<string>();
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
-  @Output() loadPrev = new EventEmitter<void>();
-  @Output() loadNext = new EventEmitter<void>();
   @Output() tagClick = new EventEmitter<string>();
   @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
   @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
-  openedComments: { [id: string]: boolean } = {};
+  @Output() loadPrev = new EventEmitter<void>();
+  @Output() loadNext = new EventEmitter<void>();
   trackByFn = trackByFn;
-
-  constructor(public uiService: UIService) {}
-
-  toggleTagHandler(event: ToggleTagEvent, item: Item) {
-    this.toggleTag.emit({ ...event, itemId: item.id });
-  }
 
   isZeroItems(): boolean {
     return this.items && !this.items.length;
-  }
-
-  toggleFavouriteHandler(item: Item): void {
-    const event: ToggleItemFavouriteEvent = { id: item.id, isFavourite: !item.isFavourite };
-    this.toggleFavourite.emit(event);
-  }
-
-  setRating(id: string, rating: ItemRating): void {
-    this.changeRating.emit({ id, rating });
-  }
-
-  read(item: Item): void {
-    if (item.status !== 'new') {
-      return;
-    }
-    this.startReading.emit(item.id);
-  }
-
-  setComment(id: string, comment: string): void {
-    this.changeComment.emit({ id, comment });
-    this.toggleComment(id, false);
-  }
-
-  toggleComment(id: string, show?: boolean): void {
-    this.openedComments[id] = typeof show === 'undefined' ? !this.openedComments[id] : show;
-  }
-
-  finishReadingHandler(id: string, rating: ItemRating): void {
-    this.setRating(id, rating);
-    this.finishReading.emit(id);
   }
 }

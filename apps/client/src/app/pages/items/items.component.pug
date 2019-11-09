@@ -3,10 +3,23 @@
   | {{error}}
 
 nav.panel
-  .notification.is-info('*ngIf'='existingItem$ | async as existingItem')
-    //- TODO: display item line component
-    | Item with this URL already exists. {{existingItem$.title ? 'Title: ' + existingItem$.title : ''}}
-    button.delete('(click)'='existingItem$.next(null)')
+  .notification.is-small(*ngIf="existingItem$ | async as existingItem")
+    p.ml-1 Item with this URL already exists:
+    button.delete('(click)'='existingItem$ = null')
+    tt-list-item(
+        [item]="existingItem",
+        [tags]="tags$ | async",
+        (startReading)="itemsService.startReading($event)",
+        (finishReading)="itemsService.finishReading($event)",
+        (undoReading)="itemsService.markAsNew($event)",
+        (delete)="existingItem$ = null; itemsService.remove($event)",
+        (retryURLParsing)="itemsService.retryURLParsing($event)",
+        (toggleTag)="itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+        (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
+        (tagClick)="routerHelper.toItemsWithFilter({tagId: $event})",
+        (changeRating)="itemsService.changeRating($event.id, $event.rating)",
+        (changeComment)="itemsService.changeComment($event.id, $event.comment)",
+    )
   tt-items-add('(add)'='create($event)', '[tags]'='tags$ | async')
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='routerHelper.toItemsWithFilter($event)')
   tt-list('[items]'='items$ | async',

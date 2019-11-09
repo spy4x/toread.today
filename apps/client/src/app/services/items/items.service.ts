@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Item, ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { setStateProperties } from '../../helpers/state.helper';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { environment } from '../../../environments/environment';
 import { LoggerService } from '../logger.service';
-import { catchError, first, switchMap } from 'rxjs/operators';
+import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { firestore, User } from 'firebase/app';
 import { AngularFirestore } from '@angular/fire/firestore';
 
@@ -104,6 +104,25 @@ export class ItemsService {
             params: { items }
           });
           return throwError(error);
+        })
+      );
+  }
+
+  getById$(id: string): Observable<null | Item> {
+    return this.firestore
+      .doc<Item>(`items/${id}`)
+      .valueChanges()
+      .pipe(
+        map((item: Item) => {
+          if (item) {
+            return { ...item, id };
+          } else {
+            return null;
+          }
+        }),
+        catchError(error => {
+          console.error(`getById$`, id, error);
+          return of(null);
         })
       );
   }

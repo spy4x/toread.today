@@ -1,11 +1,18 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 import { catchError, filter, map, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Item } from '../../interfaces/item.interface';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
 import { LoggerService } from '../../services/logger.service';
-import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { defaultFilter, Filter } from './filter/filter.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemAddEvent } from '../../common-components/items-add/items-add.component';
@@ -64,14 +71,15 @@ export class ItemsComponent implements OnInit, OnDestroy {
   pagination$ = new BehaviorSubject<Pagination>(defaultPagination);
   items$ = new BehaviorSubject<Item[]>(null);
   reloadItems$ = new BehaviorSubject<void>(void 0);
-  existingItem$ = new BehaviorSubject<null | Item>(null);
+  existingItem$: Observable<null | Item> = of(null);
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
               private logger: LoggerService,
               public itemsService: ItemsService,
               private route: ActivatedRoute,
-              public routerHelper: RouterHelperService) { }
+              public routerHelper: RouterHelperService,
+              private cd: ChangeDetectorRef) { }
 
 
   ngOnInit(): void {
@@ -206,8 +214,11 @@ export class ItemsComponent implements OnInit, OnDestroy {
       if (this.filter$.value.status !== 'new') {
         this.routerHelper.toItemsWithFilter({ status: 'new' });
       }
+      this.existingItem$ = of(null);
+    } else {
+      this.existingItem$ = this.itemsService.getById$(existingItem.id);
     }
-    this.existingItem$.next(existingItem);
+    this.cd.detectChanges();
   }
 
   async loadPrev() {
