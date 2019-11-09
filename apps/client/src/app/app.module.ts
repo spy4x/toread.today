@@ -43,6 +43,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { NotificationsService } from './services/notifications.service';
 import { AskPushNotificationsComponent } from './common-components/ask-push-notifications/ask-push-notifications.component';
 import { ListItemComponent } from './common-components/items-list/items-list-item/list-item.component';
+import { TagsService } from './services/tags/tags.service';
 
 const routes: Routes = [
   {
@@ -117,6 +118,7 @@ const routes: Routes = [
     ConnectionStatusService,
     LoggerService,
     ItemsService,
+    TagsService,
     UIService,
     RouterHelperService,
     UserService,

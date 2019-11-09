@@ -9,8 +9,9 @@ import { createNotification } from './+utils/common/createNotification';
 import { BatchSwarm } from './+utils/firebase/batchSwarm';
 import { runTransaction } from './+utils/firebase/runTransaction';
 import { User } from './+utils/interfaces/user.interface';
-import { auth, messaging } from 'firebase-admin';
+import { auth, firestore as firestoreNamespace, messaging } from 'firebase-admin';
 import { Notification } from './+utils/interfaces/notification.interface';
+import { Tag } from './+utils/interfaces/tag.interface';
 
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
@@ -120,6 +121,54 @@ const getTagRemovedData = (tagId: string): any => {
   };
 };
 
+const mergeTags = async (tagIdFrom: string, tagIdTo: string): Promise<void> => {
+  console.log(`mergeTags(): Start`, { tagIdFrom, tagIdTo });
+  try {
+    const fetchLimit = 250;
+    const items = await firestore
+      .collection(`items`)
+      .where('tags', 'array-contains', tagIdFrom)
+      .limit(fetchLimit)
+      .get();
+    const itemsFetched = items.docs.length;
+    console.log(`mergeTags(): Fetched ${itemsFetched} items for tag "${tagIdFrom}".`);
+    const batch = new BatchSwarm();
+    items.docs.forEach(itemDoc => {
+      const itemRef = firestore.doc('items/' + itemDoc.id);
+      batch.update(itemRef, { tags: firestoreNamespace.FieldValue.arrayUnion(tagIdTo) });
+      batch.update(itemRef, { tags: firestoreNamespace.FieldValue.arrayRemove(tagIdFrom) });
+    });
+    await batch.commit();
+    console.log(`mergeTags(): Updated ${itemsFetched} items.`);
+
+    if (itemsFetched === fetchLimit) {
+      console.log('mergeTags(): Batch Success. Fetching next batch...');
+      await mergeTags(tagIdFrom, tagIdTo);
+    } else {
+      await firestore.doc(`tags/${tagIdFrom}`).delete();
+      console.log(`mergeTags(): Tag "${tagIdFrom}" was deleted.`);
+      console.log('mergeTags(): Success.');
+    }
+  } catch (error) {
+    console.error('mergeTags()', error);
+  }
+};
+
+export const onTagUpdate = functions.firestore
+  .document(`tags/{id}`)
+  .onUpdate(async change => {
+    const before = { ...change.before.data(), id: change.before.id } as Tag;
+    const after = { ...change.after.data(), id: change.after.id } as Tag;
+    if (before.mergeIntoTagId === null && after.mergeIntoTagId !== null) {
+      const tagTo = await firestore.doc(`tags/${after.mergeIntoTagId}`).get();
+      if (!tagTo.exists || after.createdBy !== tagTo.data().createdBy) {
+        return;
+      }
+      await mergeTags(after.id, after.mergeIntoTagId);
+    }
+  });
+
+
 export const onTagDelete = functions.firestore
   .document(`tags/{id}`)
   .onDelete(async doc => {
@@ -133,7 +182,7 @@ export const onTagDelete = functions.firestore
       console.log('onTagDelete - Found items:', items.docs.length);
 
       const batch = new BatchSwarm();
-      items.docs.forEach((itemDoc, index) => {
+      items.docs.forEach(itemDoc => {
         const itemRef = firestore.doc('items/' + itemDoc.id);
         const data = getTagRemovedData(tag.id);
         batch.update(itemRef, data);

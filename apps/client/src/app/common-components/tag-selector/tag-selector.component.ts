@@ -13,6 +13,7 @@ export class TagSelectorComponent {
   @Input() tags: Tag[] = [];
   @Input() selectedIds: string[] = [];
   @Input() title: string = 'All Tags';
+  @Input() helpText: string = '';
   @Input() activeItemPrefix: string = '';
   @Input() searchText: string = '';
   @Input() isTitleStatic: boolean = false;

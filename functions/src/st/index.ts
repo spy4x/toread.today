@@ -64,6 +64,7 @@ const getTagIdOrCreate = async (tagIdOrTitle: string, userId: string, cache: Map
       const newTag: Tag = {
         title: tagIdOrTitle,
         color: '#209cee',
+        mergeIntoTagId: null,
         createdBy: userId,
         createdAt: new Date(),
       };

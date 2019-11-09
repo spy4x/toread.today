@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.25.1",
-    "description": "Minor UI improvements."
+    "version": "1.26.0",
+    "description": "Merge tags."
   },
   "assetGroups": [
     {

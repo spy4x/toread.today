@@ -35,7 +35,7 @@ ng-container(*ngIf="userService.user$ | async as user; else notAuthorized")
       .notification.is-info.update-available(*ngIf="isNewVersionAvailable")
         div
           p New version is available&nbsp;
-          p(*ngIf="appUpdateInfo") {{appUpdateInfo.version}}: {{appUpdateInfo.description}}
+          p(*ngIf="appUpdateInfo") {{appUpdateInfo.version}}: What's new: {{appUpdateInfo.description}}
         button.button((click)="update()") Update
 
       tt-ask-push-notifications

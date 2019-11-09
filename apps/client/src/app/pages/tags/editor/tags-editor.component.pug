@@ -49,26 +49,39 @@
             i.fas.fa-times
 
   .tag-item--actions
-    a.icon.is-small.ml-3.has-text-primary(
-        '*ngIf'='!isInEditMode(tag.id)',
-        title='Edit tag',
-        '(click)'='toggleEditMode(tag)')
-      i.far.fa-edit
+    ng-container(*ngIf="tag.mergeIntoTagId; else normalActions")
+      button.button.is-loading.is-text :)
+      span.has-text-grey-light Merging into other tag...
+    ng-template("#normalActions"="")
+      a.icon.is-small.ml-3.has-text-primary(
+          *ngIf="!isInEditMode(tag.id)",
+          title="Edit tag",
+          (click)="toggleEditMode(tag)")
+        i.far.fa-edit
 
-    .dropdown.is-hoverable.is-right.ml-3
-      .dropdown-trigger
-        a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
-      .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
-        .dropdown-content
-          a.dropdown-item(
-              '*ngFor'='let color of colors',
-              '(click)'='setColor(tag, color)',)
-            span.icon.mr-1([style.color]="tag.color")
-              i.fas.fa-check([style.visibility]="isColor(tag, color) ? 'visible' : 'hidden'")
-            span([style.color]="color") {{ tag.title }}
+      .dropdown.is-hoverable.is-right.ml-3
+        .dropdown-trigger
+          a.color-circle('[ngStyle]'='{"background-color": tag.color || "#00d1b2"}')
+        .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+          .dropdown-content
+            a.dropdown-item(
+                '*ngFor'='let color of colors',
+                '(click)'='setColor(tag, color)',)
+              span.icon.mr-1([style.color]="tag.color")
+                i.fas.fa-check([style.visibility]="isColor(tag, color) ? 'visible' : 'hidden'")
+              span([style.color]="color") {{ tag.title }}
 
-    a.icon.is-small.ml-3.has-text-danger(title='Delete tag', '(click)'='deleteHandler(tag)')
-      i.far.fa-trash-alt
+      tt-tag-selector(
+          [tags]="tags",
+          (toggle)="merge(tag, $event.tagId)",
+          [isTitleCustom]="true",
+          [isAllTagsVisible]="false",
+          helpText="Merge into:")
+        a.icon(title="Merge into other tag")
+          i.fas.fa-code-branch
 
-.buttons.is-centered.my-3('*ngIf'='!tags?.length')
+      a.icon.is-small.ml-3.has-text-danger(title="Delete tag", (click)="deleteHandler(tag)")
+        i.far.fa-trash-alt
+
+.buttons.is-centered.my-3(*ngIf="!tags?.length")
   span.button.is-static No tags yet.
