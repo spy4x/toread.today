@@ -86,6 +86,15 @@
                 i.far.fa-comment-alt
               span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
             hr.dropdown-divider
+            a.dropdown-item((click)="editTitle(item)")
+              span.icon.has-text-info
+                i.far.fa-edit
+              span Edit title
+            a.dropdown-item((click)="editURL(item)")
+              span.icon.has-text-info
+                i.fas.fa-globe-americas
+              span Edit URL
+            hr.dropdown-divider
             a.dropdown-item(*ngIf='item.status !== "new"', '(click)'='undoReading.emit(item.id)')
               span.icon
                 i.far.fa-circle

@@ -183,6 +183,15 @@ export class ItemsService {
     return this.update({ id, priority }, 'Failed to set item priority.');
   }
 
+  setTitle(id: string, title: string): Promise<void> {
+    return this.update({ id, title }, 'Failed to set item title.');
+  }
+
+  setURL(id: string, url: string): Promise<void> {
+    return this.update({ id, url, title: null, urlParseError: null, urlParseStatus: 'notStarted'  }, 'Failed to set' +
+    ' item URL.');
+  }
+
   private async update(data: Partial<Item>, errorMessageForUser?: string): Promise<void> {
     if (!data || !data.id) {
       this.logger.error(

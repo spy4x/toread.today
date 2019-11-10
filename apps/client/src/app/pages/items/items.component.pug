@@ -19,7 +19,10 @@ nav.panel
         (tagClick)="routerHelper.toItemsWithFilter({tagId: $event})",
         (changeRating)="itemsService.changeRating($event.id, $event.rating)",
         (changeComment)="itemsService.changeComment($event.id, $event.comment)",
-        (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",)
+        (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
+        (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
+        (setURL)="itemsService.setURL($event.item.id, $event.url)",
+    )
   tt-items-add('(add)'='create($event)', '[tags]'='tags$ | async')
   tt-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='routerHelper.toItemsWithFilter($event)')
   tt-list('[items]'='items$ | async',
@@ -37,5 +40,8 @@ nav.panel
           '(tagClick)'='routerHelper.toItemsWithFilter({tagId: $event})',
           '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
           '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',
-          (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",)
+          (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
+          (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
+          (setURL)="itemsService.setURL($event.item.id, $event.url)",
+  )
 

@@ -4,7 +4,7 @@ import { Tag } from '../../../interfaces/tag.interface';
 import {
   SetItemCommentEvent,
   SetItemPriorityEvent,
-  SetItemRatingEvent,
+  SetItemRatingEvent, SetItemTitleEvent, SetItemURLEvent,
   ToggleItemFavouriteEvent,
   ToggleItemTagEvent,
   ToggleTagEvent
@@ -31,6 +31,8 @@ export class ListItemComponent {
   @Output() changeRating = new EventEmitter<SetItemRatingEvent>();
   @Output() changeComment = new EventEmitter<SetItemCommentEvent>();
   @Output() setPriority = new EventEmitter<SetItemPriorityEvent>();
+  @Output() setTitle = new EventEmitter<SetItemTitleEvent>();
+  @Output() setURL = new EventEmitter<SetItemURLEvent>();
   isNoteVisible = false;
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
@@ -65,5 +67,21 @@ export class ListItemComponent {
   finishReadingHandler(id: string, rating: ItemRating): void {
     this.setRating(id, rating);
     this.finishReading.emit(id);
+  }
+
+  editTitle(item: Item): void {
+    const title = prompt(`Edit title for "${item.url}":`, item.title || '');
+    if (!title || item.title === title) {
+      return;
+    }
+    this.setTitle.emit({item, title});
+  }
+
+  editURL(item: Item): void {
+    const url = prompt(`Edit URL for "${item.title}":`, item.url || '');
+    if (!url || item.url === url) {
+      return;
+    }
+    this.setURL.emit({item, url});
   }
 }

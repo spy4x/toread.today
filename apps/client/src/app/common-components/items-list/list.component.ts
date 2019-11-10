@@ -33,6 +33,16 @@ export interface SetItemPriorityEvent {
   priority: ItemPriority
 }
 
+export interface SetItemTitleEvent {
+  item: Item
+  title: string
+}
+
+export interface SetItemURLEvent {
+  item: Item
+  url: string
+}
+
 @Component({
   selector: 'tt-list',
   templateUrl: './list.component.pug',
@@ -55,6 +65,8 @@ export class ListComponent {
   @Output() changeRating = new EventEmitter<SetItemRatingEvent>();
   @Output() changeComment = new EventEmitter<SetItemCommentEvent>();
   @Output() setPriority = new EventEmitter<SetItemPriorityEvent>();
+  @Output() setTitle = new EventEmitter<SetItemTitleEvent>();
+  @Output() setURL = new EventEmitter<SetItemURLEvent>();
   @Output() loadPrev = new EventEmitter<void>();
   @Output() loadNext = new EventEmitter<void>();
   trackByFn = trackByFn;

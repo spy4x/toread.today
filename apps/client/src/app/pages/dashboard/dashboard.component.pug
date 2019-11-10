@@ -18,7 +18,11 @@
           (retryURLParsing)="itemsService.retryURLParsing($event)",
           (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
           (changeRating)="itemsService.changeRating($event.id, $event.rating)",
-          (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
+          (changeComment)="itemsService.changeComment($event.id, $event.comment)",
+          (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
+          (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
+          (setURL)="itemsService.setURL($event.item.id, $event.url)",
+  )
   .widget__info(*ngIf="!(openedItems$ | async)?.length") You don't have unfinished items. Good job! 👍
 
 
@@ -42,7 +46,11 @@
           (retryURLParsing)="itemsService.retryURLParsing($event)",
           (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
           (changeRating)="itemsService.changeRating($event.id, $event.rating)",
-          (changeComment)="itemsService.changeComment($event.id, $event.comment)",)
+          (changeComment)="itemsService.changeComment($event.id, $event.comment)",
+          (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
+          (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
+          (setURL)="itemsService.setURL($event.item.id, $event.url)",
+  )
   .widget__info(*ngIf="!(randomItems$ | async)?.length")
     span You have nothing to read yet.&nbsp;
     a(routerLink="/items") Add something by URL 🔗
