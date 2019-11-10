@@ -35,6 +35,8 @@
           i.fas.fa-play
         span Start reading
       ng-container(*ngIf="item.status === 'finished'")
+        a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
+          i.far.fa-comment-alt
         .dropdown.is-hoverable.is-right
           .dropdown-trigger
             a.icon([ngClass]="{'has-text-primary': item.rating === 1, 'has-text-danger': item.rating === -1, 'has-text-grey-light': !item.rating}")
@@ -49,8 +51,6 @@
                 span.icon.has-text-danger
                   i.far.fa-thumbs-down
                 span Mark as Useless
-        a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
-          i.far.fa-comment-alt
       .dropdown.is-hoverable.is-right(*ngIf="item.status === 'opened'")
         .dropdown-trigger
           button.button.finish.is-primary.is-small
