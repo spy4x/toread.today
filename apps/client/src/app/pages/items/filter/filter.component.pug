@@ -5,6 +5,9 @@
         a {{status}}
       li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()')
         a
-          span.icon.has-text-warning
-            i.fas.fa-star
-  tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)', activeItemPrefix='Filter by: ')
+          span.icon([class.has-text-warning]="isFavourite()")
+            i.fa-star([ngClass]="{fas: isFavourite(), far: !isFavourite()}")
+
+  tt-priority-selector.mr-3([priority]="filter.priority", [shouldShowAnyPriority]="true", (set)="setPriority($event)")
+
+  tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)')

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Item, ItemRating } from '../../../interfaces/item.interface';
 import { Tag } from '../../../interfaces/tag.interface';
-import { Pagination } from '../../../pages/items/pagination.interface';
 import {
-  ChangeItemCommentEvent,
-  ChangeItemRatingEvent,
+  SetItemCommentEvent,
+  SetItemPriorityEvent,
+  SetItemRatingEvent,
   ToggleItemFavouriteEvent,
   ToggleItemTagEvent,
   ToggleTagEvent
@@ -28,8 +28,9 @@ export class ListItemComponent {
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
   @Output() tagClick = new EventEmitter<string>();
-  @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
-  @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
+  @Output() changeRating = new EventEmitter<SetItemRatingEvent>();
+  @Output() changeComment = new EventEmitter<SetItemCommentEvent>();
+  @Output() setPriority = new EventEmitter<SetItemPriorityEvent>();
   isNoteVisible = false;
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {

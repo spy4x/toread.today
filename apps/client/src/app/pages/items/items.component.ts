@@ -7,7 +7,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { catchError, filter, map, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { Item } from '../../interfaces/item.interface';
+import { Item, ItemPriority } from '../../interfaces/item.interface';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
@@ -87,6 +87,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
       const tagId = params[ROUTER_CONSTANTS.items.params.tagId];
       const status = params[ROUTER_CONSTANTS.items.params.status];
       const isFavourite = params[ROUTER_CONSTANTS.items.params.isFavourite];
+      const priority = params[ROUTER_CONSTANTS.items.params.priority];
 
       const filter: Filter = { ...defaultFilter };
       if (tagId) {
@@ -98,6 +99,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
       if (isFavourite) {
         filter.isFavourite = isFavourite === 'true';
         filter.status = null;
+      }
+      if (priority) {
+        filter.priority = +priority as ItemPriority;
       }
       this.pagination$.next(defaultPagination);
       this.filter$.next(filter);
@@ -154,6 +158,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
               }
               if (v.filter.isFavourite) {
                 query = query.where('isFavourite', '==', true);
+              }
+              if (v.filter.priority !== null) {
+                query = query.where('priority', '==', v.filter.priority);
               }
               if (v.filter.tagId) {
                 query = query.where('tags', 'array-contains', v.filter.tagId);

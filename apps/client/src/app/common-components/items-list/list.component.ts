@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Item, ItemRating } from '../../interfaces/item.interface';
+import { Item, ItemPriority, ItemRating } from '../../interfaces/item.interface';
 import { Tag } from '../../interfaces/tag.interface';
 import { Pagination } from '../../pages/items/pagination.interface';
 import { trackByFn } from '../../helpers/trackBy.helper';
@@ -18,14 +18,19 @@ export interface ToggleItemFavouriteEvent {
   isFavourite: boolean
 }
 
-export interface ChangeItemRatingEvent {
+export interface SetItemRatingEvent {
   id: string
   rating: ItemRating
 }
 
-export interface ChangeItemCommentEvent {
+export interface SetItemCommentEvent {
   id: string
   comment: string
+}
+
+export interface SetItemPriorityEvent {
+  item: Item
+  priority: ItemPriority
 }
 
 @Component({
@@ -47,8 +52,9 @@ export class ListComponent {
   @Output() toggleTag = new EventEmitter<ToggleItemTagEvent>();
   @Output() toggleFavourite = new EventEmitter<ToggleItemFavouriteEvent>();
   @Output() tagClick = new EventEmitter<string>();
-  @Output() changeRating = new EventEmitter<ChangeItemRatingEvent>();
-  @Output() changeComment = new EventEmitter<ChangeItemCommentEvent>();
+  @Output() changeRating = new EventEmitter<SetItemRatingEvent>();
+  @Output() changeComment = new EventEmitter<SetItemCommentEvent>();
+  @Output() setPriority = new EventEmitter<SetItemPriorityEvent>();
   @Output() loadPrev = new EventEmitter<void>();
   @Output() loadNext = new EventEmitter<void>();
   trackByFn = trackByFn;

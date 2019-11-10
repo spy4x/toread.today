@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Filter } from './filter.interface';
 import { Tag } from '../../../interfaces/tag.interface';
-import { ItemStatus } from '../../../interfaces/item.interface';
+import { ItemPriority, ItemStatus } from '../../../interfaces/item.interface';
 import { ToggleTagEvent } from '../../../common-components/items-list/list.component';
 
 @Component({
@@ -35,5 +35,13 @@ export class FilterComponent {
 
   setFavourite() {
     this.changed.emit({ ...this.filter, status: null, isFavourite: true });
+  }
+
+  isPriority(priority: null | ItemPriority): boolean {
+    return this.filter.priority === priority;
+  }
+
+  setPriority(priority: null | ItemPriority) {
+    this.changed.emit({ ...this.filter, priority });
   }
 }

@@ -4,7 +4,8 @@ export const ROUTER_CONSTANTS = {
     params: {
       tagId: 'tagId',
       status: 'status',
-      isFavourite: 'isFavourite'
+      isFavourite: 'isFavourite',
+      priority: 'priority',
     }
   }
 };

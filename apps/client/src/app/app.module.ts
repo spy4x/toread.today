@@ -44,6 +44,7 @@ import { NotificationsService } from './services/notifications.service';
 import { AskPushNotificationsComponent } from './common-components/ask-push-notifications/ask-push-notifications.component';
 import { ListItemComponent } from './common-components/items-list/items-list-item/list-item.component';
 import { TagsService } from './services/tags/tags.service';
+import { PrioritySelectorComponent } from './common-components/priority-selector/priority-selector.component';
 
 const routes: Routes = [
   {
@@ -85,6 +86,7 @@ const routes: Routes = [
     FilterComponent,
     TagsEditorComponent,
     TagSelectorComponent,
+    PrioritySelectorComponent,
     ItemsAddComponent,
     TagTitleByIdPipe,
     DropdownDirective,

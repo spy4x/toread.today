@@ -1,7 +1,7 @@
 import { bucket, createId, firestore, functions } from '../+utils/firebase/firebase';
 import { readFileSync, unlinkSync } from 'fs';
 import { every, map } from 'async-parallel';
-import { Item, ItemSkeleton } from '../+utils/interfaces/item.interface';
+import { Item, ItemPriority, ItemSkeleton } from '../+utils/interfaces/item.interface';
 import * as XRegExp from 'xregexp';
 import { isUrl } from '../+utils/common/isURL';
 import { Tag } from '../+utils/interfaces/tag.interface';
@@ -171,7 +171,7 @@ export const onFileUploadFunction = functions
             tags: tagsIds,
             type: null,
             status: 'new',
-            priority: 3,
+            priority: 0 as ItemPriority,
             rating: 0,
             comment: '',
             withComment: false,

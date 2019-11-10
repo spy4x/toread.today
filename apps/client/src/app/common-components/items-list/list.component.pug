@@ -13,6 +13,7 @@ tt-list-item( *ngFor="let item of items; trackBy: trackByFn()",
               (tagClick)="tagClick.emit($event)",
               (changeRating)="changeRating.emit($event)",
               (changeComment)="changeComment.emit($event)",
+              (setPriority)="setPriority.emit($event)",
 )
 
 .buttons.is-centered.my-3(*ngIf="pagination")

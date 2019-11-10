@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Item, ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
+import { Item, ItemPriority, ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
 import { Observable, of, throwError } from 'rxjs';
 import { setStateProperties } from '../../helpers/state.helper';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -27,7 +27,7 @@ export class ItemsService {
       title: null,
       type: null,
       status: 'new',
-      priority: 3,
+      priority: 0,
       rating: 0,
       comment: '',
       withComment: false,
@@ -177,6 +177,10 @@ export class ItemsService {
 
   changeComment(id: string, comment: string): Promise<void> {
     return this.update({ id, comment, withComment: !!comment }, 'Failed to change item comment.');
+  }
+
+  setPriority(id: string, priority: ItemPriority): Promise<void> {
+    return this.update({ id, priority }, 'Failed to set item priority.');
   }
 
   private async update(data: Partial<Item>, errorMessageForUser?: string): Promise<void> {

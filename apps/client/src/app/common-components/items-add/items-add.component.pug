@@ -11,13 +11,16 @@
           '(keydown.enter)'='addItem(0)',)
 
     .control
+      tt-priority-selector([priority]="priority", [asButton]="true", (set)="priority = $event")
+
+    .control
       tt-tag-selector(
           '[tags]'='tags',
           '[selectedIds]'='inputTags',
           '(toggle)'='toggleTag($event)',
           '[isTitleCustom]'='true',
           '[isAllTagsVisible]'='false',)
-        a.button.has-text-info
+        a.button([ngClass]="{'has-text-info': inputTags.length, 'has-text-grey-light': !inputTags.length}")
           span.icon
             i.fas.fa-hashtag(aria-hidden='true')
 

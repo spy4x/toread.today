@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.26.0",
-    "description": "Merge tags."
+    "version": "1.27.0",
+    "description": "Links - Add \"priority\" field"
   },
   "assetGroups": [
     {

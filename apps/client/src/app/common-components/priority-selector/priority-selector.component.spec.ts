@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TagSelectorComponent } from './tag-selector.component';
+import { PrioritySelectorComponent } from './priority-selector.component';
 
 describe('PrioritySelectorComponent', () => {
-  let component: TagSelectorComponent;
-  let fixture: ComponentFixture<TagSelectorComponent>;
+  let component: PrioritySelectorComponent;
+  let fixture: ComponentFixture<PrioritySelectorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TagSelectorComponent ]
+      declarations: [ PrioritySelectorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TagSelectorComponent);
+    fixture = TestBed.createComponent(PrioritySelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

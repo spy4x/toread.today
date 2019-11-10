@@ -4,12 +4,13 @@ import { ToggleTagEvent } from '../items-list/list.component';
 import { isURL } from '../../helpers/isURL.helper';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { ItemRating } from '../../interfaces/item.interface';
+import { ItemPriority, ItemRating } from '../../interfaces/item.interface';
 
 export interface ItemAddEvent {
   url: string
   tags: string[]
   rating: ItemRating
+  priority: ItemPriority
 }
 
 @Component({
@@ -24,6 +25,7 @@ export class ItemsAddComponent {
   @Output() add = new EventEmitter<ItemAddEvent>();
   inputValue = '';
   inputTags: string[] = [];
+  priority: ItemPriority = 0;
   errors: string[] = [];
 
   constructor(private route: ActivatedRoute) {
@@ -46,11 +48,13 @@ export class ItemsAddComponent {
     const item: ItemAddEvent = {
       url: this.inputValue,
       tags: this.inputTags,
-      rating: rating as ItemRating || 0
+      rating: rating as ItemRating || 0,
+      priority: this.priority,
     };
     this.add.emit(item);
     this.inputValue = '';
     this.inputTags = [];
+    this.priority = 0;
   }
 
   toggleTag(event: ToggleTagEvent) {
