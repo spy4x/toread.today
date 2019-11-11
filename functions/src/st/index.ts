@@ -135,11 +135,12 @@ export const onFileUploadFunction = functions
       console.log('File downloaded successfully');
 
       const fileBuffer = readFileSync(localPathToFile);
-      const bulk: { items: ItemSkeleton[], tags: string[] } = JSON.parse(fileBuffer.toString());
-      console.log('File has been read successfully', {items: bulk.items.length, tags: bulk.tags.length});
+      const bulk: { items: ItemSkeleton[], tags: string[], priority: ItemPriority } = JSON.parse(fileBuffer.toString());
+      console.log('File has been read successfully', {items: bulk.items.length, tags: bulk.tags.length, priority: bulk.priority});
 
       await createNotification({text:`Parsing file with ${bulk.items.length} items`, userId});
 
+      // TODO: Do I need to check URL for uniqueness before add? Won't it be faster to add it and check later async?
       // TODO: Do I still need 'async-parallel' library if this operation is sequential?
       await every(bulk.items, async (itemSkeleton: ItemSkeleton, index: number) => {
         if (index && index % 100 === 0) {
@@ -171,7 +172,7 @@ export const onFileUploadFunction = functions
             tags: tagsIds,
             type: null,
             status: 'new',
-            priority: 0 as ItemPriority,
+            priority: bulk.priority,
             rating: 0,
             comment: '',
             withComment: false,

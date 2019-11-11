@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.28.0",
-    "description": "Links - Edit title and url"
+    "version": "1.29.0",
+    "description": "Add priority selector to Import"
   },
   "assetGroups": [
     {

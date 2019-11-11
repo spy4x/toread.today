@@ -10,6 +10,7 @@ export const bulkValidators = [
   body('items.*.title', 'Should be string').optional({nullable: true}).isString(),
   body('tags', 'Should be array').isArray(),
   body('tags.*', 'Should be string').isString(),
+  body('priority', 'Should be number').isNumeric(),
 ];
 
 export const bulk = async (req: Request, res: Response): Promise<void> => {

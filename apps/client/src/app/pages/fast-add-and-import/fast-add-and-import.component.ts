@@ -9,8 +9,9 @@ import { parseBookmarks, ParseBookmarksResult } from '../../helpers/bookmarks-pa
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BookmarksBookmark } from '../../helpers/bookmarks-parser/parser.interface';
 import { ItemsService } from '../../services/items/items.service';
-import { ItemSkeleton } from '../../interfaces/item.interface';
+import { ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
 import { environment } from '../../../environments/environment';
+import { ImportData } from './items-import/items-import.component';
 
 type ImportBookmarksState = null | 'sending' | 'error' | 'success'
 
@@ -98,15 +99,15 @@ export class FastAddAndImportComponent implements OnDestroy {
     };
   }
 
-  saveBookmarks({bookmarks, tags}: {bookmarks: BookmarksBookmark[], tags: string[]}): void {
+  saveBookmarks({bookmarks, tags, priority}: ImportData): void {
     const items: ItemSkeleton[] = bookmarks.map(b => ({
       title: b.title,
       tags: b.tags,
       url: b.url,
-      rating: 0,
+      rating: 0 as ItemRating,
     }));
     this.importState$.next('sending');
-    this.itemsService.bulkCreate(items, tags).pipe(
+    this.itemsService.bulkCreate(items, tags, priority).pipe(
       first(),
       catchError(() => {
         this.importState$.next('error');

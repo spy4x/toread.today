@@ -84,7 +84,7 @@ export class ItemsService {
       .toPromise();
   }
 
-  bulkCreate(items: ItemSkeleton[], tags: string[]): Observable<any> {
+  bulkCreate(items: ItemSkeleton[], tags: string[], priority: ItemPriority): Observable<any> {
     // TODO: use custom AuthService to get User
     return this.afa.authState
       .pipe(
@@ -92,7 +92,7 @@ export class ItemsService {
         switchMap((user: User) => user.getIdToken()),
         switchMap(token => {
           const url = environment.apiPath + this.apiPathBulk;
-          const body = { items, tags };
+          const body = { items, tags, priority };
           const options = { headers: { authorization: 'Bearer ' + token } };
           return this.http.post(url, body, options);
         }),

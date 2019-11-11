@@ -8,6 +8,13 @@ import {
 import { ParseBookmarksResult } from '../../../helpers/bookmarks-parser/index';
 import { Tag } from '../../../interfaces/tag.interface';
 import { ToggleTagEvent } from '../../../common-components/items-list/list.component';
+import { ItemPriority } from '../../../interfaces/item.interface';
+
+export interface ImportData {
+  bookmarks: BookmarksBookmark[],
+  tags: string[],
+  priority: ItemPriority
+}
 
 @Component({
   selector: 'tt-items-import',
@@ -19,12 +26,17 @@ import { ToggleTagEvent } from '../../../common-components/items-list/list.compo
 export class ItemsImportComponent {
   @Input() import: ParseBookmarksResult;
   @Input() tags: Tag[] = [];
-  @Output() done = new EventEmitter<{bookmarks: BookmarksBookmark[], tags: string[]}>();
+  @Output() done = new EventEmitter<ImportData>();
   @Output() cancel = new EventEmitter<void>();
   inputTags: string[] = [];
+  priority: ItemPriority = 0;
 
   save(): void {
-    this.done.emit({ bookmarks: this.getSelectedBookmarks(this.import.bookmarks, []), tags: [...this.getCommonTags(), ...this.inputTags]});
+    this.done.emit({
+      bookmarks: this.getSelectedBookmarks(this.import.bookmarks, []),
+      tags: [...this.getCommonTags(), ...this.inputTags],
+      priority: this.priority
+    });
   }
 
   private getSelectedBookmarks(items: BookmarksParserResult, tags: string[]): BookmarksBookmark[] {
