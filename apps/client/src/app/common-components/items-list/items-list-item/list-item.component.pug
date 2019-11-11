@@ -7,18 +7,12 @@
 
   .line.second
     tt-tag-selector.action(
-    '[tags]'='tags',
-    '[selectedIds]'='item.tags',
-    '(toggle)'='toggleTagHandler($event, item)',
-    '[isTitleCustom]'='true',
-    '[isDropdownRight]'='false',
-    '[isAllTagsVisible]'='false')
-      a.has-text-info
-        i.fas.fa-hashtag(aria-hidden='true')
-
-    a.tiny-tag( *ngFor='let tagId of item.tags',
-                (click)='tagClick.emit(tagId)',
-                [ngStyle]='{"color": (tagId | tagById:tags)?.color}') {{(tagId | tagById:tags)?.title || 'Tag not found'}}
+      [tags]="tags",
+      [selectedIds]="item.tags",
+      [isDropdownLeft]="true",
+      (toggle)="toggleTagHandler($event, item)",
+      (tagClick)="tagClick.emit($event)",
+    )
 
     .actions.ml-auto
       .icon.is-small.has-text-info(

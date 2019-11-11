@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.29.0",
-    "description": "Add priority selector to Import"
+    "version": "1.30.0",
+    "description": "Improve UI of Tags filter"
   },
   "assetGroups": [
     {

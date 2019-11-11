@@ -15,14 +15,12 @@
 
     .control
       tt-tag-selector(
-          '[tags]'='tags',
-          '[selectedIds]'='inputTags',
-          '(toggle)'='toggleTag($event)',
-          '[isTitleCustom]'='true',
-          '[isAllTagsVisible]'='false',)
-        a.button([ngClass]="{'has-text-info': inputTags.length, 'has-text-grey-light': !inputTags.length}")
-          span.icon
-            i.fas.fa-hashtag(aria-hidden='true')
+        [tags]="tags",
+        [selectedIds]="inputTags",
+        (toggle)="toggleTag($event)",
+        [asButton]="true",
+        [hideSelected]="true",
+      )
 
     .control
       button.button--add-as-finished.button.dropdown.is-hoverable.is-right.button--add-as-finished

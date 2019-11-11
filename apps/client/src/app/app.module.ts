@@ -12,7 +12,7 @@ import { FilterComponent } from './pages/items/filter/filter.component';
 import { TagsEditorComponent } from './pages/tags/editor/tags-editor.component';
 import { TagSelectorComponent } from './common-components/tag-selector/tag-selector.component';
 import { ItemsAddComponent } from './common-components/items-add/items-add.component';
-import { TagTitleByIdPipe } from './common-components/tag-title-by-id/tag-title-by-id.pipe';
+import { TagsByIdsPipe } from './common-components/tags-by-ids/tags-by-ids.pipe';
 import { DropdownDirective } from './common-components/dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './services/connection-status/connection-status.service';
@@ -88,7 +88,7 @@ const routes: Routes = [
     TagSelectorComponent,
     PrioritySelectorComponent,
     ItemsAddComponent,
-    TagTitleByIdPipe,
+    TagsByIdsPipe,
     DropdownDirective,
     ItemsComponent,
     TagsComponent,

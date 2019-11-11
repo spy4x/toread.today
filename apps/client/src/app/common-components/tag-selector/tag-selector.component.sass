@@ -5,3 +5,11 @@ tt-tag-selector
   .dropdown-item
     display: flex
     align-items: center
+  .tiny-tag
+    margin-top: 0.3rem
+    &:after
+      content: ','
+    &:last-of-type:after
+      content: ''
+    + .tiny-tag
+      margin-left: 0.25rem

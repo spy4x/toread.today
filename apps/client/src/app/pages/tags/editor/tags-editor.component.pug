@@ -72,11 +72,11 @@
               span([style.color]="color") {{ tag.title }}
 
       tt-tag-selector(
-          [tags]="tags",
-          (toggle)="merge(tag, $event.tagId)",
-          [isTitleCustom]="true",
-          [isAllTagsVisible]="false",
-          helpText="Merge into:")
+        [tags]="tags",
+        (toggle)="merge(tag, $event.tagId)",
+        [isDropdownTriggerCustom]="true",
+        helpText="Merge into:"
+      )
         a.icon(title="Merge into other tag")
           i.fas.fa-code-branch
 

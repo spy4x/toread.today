@@ -1,15 +1,22 @@
-.dropdown.is-hoverable([class.is-right]="isDropdownRight")
+.dropdown.is-hoverable([class.is-right]="!isDropdownLeft")
   .dropdown-trigger
-    ng-container('*ngIf'='!isTitleCustom')
-      a([ngClass]="{'has-text-grey-light': title === getActiveTitle(), 'has-text-info': title !== getActiveTitle()}")
-        span {{getActiveTitle()}}
+    ng-container('*ngIf'='!isDropdownTriggerCustom')
+      a([ngClass]="{'has-text-info': selectedIds.length, 'has-text-grey-light': !selectedIds.length, 'button': asButton}")
+        span.icon
+          i.fas.fa-hashtag(aria-hidden='true')
+      ng-container(*ngIf="!hideSelected")
+        a.tiny-tag(
+          *ngFor='let tag of (selectedIds | tagsByIds:tags)',
+          (click)='$event.stopPropagation();tagClick.emit(tag.id)',
+          [ngStyle]='{"color": tag.color}'
+        ) {{tag.title || 'Tag not found'}}
     ng-content
   .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
     .dropdown-content
       .dropdown-item(*ngIf="helpText") {{helpText}}
       a.dropdown-item.has-text-grey-light('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
         span.icon.mr-2
-          i.fas.fa-check('[ngStyle]'='{"visibility": getSelected().length ? "hidden" : "visible"}')
+          i.fas.fa-check('[ngStyle]'='{"visibility": selectedIds.length ? "hidden" : "visible"}')
         span All tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
       .dropdown-item
@@ -18,12 +25,12 @@
       a.dropdown-item(
           *ngFor="let tag of tags | filterByField:[{field: 'title', value: searchText, match: 'includesString'}]",
           href="javascript:;",
-          (click)="toggleTag(tag)")
+          (click)="toggleTag(tag.id)")
         span.icon.mr-1([style.color]="tag.color")
-          i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag) ? "visible" : "hidden"}')
+          i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag.id) ? "visible" : "hidden"}')
         span([style.color]="tag.color") {{ tag.title }}
 
       .dropdown-item('*ngIf'='!tags?.length')
         span(style='min-width: 85px') No tags yet.&nbsp;
           br
-          a(routerLink='/tags') Create new
+          a(routerLink='/tags', target="_blank") Create new

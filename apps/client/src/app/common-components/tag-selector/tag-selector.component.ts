@@ -12,33 +12,25 @@ import { ToggleTagEvent } from '../items-list/list.component';
 export class TagSelectorComponent {
   @Input() tags: Tag[] = [];
   @Input() selectedIds: string[] = [];
-  @Input() title: string = 'All Tags';
-  @Input() helpText: string = '';
-  @Input() activeItemPrefix: string = '';
-  @Input() searchText: string = '';
-  @Input() isTitleStatic: boolean = false;
-  @Input() isTitleCustom: boolean = false;
-  @Input() isAllTagsVisible: boolean = true;
-  @Input() isDropdownRight: boolean = true;
+  @Input() helpText = '';
+  @Input() isDropdownTriggerCustom = false;
+  @Input() asButton = false;
+  @Input() isAllTagsVisible = false;
+  @Input() isDropdownLeft = false;
+  @Input() hideSelected = false;
   @Output() toggle = new EventEmitter<ToggleTagEvent>();
+  @Output() tagClick = new EventEmitter<string>();
+  searchText = '';
 
-  isSelected(tag: Tag): boolean {
-    return this.selectedIds.includes(tag.id);
+  isSelected(id: string): boolean {
+    return this.selectedIds.includes(id);
   }
 
-  getSelected(): Tag[] {
-    return this.tags ? this.tags.filter(t => this.isSelected(t)) : [];
-  }
-
-  toggleTag(tag: Tag): void {
-    this.toggle.emit({ tagId: tag.id, isSelected: !this.selectedIds.includes(tag.id) });
+  toggleTag(id: string): void {
+    this.toggle.emit({ tagId: id, isSelected: !this.isSelected(id) });
   }
 
   deselectAll(): void {
-    this.getSelected().forEach(tag => this.toggle.emit({tagId: tag.id, isSelected: false}))
-  }
-
-  getActiveTitle(): string {
-    return this.isTitleStatic ? this.title : (this.getSelected().length ? this.activeItemPrefix + this.getSelected().map(t=> t.title).join(',') : this.title);
+    this.selectedIds.forEach(tagId => this.toggle.emit({tagId, isSelected: false}))
   }
 }

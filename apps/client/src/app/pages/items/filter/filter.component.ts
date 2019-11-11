@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Filter } from './filter.interface';
+import { defaultFilter, Filter } from './filter.interface';
 import { Tag } from '../../../interfaces/tag.interface';
 import { ItemPriority, ItemStatus } from '../../../interfaces/item.interface';
 import { ToggleTagEvent } from '../../../common-components/items-list/list.component';
@@ -13,7 +13,7 @@ import { ToggleTagEvent } from '../../../common-components/items-list/list.compo
 })
 export class FilterComponent {
   @Input() tags: Tag[];
-  @Input() filter: Filter;
+  @Input() filter: Filter = defaultFilter;
   @Output() changed = new EventEmitter<Filter>();
   statuses: ItemStatus[] = ['new', 'opened', 'finished'];
 

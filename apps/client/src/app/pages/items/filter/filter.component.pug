@@ -10,4 +10,4 @@
 
   tt-priority-selector.mr-3([priority]="filter.priority", [shouldShowAnyPriority]="true", (set)="setPriority($event)")
 
-  tt-tag-selector('[tags]'='tags', '[selectedIds]'='[filter?.tagId]', '(toggle)'='toggleTagId($event)')
+  tt-tag-selector('[tags]'='tags', '[selectedIds]'='filter.tagId ? [filter.tagId] : []', '(toggle)'='toggleTagId($event)', [isAllTagsVisible]="true")
