@@ -7,7 +7,7 @@
       ng-container(*ngIf="!hideSelected")
         a.tiny-tag(
           *ngFor='let tag of (selectedIds | tagsByIds:tags)',
-          (click)='$event.stopPropagation();tagClick.emit(tag.id)',
+          (click)='tagClickHandler(tag.id, $event)',
           [ngStyle]='{"color": tag.color}'
         ) {{tag.title || 'Tag not found'}}
     ng-content

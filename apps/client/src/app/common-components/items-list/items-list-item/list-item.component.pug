@@ -28,7 +28,7 @@
         span.icon
           i.fas.fa-play
         span Start reading
-        
+
       ng-container(*ngIf="item.status === 'finished'")
         a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
           i.far.fa-comment-alt

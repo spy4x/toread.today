@@ -31,6 +31,13 @@ export class TagSelectorComponent {
   }
 
   deselectAll(): void {
-    this.selectedIds.forEach(tagId => this.toggle.emit({tagId, isSelected: false}))
+    this.selectedIds.forEach(tagId => this.toggle.emit({ tagId, isSelected: false }));
+  }
+
+  tagClickHandler(id: string, event: MouseEvent) {
+    if (!this.isAllTagsVisible) {
+      event.stopPropagation();
+    }
+    this.tagClick.emit(id);
   }
 }
