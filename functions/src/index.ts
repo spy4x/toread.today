@@ -1,17 +1,9 @@
-import { onFileUploadFunction } from './st';
+import { onFileUploadFunction } from './triggers/st';
 import * as ogs from 'open-graph-scraper';
-import { httpsFunction } from './https';
-import { Item, ItemType } from './+utils/interfaces/item.interface';
-import { admin, config, firestore, functions } from './+utils/firebase/firebase';
-import { isUrl } from './+utils/common/isURL';
-import { RoadmapBrick } from './+utils/interfaces/roadmapBrick.interface';
-import { createNotification } from './+utils/common/createNotification';
-import { BatchSwarm } from './+utils/firebase/batchSwarm';
-import { runTransaction } from './+utils/firebase/runTransaction';
-import { User } from './+utils/interfaces/user.interface';
-import { auth, firestore as firestoreNamespace, messaging } from 'firebase-admin';
-import { Notification } from './+utils/interfaces/notification.interface';
-import { Tag } from './+utils/interfaces/tag.interface';
+import { httpsFunction } from './triggers/https';
+import { admin, config, firestore, functions, FieldValue, auth, messaging, BatchSwarm, runTransaction} from './+utils/firebase';
+import { isUrl, createNotification } from './+utils/common';
+import { Item, ItemType, Notification, RoadmapBrick, Tag, User } from './+utils/interfaces';
 
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
@@ -135,8 +127,8 @@ const mergeTags = async (tagIdFrom: string, tagIdTo: string): Promise<void> => {
     const batch = new BatchSwarm();
     items.docs.forEach(itemDoc => {
       const itemRef = firestore.doc('items/' + itemDoc.id);
-      batch.update(itemRef, { tags: firestoreNamespace.FieldValue.arrayUnion(tagIdTo) });
-      batch.update(itemRef, { tags: firestoreNamespace.FieldValue.arrayRemove(tagIdFrom) });
+      batch.update(itemRef, { tags: FieldValue.arrayUnion(tagIdTo) });
+      batch.update(itemRef, { tags: FieldValue.arrayRemove(tagIdFrom) });
     });
     await batch.commit();
     console.log(`mergeTags(): Updated ${itemsFetched} items.`);

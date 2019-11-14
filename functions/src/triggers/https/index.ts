@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import { authMiddleware } from './middlewares/auth.middleware';
 import { itemsRouter } from './routes/items';
-import { functions } from '../+utils/firebase/firebase';
+import { functions } from '../../+utils/firebase';
 
 const apiRouter = express.Router();
 apiRouter.use('/items', itemsRouter);

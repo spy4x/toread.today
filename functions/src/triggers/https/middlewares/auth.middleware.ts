@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { admin } from '../../+utils/firebase/firebase';
+import { admin } from '../../../+utils/firebase';
 
 export async function authMiddleware(req: Request, res: Response, next: Function): Promise<void> {
   const token = getTokenFromHeader(req) || getTokenFromCookies(req);

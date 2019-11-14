@@ -1,3 +1,4 @@
+export {auth, messaging} from 'firebase-admin';
 import * as fbAdmin from 'firebase-admin';
 import * as fbFunctions from 'firebase-functions';
 
@@ -8,6 +9,7 @@ export const admin = (() => {
   return fbAdmin;
 })();
 export const firestore = admin.firestore();
+export const FieldValue = fbAdmin.firestore.FieldValue;
 export const bucket = admin.storage().bucket();
 export const createId = (): string => firestore.collection('fakeCollection').doc().id;
 export const functions = fbFunctions;
