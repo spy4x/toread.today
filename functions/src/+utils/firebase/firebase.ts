@@ -1,4 +1,5 @@
 export {auth, messaging} from 'firebase-admin';
+export * from 'firebase-functions';
 import * as fbAdmin from 'firebase-admin';
 import * as fbFunctions from 'firebase-functions';
 

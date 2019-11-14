@@ -1,110 +1,25 @@
 import { onFileUploadFunction } from './triggers/st';
-import * as ogs from 'open-graph-scraper';
 import { httpsFunction } from './triggers/https';
-import { admin, config, firestore, functions, FieldValue, auth, messaging, BatchSwarm, runTransaction} from './+utils/firebase';
-import { isUrl, createNotification } from './+utils/common';
-import { Item, ItemType, Notification, RoadmapBrick, Tag, User } from './+utils/interfaces';
+import {
+  admin,
+  auth,
+  BatchSwarm,
+  config,
+  FieldValue,
+  firestore,
+  functions,
+  messaging,
+  runTransaction
+} from './+utils/firebase';
+import { createNotification } from './+utils/common';
+import { Notification, RoadmapBrick, Tag, User } from './+utils/interfaces';
+import { itemOnWriteTrigger } from './triggers/fs';
 
 const antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
 
 console.log('--- COLD START ---');
 
-
-export const itemCreate = functions.firestore
-  .document(`items/{id}`)
-  .onCreate(async doc => {
-    const item = { ...doc.data(), id: doc.id } as Item;
-    if (isUrl(item.url)) {
-      await parseURL(item);
-    } else {
-      const updateFields: Partial<Item> = {
-        urlParseStatus: 'error',
-        urlParseError: 'Provided URL is not valid'
-      };
-      try {
-        console.log('itemCreate - Saving failed status:', updateFields);
-        await doc.ref.update(updateFields);
-        console.log('itemCreate - Successfully saved failed status');
-      } catch (saveError) {
-        console.error('itemCreate - Failed to save failed status', saveError);
-      }
-    }
-  });
-
-export const itemUpdate = functions.firestore
-  .document(`items/{id}`)
-  .onUpdate(async change => {
-    const before = { ...change.before.data(), id: change.before.id } as Item;
-    const after = { ...change.after.data(), id: change.after.id } as Item;
-    if (after.urlParseStatus === 'notStarted' && before.urlParseStatus !== 'notStarted') {
-      if (isUrl(after.url)) {
-        await parseURL(after);
-      } else {
-        const updateFields: Partial<Item> = {
-          urlParseStatus: 'error',
-          urlParseError: 'Provided URL is not valid'
-        };
-        try {
-          console.log('itemUpdate - Saving failed status:', updateFields);
-          await change.after.ref.update(updateFields);
-          console.log('itemUpdate - Successfully saved failed status');
-        } catch (saveError) {
-          console.error('itemUpdate - Failed to save failed status', saveError);
-        }
-      }
-    }
-  });
-
-async function parseURL(item: Item): Promise<void> {
-  console.log('parseURL - Working on:', item.id, item.url);
-  const doc = firestore.doc('items/' + item.id);
-  try {
-    const { data } = await ogs({ url: item.url });
-    const updateFields: Partial<Item> = {
-      title: item.title || data.ogTitle as string || null,
-      type: getType(data.ogType),
-      urlParseStatus: 'done',
-      urlParseError: null
-    };
-    console.log('parseURL - OG data:', {
-      updateFields,
-      data: JSON.stringify(data, null, 2)
-    });
-    await doc.update(updateFields);
-    console.log('parseURL - Success');
-  } catch (error) {
-    console.error('parseURL', error);
-    const updateFields: Partial<Item> = {
-      urlParseStatus: 'error',
-      urlParseError: error['error'] || error.message || error.name || error['errorDetails']
-    };
-    try {
-      console.log('parseURL - Saving failed status:', updateFields);
-      await doc.update(updateFields);
-      console.log('parseURL - Successfully saved failed status');
-    } catch (saveError) {
-      console.error('parseURL - Failed to save failed status', saveError);
-    }
-  }
-}
-
-
-function getType(item: string): ItemType {
-  const defaultType: ItemType = 'website';
-  if (!item) {
-    return defaultType;
-  }
-  const availableTypes: ItemType[] = ['video', 'article', 'profile', defaultType];
-  let result: ItemType = defaultType;
-  availableTypes.find(arrItem => {
-    const contains = item.indexOf(arrItem) >= 0;
-    if (contains) {
-      result = arrItem;
-    }
-    return contains;
-  });
-  return result;
-}
+export const itemOnWrite = itemOnWriteTrigger;
 
 
 const getTagRemovedData = (tagId: string): any => {
@@ -308,7 +223,8 @@ export const onNotificationCreate = functions.firestore
 async function sendPushNotification(notification: Notification): Promise<void> {
   try {
     if (notification.type !== 'roadmap') {
-      console.log('sendPushNotification(): Notification type is not "roadmap". Break.', JSON.stringify(notification, null, 2));
+      console.log('sendPushNotification(): Notification type is not "roadmap". Break.',
+        JSON.stringify(notification, null, 2));
       return;
     }
     // fetch user doc
@@ -321,15 +237,18 @@ async function sendPushNotification(notification: Notification): Promise<void> {
 
     // check if he wants to get push notifications
     if (!user.sendRoadmapActivityPushNotifications) {
-      console.log(`sendPushNotification(): User doesn't want to receive push notifications about roadmap activity. Break.`, JSON.stringify({
-        notification,
-        user
-      }, null, 2));
+      console.log(
+        `sendPushNotification(): User doesn't want to receive push notifications about roadmap activity. Break.`,
+        JSON.stringify({
+          notification,
+          user
+        }, null, 2));
       return;
     }
     const tokens = user.fcmTokens.map(fcmToken => fcmToken.token);
     if (!tokens.length) {
-      console.log('sendPushNotification(): User has no "fcmTokens" to send to. Break.', JSON.stringify({notification, user}, null, 2));
+      console.log('sendPushNotification(): User has no "fcmTokens" to send to. Break.',
+        JSON.stringify({ notification, user }, null, 2));
       return;
     }
 
@@ -345,7 +264,7 @@ async function sendPushNotification(notification: Notification): Promise<void> {
 
     // Send notifications to all tokens.
     const response = await admin.messaging().sendToDevice(tokens, payload);
-    console.log(`Push notifications sent to user.`, JSON.stringify({notification, user}, null, 2));
+    console.log(`Push notifications sent to user.`, JSON.stringify({ notification, user }, null, 2));
     // For each message check if there was an error.
     const tokensToRemove: (null | string)[] = response.results.map((result, index) => {
       const error = result.error;
