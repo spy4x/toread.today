@@ -61,4 +61,13 @@
   .widget__header
     h2.widget__header__title Statistics
       span.widget__header__subtitle (do you read or just save?)
-  .widget__info Coming soon...
+    .widget__header__action
+      a.icon((click)="prevMonth()")
+        i.fas.fa-chevron-left
+      a((click)="nextMonth()")
+        span {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
+      a.icon((click)="nextMonth()")
+        i.fas.fa-chevron-right
+  .widget__body
+    tt-dashboard-statistics([statistics]="statistics$ | async")
+  .widget__info(*ngIf="!(statistics$ | async)") No statistics for this period yet... What about to read something?

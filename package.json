@@ -45,6 +45,7 @@
     "@sentry/browser": "^5.6.1",
     "bulma": "^0.7.5",
     "core-js": "^3.2.1",
+    "dl-chart": "^8.0.0",
     "firebase": "^6.4.0",
     "firebase-tools": "^7.7.0",
     "ng-cli-pug-loader": "^0.2.0",

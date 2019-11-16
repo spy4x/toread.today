@@ -2703,6 +2703,13 @@ dir-glob@^2.0.0:
   dependencies:
     path-type "^3.0.0"
 
+dl-chart@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/dl-chart/-/dl-chart-8.0.0.tgz#6d1e50d835595eb1a0f3a00ac67c52ea12233a22"
+  integrity sha512-4ewgDO1MGlAa1s2DIV1nrcZNN2zpe0JOgJ9PKBYeyzkeUADWWflTQFRmWx5NebDm3paac1YsXWCfPvmdsSHmnQ==
+  dependencies:
+    tslib "^1.9.0"
+
 dns-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/dns-equal/-/dns-equal-1.0.0.tgz#b39e7f1da6eb0a75ba9c17324b34753c47e0654d"

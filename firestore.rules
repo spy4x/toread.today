@@ -35,6 +35,9 @@ service cloud.firestore {
       allow update: if isUserDoc(getDocInc(), id);
       allow delete: if false;
     }
+    match /counterNewFinished/{id} {
+      allow get: if isUser(getDoc().userId);
+    }
   }
 }
 

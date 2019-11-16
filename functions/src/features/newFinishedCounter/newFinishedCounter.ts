@@ -1,7 +1,6 @@
-import { Item } from '../../+utils/interfaces';
+import { Item, NewFinishedMonthlyStatistics } from '../../+utils/interfaces';
 import { firestore } from '../../+utils/firebase/firebase';
 import { runTransaction } from '../../+utils/firebase/runTransaction';
-import { BaseEntity } from '../../+utils/interfaces/baseEntity.interface';
 
 const logPrefix = 'featureNewFinishedCounter():';
 
@@ -70,19 +69,4 @@ async function updateStatistics(item: Item, fieldsToIncrease: FieldsType[]): Pro
   } catch (error) {
     console.error(`${logPrefix}`, error);
   }
-}
-
-interface NewFinishedMonthlyStatistics extends BaseEntity {
-  days: NewFinishedDailyStatistics[]
-  month: number
-  year: number
-  new: number
-  finished: number
-  userId: string
-}
-
-interface NewFinishedDailyStatistics {
-  day: number
-  new: number
-  finished: number
 }
