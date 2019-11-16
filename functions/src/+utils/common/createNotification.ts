@@ -1,4 +1,4 @@
-import { Notification } from '../interfaces/notification.interface';
+import { Notification } from '../interfaces';
 import { firestore } from '../firebase/firebase';
 
 export const createNotification = async (notification: Partial<Notification>): Promise<void> => {

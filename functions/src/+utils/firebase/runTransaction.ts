@@ -1,5 +1,5 @@
 import { firestore } from './firebase';
-import { sleep } from '../common/sleep';
+import { sleep } from '../common';
 
 export async function runTransaction<T>(
   transactionHandler: (transaction) => Promise<T>,

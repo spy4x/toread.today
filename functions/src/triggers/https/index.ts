@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import { authMiddleware } from './middlewares/auth.middleware';
 import { itemsRouter } from './routes/items';
-import { functions } from '../../+utils/firebase';
+import { functions } from '../../+utils/firebase/firebase';
 
 const apiRouter = express.Router();
 apiRouter.use('/items', itemsRouter);
@@ -20,7 +20,7 @@ app.use(cors());
 app.use('/api', authMiddleware, apiRouter);
 app.use('*', (req, res) => res.status(404).send('Sorry... Nothing here.'));
 
-export const httpsFunction = functions
+export const https = functions
   .runWith({
     memory: '2GB'
   })

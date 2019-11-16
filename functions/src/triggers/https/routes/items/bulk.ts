@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { bucket, createId } from '../../../../+utils/firebase';
+import { bucket, createId } from '../../../../+utils/firebase/firebase';
 import { body } from 'express-validator';
 
 export const bulkValidators = [
