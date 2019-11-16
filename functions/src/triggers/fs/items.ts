@@ -1,13 +1,19 @@
-import { featureParseURL } from '../../features';
+import { featureParseURL, featureNewFinishedCounter } from '../../features';
 import { getTriggerFirestoreOnWrite } from '../+utils/trigger';
 import { Item } from '../../+utils/interfaces';
 
 export const fsItems = getTriggerFirestoreOnWrite<Item>({
   collectionName: 'items',
   onCreate: async item => {
-    await featureParseURL.onCreate(item);
+    await Promise.all([
+      featureParseURL.onCreate(item),
+      featureNewFinishedCounter.onCreate(item),
+    ]);
   },
   onUpdate: async (before, after) => {
-    await featureParseURL.onUpdate(before, after);
+    await Promise.all([
+      featureParseURL.onUpdate(before, after),
+      featureNewFinishedCounter.onUpdate(before, after),
+    ]);
   }
 });
