@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { catchError, debounceTime, filter, first, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, debounceTime, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -35,6 +35,11 @@ export class DashboardComponent implements OnDestroy {
   month$ = new BehaviorSubject<number>(new Date().getMonth() + 1);
   year$ = new BehaviorSubject<number>(new Date().getFullYear());
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  doesNextMonthExist$ = combineLatest(this.year$, this.month$, (year, month) => [year, month])
+    .pipe(map(([year, month]: number[]) => {
+      const today = new Date();
+      return year <= today.getFullYear() && month <= today.getMonth();
+    }));
 
   tags$ = this.user$.pipe(
     filter(v => !!v),

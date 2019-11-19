@@ -1,6 +1,10 @@
-dl-line-chart(
-  *ngIf="statistics && values"
-  chartid="newFinishedStatisticsChart",
-  [values]="values",
-  [hideSelectionLines]="true",
-)
+.chart-wrapper.pt-3.pb-5(*ngIf="statistics && values")
+  ngx-charts-line-chart(
+      [results]="values",
+      [xAxis]="true",
+      [yAxis]="true",
+      [showGridLines]="true",
+      [roundDomains]="true",
+      [animations]="false",
+      [scheme]="colorScheme",
+  )

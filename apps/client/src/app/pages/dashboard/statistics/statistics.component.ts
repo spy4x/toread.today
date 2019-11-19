@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { Line, Point } from 'dl-chart';
 import { NewFinishedMonthlyStatistics } from '../../../interfaces/newFinishedStatistics.interface';
+import { lastDayOfMonth } from 'date-fns';
+
+interface Point {
+  name: string
+  value: number
+}
 
 @Component({
   selector: 'tt-dashboard-statistics',
@@ -11,7 +16,10 @@ import { NewFinishedMonthlyStatistics } from '../../../interfaces/newFinishedSta
 })
 export class DashboardStatisticsComponent implements OnChanges {
   @Input() statistics: null | NewFinishedMonthlyStatistics = null;
-  values: null | Line[];
+  values: null | any[];
+  colorScheme = {
+    domain: ['orange', 'forestgreen']
+  };
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.statistics) {
@@ -20,36 +28,31 @@ export class DashboardStatisticsComponent implements OnChanges {
     this.values = this.createLines(this.statistics);
   }
 
-  private createLines(statistics: NewFinishedMonthlyStatistics): Line[] {
+  private createLines(statistics: NewFinishedMonthlyStatistics): any[] {
+    const thisMonthFirstDay = new Date(statistics.year, statistics.month - 1, 1);
+    const maxDateOfMonth = lastDayOfMonth(thisMonthFirstDay);
+    const maxDayNumberOfMonth = maxDateOfMonth.getDate();
     const addedPoints: Point[] = [];
     const finishedPoints: Point[] = [];
-    statistics.days.forEach(day => {
-      addedPoints.push(new Point(day.day, day.new));
-      finishedPoints.push(new Point(day.day, day.finished));
-    });
-    if (addedPoints.length < 5) {
-      for (let i = 0, max = (5 - addedPoints.length); i < max; i++) {
-        const maxPoint = addedPoints[addedPoints.length - 1];
-        addedPoints.push(new Point(maxPoint.xValue + 1, 0));
-        finishedPoints.push(new Point(maxPoint.xValue + 1, 0));
+
+    for (let i = 1; i <= maxDayNumberOfMonth; i++) {
+      const dayStats = statistics.days.find(day => day.day === i);
+      if (dayStats) {
+        addedPoints.push({ value: dayStats.new, name: dayStats.day + '' });
+        finishedPoints.push({ value: dayStats.finished, name: dayStats.day + '' });
+      } else {
+        addedPoints.push({ value: 0, name: i + '' });
+        finishedPoints.push({ value: 0, name: i + '' });
       }
     }
     return [
       {
-        color: 'orange',
-        cssClass: null,
-        data: null,
         name: 'Saved',
-        tooltipConfig: null,
-        points: addedPoints
+        series: addedPoints
       },
       {
-        color: 'green',
-        cssClass: null,
-        data: null,
         name: 'Finished',
-        tooltipConfig: null,
-        points: finishedPoints
+        series: finishedPoints
       }
     ];
   }

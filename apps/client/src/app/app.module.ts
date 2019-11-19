@@ -45,8 +45,9 @@ import { AskPushNotificationsComponent } from './common-components/ask-push-noti
 import { ListItemComponent } from './common-components/items-list/items-list-item/list-item.component';
 import { TagsService } from './services/tags/tags.service';
 import { PrioritySelectorComponent } from './common-components/priority-selector/priority-selector.component';
-import { DlLineChartModule } from 'dl-chart';
 import { DashboardStatisticsComponent } from './pages/dashboard/statistics/statistics.component';
+import { LineChartModule } from '@swimlane/ngx-charts';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const routes: Routes = [
   {
@@ -105,7 +106,7 @@ const routes: Routes = [
     FilterByFieldPipe,
     ProfileComponent,
     AskPushNotificationsComponent,
-    DashboardStatisticsComponent,
+    DashboardStatisticsComponent
   ],
   imports: [
     BrowserModule,
@@ -115,10 +116,12 @@ const routes: Routes = [
     AngularFireAuthModule,
     AngularFireStorageModule,
     AngularFireMessagingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
+    ServiceWorkerModule.register('ngsw-worker.js',
+      { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
     FormsModule,
     HttpClientModule,
-    DlLineChartModule,
+    LineChartModule,
+    NoopAnimationsModule
   ],
   providers: [
     ConnectionStatusService,

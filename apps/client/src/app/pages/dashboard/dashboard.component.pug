@@ -64,10 +64,9 @@
     .widget__header__action
       a.icon((click)="prevMonth()")
         i.fas.fa-chevron-left
-      a((click)="nextMonth()")
-        span {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
-      a.icon((click)="nextMonth()")
+      span.mx-2 {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
+      a.icon(*ngIf="doesNextMonthExist$ | async", (click)="nextMonth()")
         i.fas.fa-chevron-right
-  .widget__body
+  .widget__body.px-0
     tt-dashboard-statistics([statistics]="statistics$ | async")
   .widget__info(*ngIf="!(statistics$ | async)") No statistics for this period yet... What about to read something?
