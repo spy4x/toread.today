@@ -1,5 +1,4 @@
-import { firestore } from './firebase';
-import { firestore as Firestore } from 'firebase-admin';
+import { firestore as Firestore } from 'firebase/app';
 
 const MAX_BATCH_OPERATIONS = 500;
 
@@ -11,6 +10,8 @@ interface BatchSwarmOperation {
 
 export class BatchSwarm {
   private operations: BatchSwarmOperation[] = [];
+
+  constructor(private firestore: Firestore.Firestore){}
 
   set(ref: Firestore.DocumentReference, data: any): this {
     this.operations.push({ type: 'set', ref, data });
@@ -35,12 +36,12 @@ export class BatchSwarm {
     const maxOperations = MAX_BATCH_OPERATIONS;
     let batchIndex = 0;
     const batches: Firestore.WriteBatch[] = [];
-    batches[batchIndex] = firestore.batch();
+    batches[batchIndex] = this.firestore.batch();
     this.operations.forEach((operation, index) => {
       const indexForCreatingNewBatch = maxOperations * (batchIndex + 1);
       if (index === indexForCreatingNewBatch) {
         ++batchIndex;
-        batches[batchIndex] = firestore.batch();
+        batches[batchIndex] = this.firestore.batch();
       }
       switch (operation.type) {
         case 'set': {

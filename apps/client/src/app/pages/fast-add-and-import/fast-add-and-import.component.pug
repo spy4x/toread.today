@@ -38,8 +38,8 @@
       p To import list of URLs - upload txt file with one URL per line or split with space (separators "\n" and " ")
 
       ng-container('*ngIf'='bookmarksImport$ | async as import; else instructions')
-        .notification.is-info('*ngIf'='(importState$ | async) === "sending"') Sending import file to the server...
-        .notification.is-success('*ngIf'='(importState$ | async) === "success"') Import file has been sent successfully.
+        .notification.is-info('*ngIf'='(importState$ | async) === "sending"') Importing data...
+        .notification.is-success('*ngIf'='(importState$ | async) === "success"') Import has been completed.
         tt-items-import('[import]'='import',
                         '[tags]'='tags$ | async',
                         '(done)'='saveBookmarks($event)',

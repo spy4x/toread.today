@@ -11,12 +11,12 @@ export interface ItemSkeleton {
   tags: string[]
   title: null | string
   rating: ItemRating
+  priority: ItemPriority
 }
 
 export interface Item extends ItemSkeleton, BaseEntity{
   createdBy: string
   createdAt: Date
-  priority: ItemPriority
   comment: string
   withComment: boolean
   isFavourite: boolean

@@ -82,6 +82,7 @@
                 span.icon.mr-1.has-text-warning
                   i.fas.fa-circle
                 span Mark as "New"
+              hr.dropdown-divider
               a.dropdown-item(*ngIf='brick.status === "done"', '(click)'='changeStatus.emit({brick: brick, status:"inProgress"})')
                 span.icon.mr-1.has-text-warning
                   i.fas.fa-undo

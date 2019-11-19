@@ -99,25 +99,17 @@ export class FastAddAndImportComponent implements OnDestroy {
     };
   }
 
-  saveBookmarks({bookmarks, tags, priority}: ImportData): void {
+  async saveBookmarks({bookmarks, tags, priority}: ImportData): Promise<void> {
     const items: ItemSkeleton[] = bookmarks.map(b => ({
       title: b.title,
-      tags: b.tags,
+      tags: Array.from(new Set<string>([...b.tags, ...tags])),
       url: b.url,
       rating: 0 as ItemRating,
+      priority,
     }));
     this.importState$.next('sending');
-    this.itemsService.bulkCreate(items, tags, priority).pipe(
-      first(),
-      catchError(() => {
-        this.importState$.next('error');
-        return of(null);
-      })
-    ).subscribe(() =>{
-      if (this.importState$.value !== 'error') {
-        this.importState$.next('success');
-      }
-    })
+    const isSuccessful = await this.itemsService.bulkCreate(items);
+    this.importState$.next(isSuccessful ? 'success' : 'error');
   }
 
   cancelImportBookmarks(): void {
