@@ -5,3 +5,4 @@ export * from './roadmapNotifier/roadmapNotifier';
 export * from './sendPushNotification/sendPushNotification';
 export * from './createUserInDB/createUserInDB';
 export * from './newFinishedCounter/newFinishedCounter';
+export * from './checkUniquenessOfURL/checkUniquenessOfURL';
