@@ -2,7 +2,7 @@ import { BaseEntity } from './baseEntity.interface';
 
 
 export interface NewFinishedMonthlyStatistics extends BaseEntity {
-  days: NewFinishedDailyStatistics[]
+  days: {[dayNumber: number]: NewFinishedDailyStatistics }
   month: number
   year: number
   new: number
@@ -11,7 +11,6 @@ export interface NewFinishedMonthlyStatistics extends BaseEntity {
 }
 
 export interface NewFinishedDailyStatistics {
-  day: number
   new: number
   finished: number
 }

@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { NewFinishedMonthlyStatistics } from '../../../interfaces/newFinishedStatistics.interface';
-import lastDayOfMonth from 'date-fns/esm/lastDayOfMonth';
+import {
+  NewFinishedDailyStatistics,
+  NewFinishedMonthlyStatistics
+} from '../../../interfaces/newFinishedStatistics.interface';
 
 interface Point {
-  name: string
+  name: number
   value: number
 }
 
@@ -29,22 +31,17 @@ export class DashboardStatisticsComponent implements OnChanges {
   }
 
   private createLines(statistics: NewFinishedMonthlyStatistics): any[] {
-    const thisMonthFirstDay = new Date(statistics.year, statistics.month - 1, 1);
-    const maxDateOfMonth = lastDayOfMonth(thisMonthFirstDay);
-    const maxDayNumberOfMonth = maxDateOfMonth.getDate();
     const addedPoints: Point[] = [];
     const finishedPoints: Point[] = [];
 
-    for (let i = 1; i <= maxDayNumberOfMonth; i++) {
-      const dayStats = statistics.days.find(day => day.day === i);
-      if (dayStats) {
-        addedPoints.push({ value: dayStats.new, name: dayStats.day + '' });
-        finishedPoints.push({ value: dayStats.finished, name: dayStats.day + '' });
-      } else {
-        addedPoints.push({ value: 0, name: i + '' });
-        finishedPoints.push({ value: 0, name: i + '' });
-      }
-    }
+    Object
+      .values(statistics.days)
+      .forEach((dayStats: NewFinishedDailyStatistics, index) => {
+        const dayNumber = index+1;
+        addedPoints.push({ value: dayStats.new, name: dayNumber });
+        finishedPoints.push({ value: dayStats.finished, name: dayNumber });
+      });
+
     return [
       {
         name: 'Saved',

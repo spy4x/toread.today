@@ -1,6 +1,8 @@
 import { Item, NewFinishedMonthlyStatistics } from '../../+utils/interfaces';
 import { firestore } from '../../+utils/firebase/firebase';
 import { runTransaction } from '../../+utils/firebase/runTransaction';
+import { firestore as Firestore} from 'firebase-admin';
+import { lastDayOfMonth } from 'date-fns';
 
 const logPrefix = 'featureNewFinishedCounter():';
 
@@ -28,43 +30,44 @@ async function updateStatistics(item: Item, fieldsToIncrease: FieldsType[]): Pro
     const day = today.getDate();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
+    const docRef = firestore.doc(`counterNewFinished/${year}_${month}_${item.createdBy}`);
+
+    // checking if counter exists. If not - creating it.
     await runTransaction(async transaction => {
-      const docRef = firestore.doc(`counterNewFinished/${year}_${month}_${item.createdBy}`);
-      const doc = await transaction.get(docRef);
-      let statistics: NewFinishedMonthlyStatistics;
-      if (doc.exists) {
-        statistics = { ...doc.data(), id: doc.id } as NewFinishedMonthlyStatistics;
-        if (!statistics.days.find(d => d.day === day)) {
-          statistics.days.push({
-            day,
-            new: 0,
-            finished: 0
-          });
-        }
-      } else {
-        statistics = {
-          days: [
-            {
-              day,
-              new: 0,
-              finished: 0
-            }
-          ],
-          month,
-          year,
+      const snapshot = await transaction.get(docRef);
+      if (snapshot.exists) {
+        return;
+      }
+      const statistics: NewFinishedMonthlyStatistics = {
+        days: {},
+        month,
+        year,
+        new: 0,
+        finished: 0,
+        userId: item.createdBy
+      };
+      const monthDate = new Date(statistics.year, statistics.month - 1);
+      const daysInMonth = lastDayOfMonth(monthDate).getDate();
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        statistics.days[i] = {
           new: 0,
-          finished: 0,
-          userId: item.createdBy
+          finished: 0
         };
       }
-      const stDay = statistics.days.find(d => d.day === day);
-      fieldsToIncrease.forEach(field => {
-        stDay[field]++;
-        statistics[field]++;
-      });
       const { id, ...body } = statistics;
-      transaction.set(docRef, body);
+      transaction.create(docRef, body);
     }, { logPrefix });
+
+    // increasing counter
+    const update: Partial<NewFinishedMonthlyStatistics> = {};
+    fieldsToIncrease.forEach(field => {
+      update[`days.${day}.${field}`] = Firestore.FieldValue.increment(1) as any;
+      update[field] = Firestore.FieldValue.increment(1) as any;
+    });
+    await docRef.update(update);
+
+
     console.log(`${logPrefix} Success`);
   } catch (error) {
     console.error(`${logPrefix}`, error);

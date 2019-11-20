@@ -1089,13 +1089,6 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
-"@ngneat/content-loader@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@ngneat/content-loader/-/content-loader-4.0.1.tgz#ed60d51277e5e7b285b74815294e053719800cef"
-  integrity sha512-ogwjTpOEjSRQBcxVoL0FEXsyUl7BkPpcP9tLXyq8ij6e7D6rt/ITZoXxeD/R2OMT47lvdxVh3m2hGVmSti3RPQ==
-  dependencies:
-    tslib "^1.9.0"
-
 "@ngtools/webpack@8.3.19":
   version "8.3.19"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-8.3.19.tgz#9ed3123a9c3d79c49f73fd9a30cbe283ddde9d47"
@@ -3616,11 +3609,6 @@ dashdash@^1.12.0:
   integrity sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=
   dependencies:
     assert-plus "^1.0.0"
-
-date-fns@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.7.0.tgz#8271d943cc4636a1f27698f1b8d6a9f1ceb74026"
-  integrity sha512-wxYp2PGoUDN5ZEACc61aOtYFvSsJUylIvCjpjDOqM1UDaKIIuMJ9fAnMYFHV3TQaDpfTVxhwNK/GiCaHKuemTA==
 
 date-now@^0.1.4:
   version "0.1.4"
