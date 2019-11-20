@@ -15,7 +15,7 @@ import {
   RoadmapBrickChangeStatusEvent,
   RoadmapBrickChangeTitleEvent,
   RoadmapBrickChangeTypeEvent
-} from './bricks-list/bricks-list.component';
+} from './roadmap-bricks-list/roadmap-bricks-list.component';
 import { UserService } from '../../services/user.service';
 import { PushNotificationsService } from '../../services/push-notifications.service';
 const { appData } = require('../../../../ngsw-config.json');

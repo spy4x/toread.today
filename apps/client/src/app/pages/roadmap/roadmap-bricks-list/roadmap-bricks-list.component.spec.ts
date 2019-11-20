@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DashboardStatisticsComponent } from './statistics.component';
+import { RoadmapBricksListComponent } from './roadmap-bricks-list.component';
 
 describe('RoadmapBricksListComponent', () => {
-  let component: DashboardStatisticsComponent;
-  let fixture: ComponentFixture<DashboardStatisticsComponent>;
+  let component: RoadmapBricksListComponent;
+  let fixture: ComponentFixture<RoadmapBricksListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DashboardStatisticsComponent ]
+      declarations: [ RoadmapBricksListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DashboardStatisticsComponent);
+    fixture = TestBed.createComponent(RoadmapBricksListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

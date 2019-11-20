@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Item, ItemPriority, ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
 import { Observable, of } from 'rxjs';
 import { setStateProperties } from '../../helpers/state.helper';
@@ -13,11 +12,7 @@ import { Tag } from '../../interfaces/tag.interface';
 
 @Injectable()
 export class ItemsService {
-  private apiPath = 'items';
-  private apiPathBulk = `${this.apiPath}/bulk`;
-
-  constructor(private http: HttpClient,
-              private firestore: AngularFirestore,
+  constructor(private firestore: AngularFirestore,
               private afa: AngularFireAuth,
               private logger: LoggerService) {}
 

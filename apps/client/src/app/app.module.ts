@@ -6,73 +6,46 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
-import { ListComponent } from './common-components/items-list/list.component';
-import { NavbarComponent } from './common-components/navbar/navbar.component';
-import { FilterComponent } from './pages/items/filter/filter.component';
-import { TagsEditorComponent } from './pages/tags/editor/tags-editor.component';
-import { TagSelectorComponent } from './common-components/tag-selector/tag-selector.component';
-import { ItemsAddComponent } from './common-components/items-add/items-add.component';
-import { TagsByIdsPipe } from './common-components/tags-by-ids/tags-by-ids.pipe';
-import { DropdownDirective } from './common-components/dropdown/dropdown.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './services/connection-status/connection-status.service';
 import { LoggerService, SentryErrorHandler } from './services/logger.service';
-import { RouterModule, Routes } from '@angular/router';
-import { ItemsComponent } from './pages/items/items.component';
-import { TagsComponent } from './pages/tags/tags.component';
-import { FormsModule } from '@angular/forms';
-import { AngularFireStorageModule } from '@angular/fire/storage';
-import { NotificationsComponent } from './common-components/notifications/notifications.component';
-import { FastAddAndImportComponent } from './pages/fast-add-and-import/fast-add-and-import.component';
-import { ItemsImportComponent } from './pages/fast-add-and-import/items-import/items-import.component';
-import { ItemsImportListComponent } from './pages/fast-add-and-import/items-import-list/items-import-list.component';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ItemsService } from './services/items/items.service';
-import { HttpClientModule } from '@angular/common/http';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ROUTER_CONSTANTS } from './helpers/router.constants';
-import { RoadmapComponent } from './pages/roadmap/roadmap.component';
-import { BricksListComponent } from './pages/roadmap/bricks-list/bricks-list.component';
-import { RoadmapActivityComponent } from './pages/roadmap/activity/activity.component';
 import { UIService } from './services/ui.service';
-import { FilterByFieldPipe } from './common-components/filterByField/filterByField.pipe';
 import { RouterHelperService } from './services/routerHelper.service';
 import { UserService } from './services/user.service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { PushNotificationsService } from './services/push-notifications.service';
-import { ProfileComponent } from './pages/profile/profile.component';
 import { NotificationsService } from './services/notifications.service';
-import { AskPushNotificationsComponent } from './common-components/ask-push-notifications/ask-push-notifications.component';
-import { ListItemComponent } from './common-components/items-list/items-list-item/list-item.component';
 import { TagsService } from './services/tags/tags.service';
-import { PrioritySelectorComponent } from './common-components/priority-selector/priority-selector.component';
-import { DashboardStatisticsComponent } from './pages/dashboard/statistics/statistics.component';
-import { LineChartModule } from '@swimlane/ngx-charts';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CoreModule } from './components/core/core.module';
 
 const routes: Routes = [
   {
     path: 'dashboard',
-    component: DashboardComponent
+    loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
   },
   {
     path: ROUTER_CONSTANTS.items.path,
-    component: ItemsComponent
+    loadChildren: './pages/items/items.module#ItemsModule'
   },
   {
     path: 'tags',
-    component: TagsComponent
+    loadChildren: './pages/tags/tags.module#TagsModule'
   },
   {
     path: 'fast-fast-add-and-import',
-    component: FastAddAndImportComponent
+    loadChildren: './pages/fast-add-and-import/fast-add-and-import.module#FastAddAndImportModule'
   },
   {
     path: 'roadmap',
-    component: RoadmapComponent
+    loadChildren: './pages/roadmap/roadmap.module#RoadmapModule'
   },
   {
     path: 'profile',
-    component: ProfileComponent
+    loadChildren: './pages/profile/profile.module#ProfileModule'
   },
   {
     path: '**',
@@ -82,46 +55,19 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ListComponent,
-    ListItemComponent,
-    NavbarComponent,
-    FilterComponent,
-    TagsEditorComponent,
-    TagSelectorComponent,
-    PrioritySelectorComponent,
-    ItemsAddComponent,
-    TagsByIdsPipe,
-    DropdownDirective,
-    ItemsComponent,
-    TagsComponent,
-    NotificationsComponent,
-    FastAddAndImportComponent,
-    ItemsImportComponent,
-    ItemsImportListComponent,
-    DashboardComponent,
-    RoadmapComponent,
-    BricksListComponent,
-    RoadmapActivityComponent,
-    FilterByFieldPipe,
-    ProfileComponent,
-    AskPushNotificationsComponent,
-    DashboardStatisticsComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes),
+    NoopAnimationsModule,
+    CoreModule,
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
-    AngularFireStorageModule,
     AngularFireMessagingModule,
     ServiceWorkerModule.register('ngsw-worker.js',
-      { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
-    FormsModule,
-    HttpClientModule,
-    LineChartModule,
-    NoopAnimationsModule
+      { enabled: environment.production, registrationStrategy: 'registerImmediately' })
   ],
   providers: [
     ConnectionStatusService,

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { NewFinishedMonthlyStatistics } from '../../../interfaces/newFinishedStatistics.interface';
-import { lastDayOfMonth } from 'date-fns';
+import lastDayOfMonth from 'date-fns/esm/lastDayOfMonth';
 
 interface Point {
   name: string

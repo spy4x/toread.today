@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, first, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { User } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -7,7 +7,6 @@ import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { parseBookmarks, ParseBookmarksResult } from '../../helpers/bookmarks-parser/index';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { BookmarksBookmark } from '../../helpers/bookmarks-parser/parser.interface';
 import { ItemsService } from '../../services/items/items.service';
 import { ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
 import { environment } from '../../../environments/environment';
@@ -88,7 +87,7 @@ export class FastAddAndImportComponent implements OnDestroy {
     reader.readAsText(file, 'UTF-8');
     reader.onload = ev => {
       try {
-        this.bookmarksImport$.next(parseBookmarks(ev.target['result'], isTxt && 'txt'));
+        this.bookmarksImport$.next(parseBookmarks(ev.target['result'].toString(), isTxt && 'txt'));
       } catch (error) {
         this.error$.next(error.message);
       }

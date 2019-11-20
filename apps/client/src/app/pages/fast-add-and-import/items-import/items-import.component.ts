@@ -7,7 +7,7 @@ import {
 } from '../../../helpers/bookmarks-parser/parser.interface';
 import { ParseBookmarksResult } from '../../../helpers/bookmarks-parser/index';
 import { Tag } from '../../../interfaces/tag.interface';
-import { ToggleTagEvent } from '../../../common-components/items-list/list.component';
+import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
 import { ItemPriority } from '../../../interfaces/item.interface';
 
 export interface ImportData {

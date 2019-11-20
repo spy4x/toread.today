@@ -15,7 +15,7 @@ import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { defaultFilter, Filter } from './filter/filter.interface';
 import { ItemsService } from '../../services/items/items.service';
-import { ItemAddEvent } from '../../common-components/items-add/items-add.component';
+import { ItemAddEvent } from './items-add/items-add.component';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
 import { defaultPagination, Pagination } from './pagination.interface';

@@ -2,16 +2,16 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { defaultFilter, Filter } from './filter.interface';
 import { Tag } from '../../../interfaces/tag.interface';
 import { ItemPriority, ItemStatus } from '../../../interfaces/item.interface';
-import { ToggleTagEvent } from '../../../common-components/items-list/list.component';
+import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
 
 @Component({
-  selector: 'tt-filter',
+  selector: 'tt-items-filter',
   templateUrl: './filter.component.pug',
   styleUrls: ['./filter.component.sass'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FilterComponent {
+export class ItemsFilterComponent {
   @Input() tags: Tag[];
   @Input() filter: Filter = defaultFilter;
   @Output() changed = new EventEmitter<Filter>();
