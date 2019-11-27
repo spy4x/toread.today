@@ -24,6 +24,10 @@ import { CoreModule } from './components/core/core.module';
 
 const routes: Routes = [
   {
+    path: 'add',
+    loadChildren: './pages/add/add.module#AddModule'
+  },
+  {
     path: 'dashboard',
     loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
   },

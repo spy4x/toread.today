@@ -118,7 +118,7 @@ export class FastAddAndImportComponent implements OnDestroy {
 
   getBookmarkletCode(): SafeUrl {
     const s = environment.production ? `https://toread-today.web.app` : `http://localhost:4200`;
-    return this.sanitizer.bypassSecurityTrustUrl(`javascript:location.href='${s}/items?url='+encodeURIComponent(location.href)`);
+    return this.sanitizer.bypassSecurityTrustUrl(`javascript:location.href='${s}/add?url='+encodeURIComponent(location.href)`);
   }
 
   getYouTubeCode(): SafeUrl {

@@ -223,7 +223,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
       }
       this.existingItem$ = of(null);
     } else {
-      this.existingItem$ = this.itemsService.getById$(existingItem.id);
+      this.existingItem$ = this.itemsService.getById$((existingItem as Item).id);
     }
     this.cd.detectChanges();
   }

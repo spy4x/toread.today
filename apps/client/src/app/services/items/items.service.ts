@@ -41,8 +41,9 @@ export class ItemsService {
   /**
    * Returns "null" in case of successful creation, "Item" in case of Item exists.
    * @param skeleton
+   * @param shouldReturnCreatedItemId or null
    */
-  create(skeleton: ItemSkeleton): Promise<null | Item> {
+  create(skeleton: ItemSkeleton, shouldReturnCreatedItemId?: boolean): Promise<null | string | Item> {
     const item = this.scaffold(skeleton);
     return this.afa.authState
       .pipe(
@@ -63,9 +64,13 @@ export class ItemsService {
                   item.status = 'finished';
                 }
                 try {
-                  await this.firestore
+                  const docRef = await this.firestore
                     .collection('items')
                     .add(this.getBodyWithoutId(item));
+                  if(!shouldReturnCreatedItemId){
+                    return null;
+                  }
+                  return docRef.id;
                 } catch (error) {
                   this.logger.error({
                     messageForDev: 'add():',

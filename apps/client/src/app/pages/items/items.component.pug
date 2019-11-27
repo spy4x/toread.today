@@ -3,7 +3,7 @@
   | {{error}}
 
 nav.panel
-  .notification.is-small(*ngIf="existingItem$ | async as existingItem")
+  .notification.is-small.text-decoration-none(*ngIf="existingItem$ | async as existingItem")
     p.ml-1 Item with this URL already exists:
     button.delete('(click)'='existingItem$ = null')
     tt-list-item(

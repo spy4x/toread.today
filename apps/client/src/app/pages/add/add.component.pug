@@ -1,0 +1,38 @@
+ng-container(*ngIf="isSaved; else isLoading")
+  .success-message
+    .has-text-centered
+      h1.title.has-text-primary
+        span.icon.mr-2
+          i.far.fa-check-circle
+        span Saved successfully.
+      h2.subtitle You can close this tab.
+    tt-list-item(
+        *ngIf="item$ | async as item",
+        [item]="item",
+        [tags]="tags$ | async",
+        (startReading)="itemsService.startReading($event)",
+        (finishReading)="itemsService.finishReading($event)",
+        (undoReading)="itemsService.markAsNew($event)",
+        (delete)="item$ = null; itemsService.remove($event)",
+        (retryURLParsing)="itemsService.retryURLParsing($event)",
+        (toggleTag)="itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+        (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
+        (tagClick)="routerHelper.toItemsWithFilter({tagId: $event})",
+        (changeRating)="itemsService.changeRating($event.id, $event.rating)",
+        (changeComment)="itemsService.changeComment($event.id, $event.comment)",
+        (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
+        (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
+        (setURL)="itemsService.setURL($event.item.id, $event.url)",
+    )
+    .buttons.is-centered
+      a.button((click)="goBack()")
+        span.icon
+          i.fas.fa-chevron-left
+        span Go back
+      a.button(routerLink="/items")
+        span.icon
+          i.fas.fa-list
+        span To the list
+
+ng-template("#isLoading"="")
+  button.button.is-loading.is-white.is-large Saving...

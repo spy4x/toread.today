@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.32.2",
-    "description": "Fix bug with wrong dashboard chart values after import a lot of links."
+    "version": "1.32.3",
+    "description": "Improve UX for the bookmarklet."
   },
   "assetGroups": [
     {
