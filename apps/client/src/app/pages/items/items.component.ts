@@ -70,6 +70,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
   filter$ = new BehaviorSubject<Filter>(defaultFilter);
   pagination$ = new BehaviorSubject<Pagination>(defaultPagination);
   items$ = new BehaviorSubject<Item[]>(null);
+  counter$ = this.itemsService.getCounter$();
   reloadItems$ = new BehaviorSubject<void>(void 0);
   existingItem$: Observable<null | Item> = of(null);
 

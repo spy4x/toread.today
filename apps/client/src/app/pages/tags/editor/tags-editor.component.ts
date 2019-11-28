@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { Tag } from '../../../interfaces/tag.interface';
 import { RouterHelperService } from '../../../services/routerHelper.service';
 import { TagsService } from '../../../services/tags/tags.service';
+import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
 
 export interface TagUpdateEvent {
   id: string
@@ -17,6 +18,7 @@ export interface TagUpdateEvent {
 })
 export class TagsEditorComponent {
   @Input() tags: Tag[];
+  @Input() counter: null | ItemsCounter = null;
   @Output() create = new EventEmitter<Tag>();
   @Output() update = new EventEmitter<TagUpdateEvent>();
   @Output() delete = new EventEmitter<string>();

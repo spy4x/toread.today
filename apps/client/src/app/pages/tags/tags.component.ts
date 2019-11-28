@@ -7,6 +7,7 @@ import { catchError, filter, shareReplay, switchMap, takeUntil, tap } from 'rxjs
 import { of, Subject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
+import { ItemsService } from '../../services/items/items.service';
 
 @Component({
   selector: 'tt-tags',
@@ -51,10 +52,12 @@ export class TagsComponent implements OnDestroy {
     }),
     shareReplay(1)
   );
+  counter$ = this.itemsService.getCounter$();
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
-              private logger: LoggerService) { }
+              private logger: LoggerService,
+              private itemsService: ItemsService) { }
 
   async create(tag: Tag) {
     tag.createdBy = this.userId;

@@ -13,7 +13,6 @@ $panel-item-border: 1px solid transparent
 
 @import 'spacers'
 
-
 .app-component-container
   max-width: $desktop
 
@@ -26,6 +25,7 @@ $panel-item-border: 1px solid transparent
     padding: 0.25rem 0
   .dropdown-item
     padding: .375rem .5rem
+
 .dropdown-menu--tiny-items .dropdown-item
   padding: .2rem .8rem !important
 
@@ -46,6 +46,7 @@ $panel-item-border: 1px solid transparent
 
 nav .dropdown-menu[role='notifications']
   min-width: 15rem
+
 +tablet
   nav .dropdown-menu[role='notifications']
     min-width: 18rem
@@ -69,7 +70,7 @@ i.fas, i.far
 
 .widget
   $gap: .8rem
-  &+.widget
+  & + .widget
     margin-top: $gap
   &__header
     display: flex
@@ -101,14 +102,14 @@ i.fas, i.far
     margin: 3*$gap $gap
 
 .notification-messages
-  >.mark-all-as-read
+  > .mark-all-as-read
     font-size: $size-6
     color: $cyan
     display: flex
     justify-content: center
 
-  >.notif
-    >.line
+  > .notif
+    > .line
       &.second
         display: flex
         align-items: center
@@ -118,9 +119,9 @@ i.fas, i.far
           flex: 0 0 10px
           border-radius: 50%
           margin-right: 0.5rem
-  >hr
+  > hr
     margin: .5rem 0
-  >.last-items-shown
+  > .last-items-shown
     color: $grey
     text-align: center
     margin-top: .5rem
@@ -139,3 +140,15 @@ i.fas, i.far
   text-decoration: none !important
   a
     text-decoration: none !important
+
+[data-badge]
+  position: relative
+  &:after
+    min-width: .5rem
+    font-size: .5rem
+    top: 0.2rem
+    right: 0
+    content: attr(data-badge)
+    z-index: 99
+    position: absolute
+    color: rgba(0, 0, 0, 0.3)

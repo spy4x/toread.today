@@ -9,19 +9,19 @@
         span.icon
           i.fas.fa-times
         span Any priority
-      a.dropdown-item.has-text-danger((click)="setHandler(3)")
+      a.dropdown-item.has-text-danger((click)="setHandler(3)", [attr.data-badge]="counter ? counter['priorities.3']: ''")
         span.icon
           i.far.fa-flag
         span Top priority
-      a.dropdown-item.has-text-warning((click)="setHandler(2)")
+      a.dropdown-item.has-text-warning((click)="setHandler(2)", [attr.data-badge]="counter ? counter['priorities.2']: ''")
         span.icon
           i.far.fa-flag
         span High priority
-      a.dropdown-item.has-text-info((click)="setHandler(1)")
+      a.dropdown-item.has-text-info((click)="setHandler(1)", [attr.data-badge]="counter ? counter['priorities.1']: ''")
         span.icon
           i.far.fa-flag
         span Medium priority
-      a.dropdown-item.has-text-dark((click)="setHandler(0)")
+      a.dropdown-item.has-text-dark((click)="setHandler(0)", [attr.data-badge]="counter ? counter['priorities.0']: ''")
         span.icon
           i.far.fa-flag
         span Low priority

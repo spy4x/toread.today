@@ -3,6 +3,7 @@ import { defaultFilter, Filter } from './filter.interface';
 import { Tag } from '../../../interfaces/tag.interface';
 import { ItemPriority, ItemStatus } from '../../../interfaces/item.interface';
 import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
+import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
 
 @Component({
   selector: 'tt-items-filter',
@@ -13,6 +14,7 @@ import { ToggleTagEvent } from '../../../components/shared/items-list/list.compo
 })
 export class ItemsFilterComponent {
   @Input() tags: Tag[];
+  @Input() counter: ItemsCounter;
   @Input() filter: Filter = defaultFilter;
   @Output() changed = new EventEmitter<Filter>();
   statuses: ItemStatus[] = ['new', 'opened', 'finished'];

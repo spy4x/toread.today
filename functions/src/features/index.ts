@@ -6,3 +6,4 @@ export * from './sendPushNotification/sendPushNotification';
 export * from './createUserInDB/createUserInDB';
 export * from './newFinishedCounter/newFinishedCounter';
 export * from './checkUniquenessOfURL/checkUniquenessOfURL';
+export * from './itemsCounter/itemsCounter';

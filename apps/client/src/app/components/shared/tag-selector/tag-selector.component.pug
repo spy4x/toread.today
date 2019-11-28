@@ -25,7 +25,8 @@
       a.dropdown-item(
           *ngFor="let tag of tags | filterByField:[{field: 'title', value: searchText, match: 'includesString'}]",
           href="javascript:;",
-          (click)="toggleTag(tag.id)")
+          (click)="toggleTag(tag.id)",
+          [attr.data-badge]="counter ? counter['tags.'+tag.id]: ''")
         span.icon.mr-1([style.color]="tag.color")
           i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag.id) ? "visible" : "hidden"}')
         span([style.color]="tag.color") {{ tag.title }}

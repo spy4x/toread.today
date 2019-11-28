@@ -30,7 +30,12 @@
 .tag-item(*ngFor="let tag of tags | filterByField:[{field: 'title', value: newTagTitle, match: 'includesString'}]")
 
   .tag-item--title
-    a(*ngIf="!isInEditMode(tag.id)", [style.color]="tag.color", (click)="routerHelper.toItemsWithFilter({tagId:tag.id})") {{tag.title}}
+    a(  *ngIf="!isInEditMode(tag.id)",
+        [style.color]="tag.color",
+        (click)="routerHelper.toItemsWithFilter({tagId:tag.id})"
+    )
+      span {{tag.title}}
+      span.counter {{counter ? (counter['tags.'+tag.id] + ' item(s)'): ''}}
     .field.has-addons('*ngIf'='isInEditMode(tag.id)')
       p.control
         input.input(

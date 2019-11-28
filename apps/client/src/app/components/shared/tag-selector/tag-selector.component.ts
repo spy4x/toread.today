@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Tag } from '../../../interfaces/tag.interface';
 import { ToggleTagEvent } from '../items-list/list.component';
+import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
 
 @Component({
   selector: 'tt-tag-selector',
@@ -12,6 +13,7 @@ import { ToggleTagEvent } from '../items-list/list.component';
 export class TagSelectorComponent {
   @Input() tags: Tag[] = [];
   @Input() selectedIds: string[] = [];
+  @Input() counter: null | ItemsCounter = null;
   @Input() helpText = '';
   @Input() isDropdownTriggerCustom = false;
   @Input() asButton = false;

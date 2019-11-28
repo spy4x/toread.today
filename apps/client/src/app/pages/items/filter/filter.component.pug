@@ -1,13 +1,16 @@
 .panel-block.is-flex.has-border-bottom.p-0
   .tabs
     ul
-      li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)')
-        a {{status}}
-      li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()')
+      li('[class.is-active]'='isStatus(null) && !isFavourite()', '(click)'='setStatus(null)', [attr.data-badge]="counter ? counter['all']: ''")
+        a All
+      li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)', [attr.data-badge]="counter ? counter['statuses.'+status]: ''")
+        a
+          span {{status}}
+      li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()', [attr.data-badge]="counter ? counter.favourites: ''")
         a
           span.icon([class.has-text-warning]="isFavourite()")
             i.fa-star([ngClass]="{fas: isFavourite(), far: !isFavourite()}")
 
-  tt-priority-selector.mr-3([priority]="filter.priority", [shouldShowAnyPriority]="true", (set)="setPriority($event)")
+  tt-priority-selector.mr-3([priority]="filter.priority", [counter]="counter", [shouldShowAnyPriority]="true", (set)="setPriority($event)")
 
-  tt-tag-selector('[tags]'='tags', '[selectedIds]'='filter.tagId ? [filter.tagId] : []', '(toggle)'='toggleTagId($event)', [isAllTagsVisible]="true")
+  tt-tag-selector('[tags]'='tags', '[selectedIds]'='filter.tagId ? [filter.tagId] : []', [counter]="counter", '(toggle)'='toggleTagId($event)', [isAllTagsVisible]="true")

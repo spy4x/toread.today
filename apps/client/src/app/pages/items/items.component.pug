@@ -24,7 +24,7 @@ nav.panel
         (setURL)="itemsService.setURL($event.item.id, $event.url)",
     )
   tt-items-add('(add)'='create($event)', '[tags]'='tags$ | async')
-  tt-items-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', '(changed)'='routerHelper.toItemsWithFilter($event)')
+  tt-items-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', [counter]="counter$ | async", '(changed)'='routerHelper.toItemsWithFilter($event)')
   tt-list('[items]'='items$ | async',
           '[tags]'='tags$ | async',
           '[pagination]'='pagination$ | async',
