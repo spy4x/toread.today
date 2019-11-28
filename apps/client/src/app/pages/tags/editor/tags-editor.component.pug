@@ -35,7 +35,7 @@
         (click)="routerHelper.toItemsWithFilter({tagId:tag.id})"
     )
       span {{tag.title}}
-      span.counter {{counter ? (counter['tags.'+tag.id] + ' item(s)'): ''}}
+      span.counter {{counter ? ((counter['tags.'+tag.id] || 0) + ' item(s)') : ''}}
     .field.has-addons('*ngIf'='isInEditMode(tag.id)')
       p.control
         input.input(
