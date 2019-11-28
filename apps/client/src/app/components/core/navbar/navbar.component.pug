@@ -23,7 +23,7 @@ nav.navbar.is-primary(role='navigation' aria-label='main navigation')
         span.icon.mr-1
           i.fas.fa-chart-line
         span Dashboard
-      a.navbar-item(routerLink='/items', routerLinkActive='is-active', '(click)'='closeMenu()')
+      a.navbar-item(routerLink='/items', [queryParams]="{status: 'new'}", routerLinkActive='is-active', '(click)'='closeMenu()')
         span.icon.mr-1
           i.fas.fa-list-ul
         span Links
