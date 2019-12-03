@@ -40,8 +40,8 @@ const routes: Routes = [
     loadChildren: './pages/tags/tags.module#TagsModule'
   },
   {
-    path: 'fast-fast-add-and-import',
-    loadChildren: './pages/fast-add-and-import/fast-add-and-import.module#FastAddAndImportModule'
+    path: 'import',
+    loadChildren: './pages/import/import.module#ImportModule'
   },
   {
     path: 'roadmap',

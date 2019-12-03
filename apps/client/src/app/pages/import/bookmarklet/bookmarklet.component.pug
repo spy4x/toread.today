@@ -1,0 +1,53 @@
+h2.title Save URL using bookmarklet
+p Bookmarklet is a special bookmark that uses saves current tab to Toread.today when you click on it.
+
+.accordion.mt-2
+  a.accordion__title((click)="toggleAccordion('desktop')") How to use on Desktop
+  .accordion__content.content(*ngIf="isAccordionVisible('desktop')")
+    ol
+      li(style="line-height: 36px")
+        span Drag and drop
+        a.button.is-primary.mx-1('[href]'='bookmarkletCode') Save to Toread.today
+        span button to Bookmarks Bar.
+        img.screenshot(src="assets/import/bookmarklet/desktop/drag-and-drop.png", alt="Drag and drop button to bookmarks bar")
+      li Open link that you want to save in new tab. Click on bookmarket on your Bookmarks Bar. 
+      li Profit! 
+
+.accordion
+  a.accordion__title((click)="toggleAccordion('android')") How to use on Android Chrome
+  .accordion__content.content(*ngIf="isAccordionVisible('android')")
+    ol
+      li Save this page as bookmark.
+      li 
+        span Edit bookmark - Erase everything before "javascript" in the URL field. Submit changes.
+        img.screenshot(src="assets/import/bookmarklet/android/edit.png", alt="Edit bookmark - Erase everything before \"javascript\" in the URL field")
+      li Open link that you want to save in new tab.
+      li Tap your location bar, and enter name of the bookmarklet ("Save to Toread.today").
+      li 
+        span Tap the bookmarklet’s name to run it on the current page.
+        img.screenshot(src="assets/import/bookmarklet/android/use.png", alt="Tap your location bar, and enter name of the bookmarklet (\"Save to Toread.today\").")
+      li Profit!
+.accordion
+  a.accordion__title((click)="toggleAccordion('iphone')") How to use on iPhone/iPad Safari
+  .accordion__content.content(*ngIf="isAccordionVisible('iphone')")
+    ol
+      li Save this page as bookmark.
+      li 
+        span Edit bookmark - Erase everything before "javascript" in the URL field. Submit changes.
+        img.screenshot(src="assets/import/bookmarklet/iphone/edit.png", alt="Edit bookmark - Erase everything before \"javascript\" in the URL field. Submit changes.")
+      li Open link that you want to save in new tab. 
+      li 
+        span Tap on bookmarket on your Bookmarks Bar. 
+        img.screenshot(src="assets/import/bookmarklet/iphone/use.png", alt="Tap on bookmarket on your Bookmarks Bar.")
+      li Profit!
+
+  //p as well as parse a YouTube Playlist for videos to import them all.
+  //p
+  //  span Check it on
+  //  a.tag.is-info.tag--inline(href='https://youtube.com/playlist?list=WL', target='_blank') YouTube Watch Later
+  //  span page or other page with a YouTube Playlist and URL like
+  //  span.tag.tag--inline.is-info https://youtube.com/playlist?list=xxx
+
+  //button.button.my-1('(click)'='isBookmarkletVideoVisible = !isBookmarkletVideoVisible') Show/hide "How to" video
+  //figure.image.is-16by9('*ngIf'='isBookmarkletVideoVisible')
+  //  iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')

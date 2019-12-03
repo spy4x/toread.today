@@ -22,7 +22,5 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     LineChartModule
   ],
-  exports: [RouterModule],
-  providers: []
 })
 export class DashboardModule {}

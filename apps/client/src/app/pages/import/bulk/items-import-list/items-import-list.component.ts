@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
-import { BookmarksBaseUnionType, BookmarksFolder, BookmarksParserResult } from '../../../helpers/bookmarks-parser/parser.interface';
-import { setStateProperties } from '../../../helpers/state.helper';
+import { BookmarksBaseUnionType, BookmarksFolder, BookmarksParserResult } from '../bookmarks-parser/parser.interface';
+import { setStateProperties } from '../../../../helpers/state.helper';
 
 @Component({
   selector: 'tt-items-import-list',
@@ -9,7 +9,7 @@ import { setStateProperties } from '../../../helpers/state.helper';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ItemsImportListComponent {
+export class ImportBulkListComponent {
   @Input() items: BookmarksParserResult;
   @Input() level = 0;
 

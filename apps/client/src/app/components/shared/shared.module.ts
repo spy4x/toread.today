@@ -37,6 +37,5 @@ import { ListItemComponent } from './items-list/items-list-item/list-item.compon
     ListComponent,
     ListItemComponent,
   ],
-  providers: []
 })
 export class SharedModule {}

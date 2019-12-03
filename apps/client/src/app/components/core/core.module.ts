@@ -20,6 +20,5 @@ import { AskPushNotificationsComponent } from './ask-push-notifications/ask-push
     NavbarComponent,
     AskPushNotificationsComponent,
   ],
-  providers: []
 })
 export class CoreModule {}

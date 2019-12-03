@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FastAddAndImportComponent } from './fast-add-and-import.component';
+import { ImportBulkComponent } from './items-import.component';
 
-describe('NotificationsComponent', () => {
-  let component: FastAddAndImportComponent;
-  let fixture: ComponentFixture<FastAddAndImportComponent>;
+describe('ItemsImportListComponent', () => {
+  let component: ImportBulkComponent;
+  let fixture: ComponentFixture<ImportBulkComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FastAddAndImportComponent ]
+      declarations: [ ImportBulkComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FastAddAndImportComponent);
+    fixture = TestBed.createComponent(ImportBulkComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

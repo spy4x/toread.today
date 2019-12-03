@@ -1,0 +1,31 @@
+h2.title Import URLs bulk
+p Using file input below you can import:
+.content
+  ul
+    li Browser bookmarks (.html file, folders will become tags)
+    li List of URLs (.txt file, each URL on it's own line)
+    li Pocket app URLs (.html file, tags will be saved as well)
+
+ng-container('*ngIf'='bookmarksImport$ | async as import; else instructions')
+  .notification.is-info('*ngIf'='(importState$ | async) === "sending"') Importing data...
+  .notification.is-success('*ngIf'='(importState$ | async) === "success"') Import has been completed.
+  tt-items-import('[import]'='import',
+                  '[tags]'='tags$ | async',
+                  '(done)'='saveBookmarks($event)',
+                  '(cancel)'='cancelImportBookmarks()'
+                  '[ngClass]'='{"is-hidden": (importState$ | async) === "sending"}')
+ng-template('#instructions'='')
+  .field.my-3
+    .file.is-medium.is-boxed.is-centered
+      label.file-label
+        input.file-input(type='file' name='Import' '(change)'='parseFile($event)' title='Click to upload files' accept='text/html, text/plain')
+        span.file-cta
+          span.file-icon
+            i.fas.fa-upload
+          span.file-label
+            | Choose file
+
+//button.button.my-1('(click)'='isImportVideoVisible = !isImportVideoVisible') Show/hide "How to" video
+//figure.image.is-16by9('*ngIf'='isImportVideoVisible')
+//  iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')
+

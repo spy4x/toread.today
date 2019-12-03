@@ -18,7 +18,5 @@ const routes: Routes = [
     SharedModule,
     RouterModule.forChild(routes)
   ],
-  exports: [RouterModule],
-  providers: []
 })
 export class ProfileModule {}

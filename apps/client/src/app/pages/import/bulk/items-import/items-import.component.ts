@@ -4,11 +4,11 @@ import {
   BookmarksBookmark,
   BookmarksFolder,
   BookmarksParserResult
-} from '../../../helpers/bookmarks-parser/parser.interface';
-import { ParseBookmarksResult } from '../../../helpers/bookmarks-parser/index';
-import { Tag } from '../../../interfaces/tag.interface';
-import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
-import { ItemPriority } from '../../../interfaces/item.interface';
+} from '../bookmarks-parser/parser.interface';
+import { ParseBookmarksResult } from '../bookmarks-parser/index';
+import { Tag } from '../../../../interfaces/tag.interface';
+import { ToggleTagEvent } from '../../../../components/shared/items-list/list.component';
+import { ItemPriority } from '../../../../interfaces/item.interface';
 
 export interface ImportData {
   bookmarks: BookmarksBookmark[],
@@ -23,7 +23,7 @@ export interface ImportData {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ItemsImportComponent {
+export class ImportBulkComponent {
   @Input() import: ParseBookmarksResult;
   @Input() tags: Tag[] = [];
   @Output() done = new EventEmitter<ImportData>();

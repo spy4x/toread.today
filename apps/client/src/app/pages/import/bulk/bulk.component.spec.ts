@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemsImportComponent } from './items-import.component';
+import { ImportBulkPageComponent } from './bulk.component';
 
-describe('ItemsImportListComponent', () => {
-  let component: ItemsImportComponent;
-  let fixture: ComponentFixture<ItemsImportComponent>;
+describe('ImportBulkPageComponent', () => {
+  let component: ImportBulkPageComponent;
+  let fixture: ComponentFixture<ImportBulkPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ItemsImportComponent ]
+      declarations: [ ImportBulkPageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ItemsImportComponent);
+    fixture = TestBed.createComponent(ImportBulkPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
