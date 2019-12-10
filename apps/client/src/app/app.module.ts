@@ -10,7 +10,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { ConnectionStatusService } from './services/connection-status/connection-status.service';
 import { LoggerService, SentryErrorHandler } from './services/logger.service';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ItemsService } from './services/items/items.service';
+import { ItemService } from './services/items/items.service';
 import { ROUTER_CONSTANTS } from './helpers/router.constants';
 import { UIService } from './services/ui.service';
 import { RouterHelperService } from './services/routerHelper.service';
@@ -18,7 +18,7 @@ import { UserService } from './services/user.service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { PushNotificationsService } from './services/push-notifications.service';
 import { NotificationsService } from './services/notifications.service';
-import { TagsService } from './services/tags/tags.service';
+import { TagService } from './services/tags/tags.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './components/core/core.module';
 
@@ -76,8 +76,8 @@ const routes: Routes = [
   providers: [
     ConnectionStatusService,
     LoggerService,
-    ItemsService,
-    TagsService,
+    ItemService,
+    TagService,
     UIService,
     RouterHelperService,
     UserService,

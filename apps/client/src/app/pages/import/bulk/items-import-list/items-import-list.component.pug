@@ -1,14 +1,17 @@
-.base('*ngFor'='let base of items', '[ngStyle]'='{"padding-left": (level ? 2.5 : 0) + "rem"}')
+.base(*ngFor="let base of items", [class.has-indentation]="level")
   .line
-    label.checkbox
-      input(type='checkbox', '[(ngModel)]'='base.isSelected', '(input)'='toggle(base)')
-    button.button.is-small('*ngIf'='base.type === "folder"', '(click)'='toggleExpansion(base)')
+    input(type="checkbox", [(ngModel)]="base.isSelected", (input)="toggle(base)")
+    button.button.is-small(*ngIf="base.type === 'folder'", (click)="toggleExpansion(base)", title="Expand/collapse folder")
       span.icon
-        i.far.fa-folder
-    span('[attr.title]'='base.title || base.url') {{ base.title || base.url }}
+        i.fas([ngClass]="{'fa-minus': base.isExpanded, 'fa-plus': !base.isExpanded}")
+    span.pointer(*ngIf="base.type === 'folder'",
+      title="Click to expand/collapse folder",
+      (click)="toggleExpansion(base)",
+    ) {{ base.title || base.url }}
+    a(*ngIf="base.type === 'bookmark'",
+      [attr.title]="base.title ? base.url : 'Click to open link in new tab'",
+      [attr.href]="base.url", 
+      target="_blank"
+    ) {{ base.title || base.url }}
 
-    a('*ngIf'='base.type === "bookmark"', '[attr.href]'='base.url', target='_blank', title='Open link in new tab')
-      span.icon
-        i.fas.fa-globe-americas
-
-  tt-items-import-list('*ngIf'='base.type === "folder" && base.children.length && base.isExpanded', '[items]'='base.children', '[level]'='level+1')
+  tt-items-import-list(*ngIf="base.type === 'folder' && base.children.length && base.isExpanded", [items]="base.children", [level]="level+1")

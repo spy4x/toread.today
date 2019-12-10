@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { catchError, debounceTime, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { User } from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { LoggerService } from '../../services/logger.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { ItemsService } from '../../services/items/items.service';
-import { RouterHelperService } from '../../services/routerHelper.service';
-import { NewFinishedMonthlyStatistics } from '../../interfaces/newFinishedStatistics.interface';
+import { catchError, debounceTime, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ItemService, TagService, LoggerService, RouterHelperService, UserService } from '../../services';
+import { NewFinishedMonthlyStatistics, User } from '../../interfaces';
 
 @Component({
   selector: 'tt-dashboard',
@@ -18,20 +14,7 @@ import { NewFinishedMonthlyStatistics } from '../../interfaces/newFinishedStatis
 })
 export class DashboardComponent implements OnDestroy {
   componentDestroy$ = new Subject<void>();
-  error$ = new BehaviorSubject<string>(null);
-  userId: null | string;
-  user$ = this.auth.authState.pipe(
-    takeUntil(this.componentDestroy$),
-    tap(user => {
-      this.userId = user ? user.uid : null;
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'user$ error', error });
-      return of(null);
-    }));
-  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
+  user$ = this.userService.authorizedUserOnly$;
   month$ = new BehaviorSubject<number>(new Date().getMonth() + 1);
   year$ = new BehaviorSubject<number>(new Date().getFullYear());
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -40,88 +23,67 @@ export class DashboardComponent implements OnDestroy {
       const today = new Date();
       return year <= today.getFullYear() && month <= today.getMonth();
     }));
-
-  tags$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('tags',
-          ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .valueChanges({ idField: 'id' })
-        .pipe(
-          takeUntil(this.userIsNotAuthenticated$),
-          takeUntil(this.componentDestroy$)
-        )
-    ),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'tags$ error', error });
-      return of([]);
-    }),
-    shareReplay(1)
-  );
-
   getNewRandom$ = new BehaviorSubject<void>(null);
+
+  // TODO: Move to ItemService
   randomItems$ = this.getNewRandom$
     .pipe(
-      switchMap(() => this.user$.pipe(first())),
-      filter(v => !!v),
+      switchMap(() => this.user$),
       switchMap((user: User) => this.firestore
         .collection('items',
-          ref => ref.where('createdBy', '==', user.uid).where('__name__', '>=', this.firestore.createId()).where(
-            'status', '==', 'new').limit(3))
+          ref => ref
+            .where('createdBy', '==', user.id)
+            .where('__name__', '>=', this.firestore.createId())
+            .where('status', '==', 'new').limit(3)
+        )
         .valueChanges({ idField: 'id' })
         .pipe(
-          debounceTime(500), // fixes bug related to that "where('__name__', '>=', v.randomId)" returns 1-2 emits
-          // instead of just 1
-          takeUntil(this.userIsNotAuthenticated$),
+          debounceTime(500), // fixes bug related to that "where('__name__', '>=', v.randomId)" returns 1-2 emits instead of just 1
+          takeUntil(this.userService.signedOut$),
           takeUntil(this.componentDestroy$)
         )),
       catchError(error => {
-        this.error$.next(error.message);
-        this.logger.error(
-          { messageForDev: 'randomItems$ error', messageForUser: 'Failed to fetch random items.', error });
+        this.logger.error({ messageForDev: 'randomItems$ error', messageForUser: 'Failed to fetch random items.', error });
         return of([]);
       }),
       shareReplay(1)
     );
 
+  // TODO: Move to ItemService
   openedItems$ = this.user$.pipe(
-    first(),
-    filter(v => !!v),
     switchMap((user: User) => this.firestore
       .collection('items',
-        ref => ref.where('createdBy', '==', user.uid).where('status', '==', 'opened').orderBy('openedAt', 'desc').limit(
-          3))
+        ref => ref
+          .where('createdBy', '==', user.id)
+          .where('status', '==', 'opened')
+          .orderBy('openedAt', 'desc')
+          .limit(3)
+      )
       .valueChanges({ idField: 'id' })
       .pipe(
-        takeUntil(this.userIsNotAuthenticated$),
+        takeUntil(this.userService.signedOut$),
         takeUntil(this.componentDestroy$)
       )),
     catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error(
-        { messageForDev: 'openedItems$ error', messageForUser: 'Failed to fetch recently opened item.', error });
+      this.logger.error({ messageForDev: 'openedItems$ error', messageForUser: 'Failed to fetch recently opened item.', error });
       return of([]);
     }),
     shareReplay(1)
   );
 
+  // TODO: Move to ItemService
   statistics$: Observable<NewFinishedMonthlyStatistics> = combineLatest([
-    this.user$.pipe(
-      first(),
-      filter(v => !!v)
-    ),
+    this.user$,
     this.month$,
     this.year$
   ], (user, month, year) => ({ user, month, year }))
     .pipe(
       switchMap(({ user, month, year }: { user: User, month: number, year: number }) => {
         return this.firestore
-          .doc<NewFinishedMonthlyStatistics>(`counterNewFinished/${year}_${month}_${user.uid}`)
+          .doc<NewFinishedMonthlyStatistics>(`counterNewFinished/${year}_${month}_${user.id}`)
           .valueChanges()
           .pipe(
-            takeUntil(this.userIsNotAuthenticated$),
+            takeUntil(this.userService.signedOut$),
             takeUntil(this.componentDestroy$),
             catchError(() => {
               return of(null);
@@ -132,11 +94,14 @@ export class DashboardComponent implements OnDestroy {
     );
 
 
-  constructor(private auth: AngularFireAuth,
-              private firestore: AngularFirestore,
-              private logger: LoggerService,
-              public itemsService: ItemsService,
-              public routerHelper: RouterHelperService) { }
+  constructor(
+    public itemService: ItemService,
+    public tagService: TagService,
+    public routerHelper: RouterHelperService,
+    private userService: UserService,
+    private firestore: AngularFirestore,
+    private logger: LoggerService
+    ) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();

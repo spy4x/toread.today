@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../../../interfaces/tag.interface';
+import { Tag, ItemsCounter } from '../../../interfaces';
 import { ToggleTagEvent } from '../items-list/list.component';
-import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
 
 @Component({
   selector: 'tt-tag-selector',

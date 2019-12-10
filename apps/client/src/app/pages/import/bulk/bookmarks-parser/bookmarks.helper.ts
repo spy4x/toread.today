@@ -1,5 +1,5 @@
 import { BookmarksBookmark, BookmarksFolder } from './parser.interface';
-import { setStateProperties } from '../../../../helpers/state.helper';
+import { setStateProperties } from '../../../../helpers';
 
 export const createBookmarksFolder = (folder: Partial<BookmarksFolder>) : BookmarksFolder => {
   const defaults: BookmarksFolder = {

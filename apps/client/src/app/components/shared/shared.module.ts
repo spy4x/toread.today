@@ -9,6 +9,7 @@ import { TagsByIdsPipe } from './tags-by-ids/tags-by-ids.pipe';
 import { FormsModule } from '@angular/forms';
 import { ListComponent } from './items-list/list.component';
 import { ListItemComponent } from './items-list/items-list-item/list-item.component';
+import { UploadInputComponent } from './upload-input/upload-input.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ListItemComponent } from './items-list/items-list-item/list-item.compon
     TagsByIdsPipe,
     ListComponent,
     ListItemComponent,
+    UploadInputComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { ListItemComponent } from './items-list/items-list-item/list-item.compon
     DropdownDirective,
     ListComponent,
     ListItemComponent,
+    UploadInputComponent,
   ],
 })
 export class SharedModule {}

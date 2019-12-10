@@ -1,21 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Item, ItemPriority, ItemRating, ItemSkeleton } from '../../interfaces/item.interface';
-import { Observable, of } from 'rxjs';
-import { setStateProperties } from '../../helpers/state.helper';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { LoggerService } from '../logger.service';
-import { catchError, first, map, switchMap } from 'rxjs/operators';
-import { firestore, User } from 'firebase/app';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { BatchSwarm } from '../../helpers/batchSwarm.helper';
-import { Tag } from '../../interfaces/tag.interface';
-import { ItemsCounter } from '../../interfaces/itemsCounter.interface';
+import { Observable, of } from 'rxjs';
+import { catchError, first, map, switchMap } from 'rxjs/operators';
+import { firestore } from 'firebase/app';
+import { LoggerService } from '../logger.service';
+import { UserService } from '../user.service';
+import { BatchSwarm, setStateProperties } from '../../helpers';
+import { Item, ItemPriority, ItemRating, ItemSkeleton, ItemsCounter, Tag } from '../../interfaces';
 
 @Injectable()
-export class ItemsService {
+export class ItemService {
   constructor(private firestore: AngularFirestore,
-              private afa: AngularFireAuth,
-              private logger: LoggerService) {}
+    private userService: UserService,
+    private logger: LoggerService) { }
 
   scaffold(item: Partial<Item>): Item {
     const defaults: Item = {
@@ -29,7 +26,7 @@ export class ItemsService {
       comment: '',
       withComment: false,
       isFavourite: false,
-      createdBy: this.afa.auth.currentUser.uid,
+      createdBy: this.userService.user.id,
       createdAt: new Date(),
       openedAt: null,
       finishedAt: null,
@@ -46,51 +43,45 @@ export class ItemsService {
    */
   create(skeleton: ItemSkeleton, shouldReturnCreatedItemId?: boolean): Promise<null | string | Item> {
     const item = this.scaffold(skeleton);
-    return this.afa.authState
+    return this.firestore
+      .collection<Item>('items',
+        ref => ref.where('url', '==', item.url).where('createdBy', '==', this.userService.user.id).limit(1))
+      .valueChanges({ idField: 'id' })
       .pipe(
         first(),
-        switchMap((user: User) =>
-          this.firestore
-            .collection<Item>('items',
-              ref => ref.where('url', '==', item.url).where('createdBy', '==', user.uid).limit(1))
-            .valueChanges({ idField: 'id' })
-            .pipe(
-              first(),
-              switchMap(async results => {
-                if (results.length) {
-                  return results[0];
-                }
-                if (item.rating !== 0) {
-                  item.finishedAt = new Date();
-                  item.status = 'finished';
-                }
-                try {
-                  const docRef = await this.firestore
-                    .collection('items')
-                    .add(this.getBodyWithoutId(item));
-                  if (!shouldReturnCreatedItemId) {
-                    return null;
-                  }
-                  return docRef.id;
-                } catch (error) {
-                  this.logger.error({
-                    messageForDev: 'add():',
-                    messageForUser: 'Failed to save new item to database.',
-                    error,
-                    params: { ...item }
-                  });
-                }
-              })
-            ))
+        switchMap(async results => {
+          if (results.length) {
+            return results[0];
+          }
+          if (item.rating !== 0) {
+            item.finishedAt = new Date();
+            item.status = 'finished';
+          }
+          try {
+            const docRef = await this.firestore
+              .collection('items')
+              .add(this.getBodyWithoutId(item));
+            if (!shouldReturnCreatedItemId) {
+              return null;
+            }
+            return docRef.id;
+          } catch (error) {
+            this.logger.error({
+              messageForDev: 'add():',
+              messageForUser: 'Failed to save new item to database.',
+              error,
+              params: { ...item }
+            });
+          }
+        })
       )
       .toPromise();
   }
 
   async bulkCreate(items: ItemSkeleton[]): Promise<boolean> {
-    // TODO: use custom AuthService to get User
     try {
-      const user = await this.afa.authState.pipe(first()).toPromise();
-      const userId = user.uid;
+      const user = this.userService.user;
+      const userId = user.id;
       const tagsCache = new Map<string, string>();
       const initialValue: string[] = [];
       const reducer = (acc: string[], cur: ItemSkeleton) => {
@@ -111,7 +102,7 @@ export class ItemsService {
       return true;
     } catch (error) {
       this.logger.error({
-        messageForDev: 'ItemsService.bulkCreate(): ',
+        messageForDev: 'ItemService.bulkCreate(): ',
         messageForUser: 'Error happened while importing. Developer is notified. Please try again later.',
         error,
         params: { items }
@@ -141,18 +132,18 @@ export class ItemsService {
 
   getCounter$(): Observable<null | ItemsCounter> {
     return this.firestore
-      .doc<ItemsCounter>(`counterItems/${this.afa.auth.currentUser.uid}`)
+      .doc<ItemsCounter>(`counterItems/${this.userService.user.id}`)
       .valueChanges()
       .pipe(
         map((counter: ItemsCounter) => {
           if (counter) {
-            return { ...counter, id: this.afa.auth.currentUser.uid };
+            return { ...counter, id: this.userService.user.id };
           } else {
             return null;
           }
         }),
         catchError(error => {
-          console.error(`getCounter$ for userId:`, this.afa.auth.currentUser.uid, error);
+          console.error(`getCounter$ for userId:`, this.userService.user.id, error);
           return of(null);
         })
       );
@@ -168,7 +159,7 @@ export class ItemsService {
         .delete();
     } catch (error) {
       this.logger.error(
-        { messageForDev: 'ItemsService.remove():', messageForUser: 'Failed to delete item.', error, params: { id } });
+        { messageForDev: 'ItemService.remove():', messageForUser: 'Failed to delete item.', error, params: { id } });
     }
   }
 
@@ -188,8 +179,8 @@ export class ItemsService {
     return this.update({
       id,
       tags: (isSelected
-             ? firestore.FieldValue.arrayUnion(tagId)
-             : firestore.FieldValue.arrayRemove(tagId)) as unknown as string[]
+        ? firestore.FieldValue.arrayUnion(tagId)
+        : firestore.FieldValue.arrayRemove(tagId)) as unknown as string[]
     }, 'Failed to toggle item tag.');
   }
 
@@ -240,7 +231,7 @@ export class ItemsService {
       let doc;
       try {
         doc = await this.firestore.doc(`tags/${tagIdOrTitle}`).ref.get();
-      } catch {}
+      } catch { }
       if (doc && doc.exists && doc.data().createdBy === userId) {
         cache.set(tagIdOrTitle, doc.id);
         return doc.id;
@@ -275,7 +266,7 @@ export class ItemsService {
     if (!data || !data.id) {
       this.logger.error(
         {
-          messageForDev: 'ItemsService.update(): "data" or "data.id" is not provided',
+          messageForDev: 'ItemService.update(): "data" or "data.id" is not provided',
           messageForUser: errorMessageForUser || 'Failed to' +
             ' update item.',
           params: { data }
@@ -289,7 +280,7 @@ export class ItemsService {
         .update(body);
     } catch (error) {
       this.logger.error({
-        messageForDev: 'ItemsService.update():',
+        messageForDev: 'ItemService.update():',
         messageForUser: errorMessageForUser || 'Failed to update item',
         error,
         params: { data }

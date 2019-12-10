@@ -48,14 +48,14 @@
 
     span.is-size-7(*ngIf="brick.createdBy === userId") My idea
 
-    .dropdown.is-hoverable.is-right.ml-auto.mr-0
+    .dropdown.is-hoverable.is-right.ml-auto.mr-0(*ngIf='userId === antonId || userId === brick.createdBy')
       .dropdown-trigger
         a
           span.icon.has-text-primary
             i.fas.fa-ellipsis-v(aria-hidden='true')
       .dropdown-menu.dropdown-menu--w-none(role='menu')
         .dropdown-content
-          a.dropdown-item(*ngIf='userId === antonId || userId === brick.createdBy',(click)="toggleEditMode(brick.id)")
+          a.dropdown-item((click)="toggleEditMode(brick.id)")
             span.icon.mr-1.has-text-info
               i.far.fa-edit
             span Edit

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, Vi
 import {
   NewFinishedDailyStatistics,
   NewFinishedMonthlyStatistics
-} from '../../../interfaces/newFinishedStatistics.interface';
+} from '../../../interfaces';
 
 interface Point {
   name: number
@@ -20,7 +20,7 @@ export class DashboardStatisticsComponent implements OnChanges {
   @Input() statistics: null | NewFinishedMonthlyStatistics = null;
   values: null | any[];
   colorScheme = {
-    domain: ['orange', 'forestgreen']
+    domain: ['forestgreen', 'orange']
   };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -37,20 +37,20 @@ export class DashboardStatisticsComponent implements OnChanges {
     Object
       .values(statistics.days)
       .forEach((dayStats: NewFinishedDailyStatistics, index) => {
-        const dayNumber = index+1;
+        const dayNumber = index + 1;
         addedPoints.push({ value: dayStats.new, name: dayNumber });
         finishedPoints.push({ value: dayStats.finished, name: dayNumber });
       });
 
     return [
       {
+        name: 'Finished',
+        series: finishedPoints
+      },
+      {
         name: 'Saved',
         series: addedPoints
       },
-      {
-        name: 'Finished',
-        series: finishedPoints
-      }
     ];
   }
 }

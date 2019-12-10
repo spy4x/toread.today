@@ -1,23 +1,20 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
-import { LoggerService } from '../../services/logger.service';
+import { catchError, shareReplay, takeUntil } from 'rxjs/operators';
+import { firestore } from 'firebase/app';
+import { UserService, PushNotificationsService, LoggerService } from '../../services';
 import {
   defaultRoadmapBrick,
   RoadmapBrick,
   RoadmapBrickType
-} from '../../interfaces/roadmapBrick.interface';
-import { firestore } from 'firebase/app';
+} from '../../interfaces';
 import { AppVersionInfo } from '../../../appVersionInfo.interface';
 import {
   RoadmapBrickChangeStatusEvent,
   RoadmapBrickChangeTitleEvent,
   RoadmapBrickChangeTypeEvent
 } from './roadmap-bricks-list/roadmap-bricks-list.component';
-import { UserService } from '../../services/user.service';
-import { PushNotificationsService } from '../../services/push-notifications.service';
 const { appData } = require('../../../../ngsw-config.json');
 
 
@@ -32,25 +29,12 @@ const collectionPath = 'roadmapBricks';
 })
 export class RoadmapComponent implements OnDestroy {
   componentDestroy$ = new Subject<void>();
-  userId: null | string;
-  user$ = this.auth.authState.pipe(
-    takeUntil(this.componentDestroy$),
-    tap(user => {
-      this.userId = user ? user.uid : null;
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.logger.error({ messageForDev: 'user$ error', error });
-      return of(null);
-    }));
-  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
-
   bricksNew$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
       ref => ref.where('status','==','new').orderBy('type').orderBy('score', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
-      takeUntil(this.userIsNotAuthenticated$),
+      takeUntil(this.userService.signedOut$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
@@ -64,7 +48,7 @@ export class RoadmapComponent implements OnDestroy {
       ref => ref.where('status','==','inProgress').orderBy('startWorkingAt', 'asc'))
     .valueChanges({ idField: 'id' })
     .pipe(
-      takeUntil(this.userIsNotAuthenticated$),
+      takeUntil(this.userService.signedOut$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
@@ -78,7 +62,7 @@ export class RoadmapComponent implements OnDestroy {
       ref => ref.where('status','==','done').orderBy('releasedAt', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
-      takeUntil(this.userIsNotAuthenticated$),
+      takeUntil(this.userService.signedOut$),
       takeUntil(this.componentDestroy$),
       catchError(error => {
         this.logger.error(
@@ -90,8 +74,7 @@ export class RoadmapComponent implements OnDestroy {
   antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
   appVersionInfo = appData as AppVersionInfo;
 
-  constructor(private auth: AngularFireAuth,
-              private firestore: AngularFirestore,
+  constructor(private firestore: AngularFirestore,
               private logger: LoggerService,
               public userService: UserService,
               public messagingService: PushNotificationsService) { }
@@ -105,10 +88,10 @@ export class RoadmapComponent implements OnDestroy {
     let scoreDiff: number = rate;
     let likedBy: firestore.FieldValue;
     let dislikedBy: firestore.FieldValue;
-    const add = firestore.FieldValue.arrayUnion(this.userId);
-    const remove = firestore.FieldValue.arrayRemove(this.userId);
+    const add = firestore.FieldValue.arrayUnion(this.userService.user.id);
+    const remove = firestore.FieldValue.arrayRemove(this.userService.user.id);
     if (rate > 0) {
-      if (brick.likedBy.includes(this.userId)) {
+      if (brick.likedBy.includes(this.userService.user.id)) {
         // double click on already voted button means - remove my vote
         scoreDiff = -1;
         likedBy = remove;
@@ -116,12 +99,12 @@ export class RoadmapComponent implements OnDestroy {
       } else {
         likedBy = add;
         dislikedBy = remove;
-        if (brick.dislikedBy.includes(this.userId)) {
+        if (brick.dislikedBy.includes(this.userService.user.id)) {
           scoreDiff = 2;
         }
       }
     } else {
-      if (brick.dislikedBy.includes(this.userId)) {
+      if (brick.dislikedBy.includes(this.userService.user.id)) {
         // double click on already voted button means - remove my vote
         scoreDiff = 1;
         likedBy = remove;
@@ -129,7 +112,7 @@ export class RoadmapComponent implements OnDestroy {
       }else{
         likedBy = remove;
         dislikedBy = add;
-        if (brick.likedBy.includes(this.userId)) {
+        if (brick.likedBy.includes(this.userService.user.id)) {
           scoreDiff = -2;
         }
       }
@@ -178,10 +161,10 @@ export class RoadmapComponent implements OnDestroy {
       ...defaultRoadmapBrick,
       title,
       type,
-      createdBy: this.userId,
+      createdBy: this.userService.user.id,
       createdAt: new Date(),
-      score: this.userId === this.antonId ? 0 : 1,
-      likedBy: this.userId === this.antonId ? [] : [this.userId]
+      score: this.userService.user.id === this.antonId ? 0 : 1,
+      likedBy: this.userService.user.id === this.antonId ? [] : [this.userService.user.id]
     };
     try {
       await this.firestore

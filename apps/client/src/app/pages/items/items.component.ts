@@ -6,20 +6,16 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import { catchError, filter, map, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { Item, ItemPriority } from '../../interfaces/item.interface';
-import { User } from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
-import { LoggerService } from '../../services/logger.service';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { defaultFilter, Filter } from './filter/filter.interface';
-import { ItemsService } from '../../services/items/items.service';
-import { ItemAddEvent } from './items-add/items-add.component';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ROUTER_CONSTANTS } from '../../helpers/router.constants';
+import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { User, Item, ItemPriority } from '../../interfaces';
+import { defaultFilter, Filter } from './filter/filter.interface';
+import { ItemAddEvent } from './items-add/items-add.component';
+import { ROUTER_CONSTANTS } from '../../helpers';
 import { defaultPagination, Pagination } from './pagination.interface';
-import { RouterHelperService } from '../../services/routerHelper.service';
+import { UserService, ItemService, TagService as TagService, LoggerService, RouterHelperService } from '../../services';
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -32,55 +28,23 @@ const LOAD_ITEMS_LIMIT = 20;
 })
 export class ItemsComponent implements OnInit, OnDestroy {
   componentDestroy$ = new Subject<void>();
-  error$ = new BehaviorSubject<string>(null);
-  userId: null | string;
-  user$ = this.auth.authState.pipe(
-    takeUntil(this.componentDestroy$),
-    tap(user => {
-      this.userId = user ? user.uid : null;
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'user$ error', error });
-      return of(null);
-    }));
-  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
-
-  tags$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('tags',
-          ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .valueChanges({ idField: 'id' })
-        .pipe(
-          takeUntil(this.userIsNotAuthenticated$),
-          takeUntil(this.componentDestroy$)
-        )
-    ),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'tags$ error', error });
-      return of([]);
-    }),
-    shareReplay(1)
-  );
-
   filter$ = new BehaviorSubject<Filter>(defaultFilter);
   pagination$ = new BehaviorSubject<Pagination>(defaultPagination);
+  // TODO: Move to ItemService
   items$ = new BehaviorSubject<Item[]>(null);
-  counter$ = this.itemsService.getCounter$();
+  counter$ = this.itemService.getCounter$();
   reloadItems$ = new BehaviorSubject<void>(void 0);
   existingItem$: Observable<null | Item> = of(null);
 
-  constructor(private auth: AngularFireAuth,
-              private firestore: AngularFirestore,
-              private logger: LoggerService,
-              public itemsService: ItemsService,
-              private route: ActivatedRoute,
-              public routerHelper: RouterHelperService,
-              private cd: ChangeDetectorRef) { }
+  constructor(
+    public itemService: ItemService,
+    public tagService: TagService,
+    public routerHelper: RouterHelperService,
+    private userService: UserService,
+    private firestore: AngularFirestore,
+    private logger: LoggerService,
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef) { }
 
 
   ngOnInit(): void {
@@ -113,11 +77,10 @@ export class ItemsComponent implements OnInit, OnDestroy {
     });
 
     let items$ParamsForLogs: any;
-    combineLatest([this.user$, this.filter$, this.reloadItems$],
+    combineLatest([this.userService.authorizedUserOnly$, this.filter$, this.reloadItems$],
       (user, filter, reloadItems) => ({ user, filter }))
       .pipe(
         takeUntil(this.componentDestroy$),
-        filter(v => !!v.user),
         tap(v => {
           items$ParamsForLogs = v;
           this.pagination$.next({ ...this.pagination$.value, isLoading: true });
@@ -136,7 +99,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
           (v: { user: User, filter: Filter, pagination: Pagination, lastItemSnapshot: null | DocumentSnapshot<any> }) => this.firestore
             .collection<Item>('items', ref => {
               let query = ref
-                .where('createdBy', '==', v.user.uid)
+                .where('createdBy', '==', v.user.id)
                 .limit(LOAD_ITEMS_LIMIT + 1);
               if (v.filter.status) {
                 query = query.where('status', '==', v.filter.status);
@@ -173,7 +136,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
             })
             .valueChanges({ idField: 'id' })
             .pipe(
-              takeUntil(this.userIsNotAuthenticated$),
+              takeUntil(this.userService.signedOut$),
               takeUntil(this.componentDestroy$)
             )
         ),
@@ -197,7 +160,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
           return items;
         }),
         catchError(error => {
-          this.error$.next(error.message);
           this.logger.error(
             {
               messageForDev: 'items$ error',
@@ -217,14 +179,14 @@ export class ItemsComponent implements OnInit, OnDestroy {
   }
 
   async create(item: ItemAddEvent): Promise<void> {
-    const existingItem = await this.itemsService.create({ ...item, title: null });
+    const existingItem = await this.itemService.create({ ...item, title: null });
     if (!existingItem) {
       if (this.filter$.value.status !== 'new') {
         this.routerHelper.toItemsWithFilter({ status: 'new' });
       }
       this.existingItem$ = of(null);
     } else {
-      this.existingItem$ = this.itemsService.getById$((existingItem as Item).id);
+      this.existingItem$ = this.itemService.getById$((existingItem as Item).id);
     }
     this.cd.detectChanges();
   }

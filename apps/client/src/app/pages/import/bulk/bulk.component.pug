@@ -1,29 +1,63 @@
-h2.title Import URLs bulk
-p Using file input below you can import:
-.content
-  ul
-    li Browser bookmarks (.html file, folders will become tags)
-    li List of URLs (.txt file, each URL on it's own line)
-    li Pocket app URLs (.html file, tags will be saved as well)
+h1.title
+  a(routerLink="/import") Add & Import
+  span.mx-2.has-text-grey-light /
+  span Import URLs bulk
+h2.subtitle Here you can import batch of URLs by uploading a file.
 
-ng-container('*ngIf'='bookmarksImport$ | async as import; else instructions')
-  .notification.is-info('*ngIf'='(importState$ | async) === "sending"') Importing data...
-  .notification.is-success('*ngIf'='(importState$ | async) === "success"') Import has been completed.
-  tt-items-import('[import]'='import',
-                  '[tags]'='tags$ | async',
-                  '(done)'='saveBookmarks($event)',
-                  '(cancel)'='cancelImportBookmarks()'
-                  '[ngClass]'='{"is-hidden": (importState$ | async) === "sending"}')
-ng-template('#instructions'='')
-  .field.my-3
-    .file.is-medium.is-boxed.is-centered
-      label.file-label
-        input.file-input(type='file' name='Import' '(change)'='parseFile($event)' title='Click to upload files' accept='text/html, text/plain')
-        span.file-cta
-          span.file-icon
-            i.fas.fa-upload
-          span.file-label
-            | Choose file
+ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
+  ng-container(*ngIf="(importState$ | async) === 'editing' || (importState$ | async) === 'error'") 
+    .notification.mb-2(*ngIf="(importState$ | async) === 'error'")
+      span.has-text-weight-semibold.has-text-danger
+        span.icon.mr-2
+          i.fas.fa-exclamation-triangle
+        span Import failed. Please try again.
+    .notification.common-actions
+      button.delete((click)="reset()")
+      div.text-decoration-none
+        p.has-text-weight-semibold File has been parsed.
+        span You can set priority 
+        tt-priority-selector.mr-1([priority]="priority", [asButton]="true", (set)="priority = $event")
+        span and tags 
+        tt-tag-selector.mr-1(
+          [tags]="tagService.tags$ | async",
+          [selectedIds]="inputTags",
+          (toggle)="toggleTag($event)",
+          [asButton]="true",
+          [hideSelected]="true",
+        )
+        span for all links. 
+      div 
+        span Also below you can uncheck links/folders that you don't need to be imported. Once ready - click 
+        button.button.is-primary.ml-1((click)="save()") Submit
+  
+      span.has-text-weight-semibold Links for import:
+      tt-items-import-list([items]="import.bookmarks")
+  
+  .notification(*ngIf="(importState$ | async) === 'sending'") 
+    span.has-text-weight-semibold Importing data...
+    progress.progress.is-small.is-primary.mt-2(max="100") 15%
+  
+  .notification(*ngIf="(importState$ | async) === 'success'") 
+    button.delete((click)="reset()")
+    span.has-text-weight-semibold.has-text-success
+      p
+        span.icon.mr-2
+          i.far.fa-check-circle
+        span Import has been completed.
+      a.button.is-primary.mt-2(routerLink="/items", [queryParams]="{status: 'new'}") Go to imported links
+
+
+ng-template("#instructions"="")
+  .content
+    ul
+      li Browser bookmarks (.html file, folders will become tags)
+      li List of URLs (.txt file, each URL on it's own line)
+      li Pocket app URLs (.html file, tags will be saved as well)
+
+  p You can drag and drop a file as well.
+  tt-upload-input.my-3((selected)="parseFile($event)")
+  
+
 
 //button.button.my-1('(click)'='isImportVideoVisible = !isImportVideoVisible') Show/hide "How to" video
 //figure.image.is-16by9('*ngIf'='isImportVideoVisible')

@@ -1,24 +1,9 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { User as FirebaseUser } from 'firebase';
-import * as Sentry from '@sentry/browser';
-import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-
-@Injectable()
-export class SentryErrorHandler implements ErrorHandler {
-  constructor() {}
-
-  async handleError(error) {
-    Sentry.withScope(scope => {
-      scope.setExtra('debug', false);
-      Sentry.captureException(error.originalError || error);
-    });
-
-    console.error(error);
-    throw error;
-  }
-}
+import { User as FirebaseUser } from 'firebase/app';
+import * as Sentry from '@sentry/browser';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class LoggerService {
@@ -85,5 +70,20 @@ export class LoggerService {
 
   hideLastErrorMessage() {
     this.lastErrorMessageSubject.next(null);
+  }
+}
+
+@Injectable()
+export class SentryErrorHandler implements ErrorHandler {
+  constructor() {}
+
+  async handleError(error) {
+    Sentry.withScope(scope => {
+      scope.setExtra('debug', false);
+      Sentry.captureException(error.originalError || error);
+    });
+
+    console.error(error);
+    throw error;
   }
 }

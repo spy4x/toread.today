@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Notification } from '../interfaces/notification.interface';
+import { Notification } from '../interfaces';
 import { LoggerService } from './logger.service';
 
 

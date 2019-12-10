@@ -47,7 +47,7 @@ service cloud.firestore {
 function isItem(doc, id) {
   return
   		// doc.size() == 7
-  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && doc.url is string && doc.url.size() > 0
   		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
   		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
   		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]
@@ -60,7 +60,7 @@ function isItem(doc, id) {
 function isTag(doc, id) {
   return
   		// doc.size() == 7
-  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && doc.url is string && doc.url.size() > 0
   		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
   		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
   		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]
@@ -73,7 +73,7 @@ function isTag(doc, id) {
 function isNotification(doc, id) {
   return
   		// doc.size() == 7
-  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && doc.url is string && doc.url.size() > 0
   		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
   		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
   		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]
@@ -86,7 +86,7 @@ function isNotification(doc, id) {
 function isRoadmapBrick(doc, id) {
   return true;
   		// doc.size() == 7
-  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && doc.url is string && doc.url.size() > 0
   		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
   		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
   		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]
@@ -99,7 +99,7 @@ function isRoadmapBrick(doc, id) {
 function isUserDoc(doc, id) {
   return
   		// doc.size() == 7
-  		// && doc.url is string && doc.url.size() > 0 // TODO: is valid URL
+  		// && doc.url is string && doc.url.size() > 0
   		// && ((doc.title is string && doc.title.size() > 0) || doc.title == null)
   		// && ((doc.description is string && doc.description.size() > 0) || doc.description == null)
   		// && doc.type is string && doc.type in ["video", "article", "profile", "website"]

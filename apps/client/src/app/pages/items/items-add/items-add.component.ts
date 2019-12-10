@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../../../interfaces/tag.interface';
-import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
-import { isURL } from '../../../helpers/isURL.helper';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { ItemPriority, ItemRating } from '../../../interfaces/item.interface';
+import { ItemPriority, ItemRating, Tag } from '../../../interfaces';
+import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
+import { isURL } from '../../../helpers';
 
 export interface ItemAddEvent {
   url: string

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFireMessaging } from '@angular/fire/messaging';
-import { catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 
 @Injectable()
 export class PushNotificationsService {
-  constructor(private messaging: AngularFireMessaging) {
-  }
+  constructor(private messaging: AngularFireMessaging) {}
 
   isSupported(): boolean {
     return 'Notification' in window;

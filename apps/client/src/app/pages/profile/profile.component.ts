@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { UserService } from '../../services/user.service';
-import { PushNotificationsService } from '../../services/push-notifications.service';
+import { UserService, PushNotificationsService } from '../../services';
 
 @Component({
   selector: 'tt-profile',

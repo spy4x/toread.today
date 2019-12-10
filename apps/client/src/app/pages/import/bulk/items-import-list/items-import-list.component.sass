@@ -1,11 +1,14 @@
-tt-items-import
+tt-items-import-list
+  display: block
   .base
+    &.has-indentation
+      padding-left: 2.5rem
     .line
       display: flex
       align-items: center
-  .checkbox
-    display: flex
-    align-items: center
-    margin-bottom: 0.5rem
-    input + span
-      margin-left: 0.25rem
+      > *
+        margin-right: .5rem
+      input[type="checkbox"]
+        width: 1rem
+        height: 1rem
+        cursor: pointer

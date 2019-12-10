@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Tag } from '../../../interfaces/tag.interface';
+import { Tag } from '../../../interfaces';
 
 @Pipe({
   name: 'tagsByIds'

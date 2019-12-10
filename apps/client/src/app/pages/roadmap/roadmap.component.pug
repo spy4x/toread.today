@@ -53,7 +53,7 @@
         h2.widget__header__title New
         .widget__header__action {{(bricksNew$ | async)?.length}}
       tt-bricks-list('[bricks]'='bricksNew$ | async',
-        '[userId]'='userId',
+        '[userId]'='(userService.authorizedUserOnly$ | async).id',
         '(vote)'="vote($event)",
         '(changeTitle)'="changeTitle($event)",
         '(changeType)'="changeType($event)",
@@ -65,7 +65,7 @@
         h2.widget__header__title In Progress
         .widget__header__action {{(bricksInProgress$ | async)?.length}}
       tt-bricks-list('[bricks]'='bricksInProgress$ | async',
-        '[userId]'='userId',
+        '[userId]'='(userService.authorizedUserOnly$ | async).id',
         '(vote)'="vote($event)",
         '(changeTitle)'="changeTitle($event)",
         '(changeType)'="changeType($event)",
@@ -77,7 +77,7 @@
         h2.widget__header__title Done
         .widget__header__action {{(bricksDone$ | async)?.length}}
       tt-bricks-list('[bricks]'='bricksDone$ | async',
-        '[userId]'='userId',
+        '[userId]'='(userService.authorizedUserOnly$ | async).id',
         '(vote)'="vote($event)",
         '(changeTitle)'="changeTitle($event)",
         '(changeType)'="changeType($event)",

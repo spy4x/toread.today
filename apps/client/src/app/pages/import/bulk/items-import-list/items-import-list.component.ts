@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 import { BookmarksBaseUnionType, BookmarksFolder, BookmarksParserResult } from '../bookmarks-parser/parser.interface';
-import { setStateProperties } from '../../../../helpers/state.helper';
+import { setStateProperties } from '../../../../helpers';
 
 @Component({
   selector: 'tt-items-import-list',

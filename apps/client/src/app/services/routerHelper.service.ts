@@ -1,6 +1,6 @@
-import { Filter } from '../pages/items/filter/filter.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { Filter } from '../pages/items/filter/filter.interface';
 
 @Injectable()
 export class RouterHelperService {

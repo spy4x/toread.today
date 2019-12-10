@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { BehaviorSubject, of } from 'rxjs';
-import { FCMToken, User } from '../interfaces/user.interface';
-import { User as FirebaseUser } from 'firebase/app';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { User as FirebaseUser } from 'firebase/app';
+import { FCMToken, User } from '../interfaces';
 import { LoggerService } from './logger.service';
 import { PushNotificationsService } from './push-notifications.service';
 import { NotificationsService } from './notifications.service';
@@ -18,17 +18,18 @@ export enum AuthStates {
 
 @Injectable()
 export class UserService {
-  collectionPath = `users`;
   private _firebaseUser$ = new BehaviorSubject<null | FirebaseUser>(null);
+  private _authState$ = new BehaviorSubject<AuthStates>(AuthStates.authenticating);
+  private _userDoc$ = new BehaviorSubject<null | AngularFirestoreDocument<User>>(null);
+  private _user$ = new BehaviorSubject<null | User>(null);
+  collectionPath = `users`;
   firebaseUser$ = this._firebaseUser$.asObservable();
   isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
   signedIn$ = this._firebaseUser$.pipe(filter(v => !!v));
   signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
-  private _authState$ = new BehaviorSubject<AuthStates>(AuthStates.authenticating);
   authState$ = this._authState$.asObservable();
-  private _userDoc$ = new BehaviorSubject<null | AngularFirestoreDocument<User>>(null);
-  private _user$ = new BehaviorSubject<null | User>(null);
   user$ = this._user$.asObservable();
+  authorizedUserOnly$ = this.user$.pipe(filter(v => !!v));
   isAuthorized$ = this._user$.pipe(map(v => !!v));
 
   constructor(private auth: AngularFireAuth,

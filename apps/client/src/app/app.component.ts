@@ -1,14 +1,10 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { interval } from 'rxjs';
 import { auth } from 'firebase/app';
-import { ConnectionStatusService } from './services/connection-status/connection-status.service';
-import { SwUpdate } from '@angular/service-worker';
+import { AuthStates, UserService, LoggerService, PushNotificationsService, ConnectionStatusService } from './services';
 import { AppVersionInfo } from '../appVersionInfo.interface';
-import { LoggerService } from './services/logger.service';
-import { AuthStates, UserService } from './services/user.service';
-import { PushNotificationsService } from './services/push-notifications.service';
-
 const { appData } = require('../../ngsw-config.json');
 
 @Component({

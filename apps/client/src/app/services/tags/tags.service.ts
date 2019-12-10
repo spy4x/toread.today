@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Tag } from '../../interfaces/tag.interface';
-import { LoggerService } from '../logger.service';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import { switchMap, takeUntil, catchError, shareReplay } from 'rxjs/operators';
+import { User, Tag } from '../../interfaces';
+import { UserService } from '../user.service';
+import { LoggerService } from '../logger.service';
 
 @Injectable()
-export class TagsService {
+export class TagService {
   private apiPath = 'tags';
 
   constructor(private firestore: AngularFirestore,
+              private userService: UserService,
               private logger: LoggerService) {}
 
   // scaffold(tag: Partial<Tag>): Tag {
@@ -88,7 +92,7 @@ export class TagsService {
   //       }),
   //       catchError(error => {
   //         this.logger.error({
-  //           messageForDev: 'TagsService.bulkCreate(): ',
+  //           messageForDev: 'TagService.bulkCreate(): ',
   //           messageForUser: 'Error happened while sending import file to the server. Try again.',
   //           error,
   //           params: { tags }
@@ -127,9 +131,25 @@ export class TagsService {
   //       .delete();
   //   } catch (error) {
   //     this.logger.error(
-  //       { messageForDev: 'TagsService.remove():', messageForUser: 'Failed to delete tag.', error, params: { id } });
+  //       { messageForDev: 'TagService.remove():', messageForUser: 'Failed to delete tag.', error, params: { id } });
   //   }
   // }
+
+  tags$: Observable<Tag[]> = this.userService.authorizedUserOnly$.pipe(
+    switchMap((user: User) =>
+      this.firestore
+        .collection('tags', ref => ref.where('createdBy', '==', user.id).orderBy('title'))
+        .valueChanges({ idField: 'id' })
+        .pipe(
+          takeUntil(this.userService.signedOut$),
+          catchError(error => {
+            this.logger.error({ messageForDev: 'tags$ error', messageForUser: 'Failed to load tags.', error });
+            return of([]);
+          })
+        )
+    ),
+    shareReplay(1)
+  );
 
   merge(tagFrom: Tag, tagTo: Tag): Promise<void> {
     return this.update({ id: tagFrom.id, mergeIntoTagId: tagTo.id }, 'Failed to merge tags.');
@@ -139,7 +159,7 @@ export class TagsService {
     if (!data || !data.id) {
       this.logger.error(
         {
-          messageForDev: 'TagsService.update(): "data" or "data.id" is not provided',
+          messageForDev: 'TagService.update(): "data" or "data.id" is not provided',
           messageForUser: errorMessageForUser || 'Failed to update tag.',
           params: { data }
         });
@@ -152,7 +172,7 @@ export class TagsService {
         .update(body);
     } catch (error) {
       this.logger.error({
-        messageForDev: 'TagsService.update():',
+        messageForDev: 'TagService.update():',
         messageForUser: errorMessageForUser || 'Failed to update tag',
         error,
         params: { data }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { RoadmapBrick, RoadmapBrickStatus, RoadmapBrickType } from '../../../interfaces/roadmapBrick.interface';
+import { RoadmapBrick, RoadmapBrickStatus, RoadmapBrickType } from '../../../interfaces';
 
 
 export interface RoadmapBrickVoteEvent {

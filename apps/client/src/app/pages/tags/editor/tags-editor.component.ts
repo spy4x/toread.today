@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Tag } from '../../../interfaces/tag.interface';
-import { RouterHelperService } from '../../../services/routerHelper.service';
-import { TagsService } from '../../../services/tags/tags.service';
-import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
+import { RouterHelperService, TagService } from '../../../services';
+import { Tag, ItemsCounter } from '../../../interfaces';
 
 export interface TagUpdateEvent {
   id: string
@@ -38,7 +36,7 @@ export class TagsEditorComponent {
   newTagTitle: string = '';
 
   constructor(public routerHelper: RouterHelperService,
-              private tagsService: TagsService){}
+              private tagService: TagService){}
 
   setTitle(tag: Tag, title: string): void {
     this.update.emit({ id: tag.id, change: { title } });
@@ -94,7 +92,7 @@ export class TagsEditorComponent {
     }
     const message = `Are you sure you want to merge all links from tag "${tagFrom.title}" to tag "${tagTo.title}"? Tag "${tagFrom.title}" will be deleted after merge.`;
     if(confirm(message)) {
-      await this.tagsService.merge(tagFrom, tagTo);
+      await this.tagService.merge(tagFrom, tagTo);
     }
   }
 }

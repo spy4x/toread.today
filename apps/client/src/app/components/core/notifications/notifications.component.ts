@@ -9,10 +9,10 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { catchError, first, map, shareReplay, takeUntil } from 'rxjs/operators';
-import { Notification } from '../../../interfaces/notification.interface';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { LoggerService } from '../../../services/logger.service';
 import { Observable, of, Subject } from 'rxjs';
+import { Notification } from '../../../interfaces';
+import { LoggerService } from '../../../services';
 
 @Component({
   selector: 'tt-notifications',

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.33.1",
-    "description": "Add & Import - Add detailed description \"How to use bookmarklet?\"."
+    "version": "1.33.2",
+    "description": "Add & Import - Improve UI & UX."
   },
   "assetGroups": [
     {

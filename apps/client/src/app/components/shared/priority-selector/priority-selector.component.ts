@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { ItemPriority } from '../../../interfaces/item.interface';
-import { ItemsCounter } from '../../../interfaces/itemsCounter.interface';
+import { ItemPriority, ItemsCounter } from '../../../interfaces';
 
 @Component({
   selector: 'tt-priority-selector',

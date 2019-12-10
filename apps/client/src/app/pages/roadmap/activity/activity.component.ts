@@ -8,14 +8,11 @@ import {
   Output,
   ViewEncapsulation
 } from '@angular/core';
-import { catchError, filter, first, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
-import { LoggerService } from '../../../services/logger.service';
-import { Notification } from '../../../interfaces/notification.interface';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { User as FirebaseUser } from 'firebase';
-import { User } from '../../../interfaces/user.interface';
+import { catchError, first, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
+import { LoggerService, UserService } from '../../../services';
+import { User, Notification } from '../../../interfaces';
 
 @Component({
   selector: 'tt-roadmap-activity',
@@ -30,34 +27,20 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
   componentDestroy$ = new Subject<void>();
   dateFormat = 'd MMM yyyy HH:mm';
   notificationsLimit = 5;
-
-  userId: null | string;
-  user$ = this.auth.authState.pipe(
-    takeUntil(this.componentDestroy$),
-    tap(user => {
-      this.userId = user ? user.uid : null;
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.logger.error({ messageForDev: 'user$ error', error });
-      return of(null);
-    }));
-  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
-
-  allNotifications$: Observable<Notification[]> = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: FirebaseUser) =>
+  // TODO: Move to NotificationService
+  allNotifications$: Observable<Notification[]> = this.userService.authorizedUserOnly$.pipe(
+    switchMap((user: User) =>
       this.firestore
         .collection<Notification>('notifications', ref =>
           ref
-            .where('userId', '==', user.uid)
+            .where('userId', '==', user.id)
             .where('type', '==', 'roadmap')
             .orderBy('createdAt', 'desc')
             .limit(this.notificationsLimit)
         )
         .valueChanges({ idField: 'id' })
         .pipe(
-          takeUntil(this.userIsNotAuthenticated$),
+          takeUntil(this.userService.signedOut$),
           takeUntil(this.componentDestroy$)
         )
     ),
@@ -73,29 +56,11 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
   recentlyDeletedIds: string[] = [];
 
 
-  constructor(private auth: AngularFireAuth,
+  constructor(private userService: UserService,
               private firestore: AngularFirestore,
               private logger: LoggerService) { }
 
   ngOnInit(): void {
-    // this.allNotifications$ = this.firestore
-    //   .collection<Notification>('notifications', ref =>
-    //     ref
-    //       .where('userId', '==', this.userId)
-    //       .where('type', '==', 'roadmap')
-    //       .orderBy('createdAt', 'desc')
-    //       .limit(10)
-    //   )
-    //   .valueChanges({ idField: 'id' })
-    //   .pipe(
-    //     takeUntil(this.componentDestroy$),
-    //     shareReplay(1),
-    //     catchError(error => {
-    //       this.logger.error(
-    //         { messageForDev: 'allNotifications$ error', messageForUser: 'Failed to fetch roadmap activity.', error });
-    //       return of([]);
-    //     })
-    //   );
     this.newNotifications$ = this.allNotifications$.pipe(
       map((notifications: Notification[]) => notifications.filter(n => n.status === 'new'))
     );

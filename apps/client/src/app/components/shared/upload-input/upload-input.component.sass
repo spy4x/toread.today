@@ -1,0 +1,27 @@
+tt-upload-input
+  display: block
+  .file
+    body.has-dragover &
+      position: fixed
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+      z-index: 30
+      input.file-input
+        z-index: 40
+      .file-label
+        width: 100%
+      .file-cta
+        width: 100%
+        height: 100%
+        justify-content: center
+        font-size: 3rem
+        .file-label
+          width: auto
+        .drop-label
+          display: inline
+        .normal-label
+          display: none
+    .drop-label
+      display: none

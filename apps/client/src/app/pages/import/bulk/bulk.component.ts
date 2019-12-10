@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { catchError, filter, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { User } from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { LoggerService } from '../../../services/logger.service';
-import { BehaviorSubject, of, Subject } from 'rxjs';
-import { parseBookmarks, ParseBookmarksResult } from './bookmarks-parser/index';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ItemsService } from '../../../services/items/items.service';
-import { ItemRating, ItemSkeleton } from '../../../interfaces/item.interface';
-import { ImportData } from './items-import/items-import.component';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { TagService, ItemService, LoggerService } from '../../../services';
+import { ParseBookmarksResult, parseBookmarks } from './bookmarks-parser';
+import { ItemPriority, ItemSkeleton, ItemRating } from '../../../interfaces';
+import { BookmarksBookmark, BookmarksParserResult, BookmarksBaseUnionType, BookmarksFolder } from './bookmarks-parser/parser.interface';
+import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
 
-type ImportBookmarksState = null | 'sending' | 'error' | 'success'
+export interface ImportData {
+  bookmarks: BookmarksBookmark[],
+  tags: string[],
+  priority: ItemPriority
+}
+type ImportBookmarksState = 'editing' | 'sending' | 'error' | 'success'
 
 @Component({
   selector: 'tt-import-bulk-page',
@@ -20,54 +20,38 @@ type ImportBookmarksState = null | 'sending' | 'error' | 'success'
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportBulkPageComponent implements OnDestroy {
-  componentDestroy$ = new Subject<void>();
-  error$ = new BehaviorSubject<string>(null);
-  userId: null | string;
-  user$ = this.auth.authState.pipe(
-    takeUntil(this.componentDestroy$),
-    tap(user => {
-      this.userId = user ? user.uid : null;
-      this.logger.setUser(user);
-    }),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'user$ error', error });
-      return of(null);
-    }));
-  userIsNotAuthenticated$ = this.user$.pipe(filter(v => !v));
-  bookmarksImport$ = new Subject<ParseBookmarksResult>();
-  importState$ = new BehaviorSubject<ImportBookmarksState>(null);
+export class ImportBulkPageComponent { 
+  inputTags: string[] = [];
+  priority: ItemPriority = 0;
+  bookmarksImport$ = new BehaviorSubject<ParseBookmarksResult>(null);
+  importState$ = new BehaviorSubject<ImportBookmarksState>('editing');
 
-  tags$ = this.user$.pipe(
-    filter(v => !!v),
-    switchMap((user: User) =>
-      this.firestore
-        .collection('tags',
-          ref => ref.where('createdBy', '==', user.uid).orderBy('title'))
-        .valueChanges({ idField: 'id' })
-        .pipe(
-          takeUntil(this.userIsNotAuthenticated$),
-          takeUntil(this.componentDestroy$)
-        )
-    ),
-    catchError(error => {
-      this.error$.next(error.message);
-      this.logger.error({ messageForDev: 'tags$ error', error });
-      return of([]);
-    }),
-    shareReplay(1)
-  );
+  constructor(
+    public tagService: TagService,
+    private itemService: ItemService,
+    private logger: LoggerService,
+  ) { }
 
-  constructor(private auth: AngularFireAuth,
-              private firestore: AngularFirestore,
-              private logger: LoggerService,
-              private sanitizer: DomSanitizer,
-              private itemsService: ItemsService) { }
+  private getSelectedBookmarks(items: BookmarksParserResult, tags: string[]): BookmarksBookmark[] {
+    const accumulator: BookmarksBookmark[] = [];
+    const iterator = (acc: BookmarksBookmark[], cur: BookmarksBaseUnionType) => {
+      if (cur.type === 'bookmark') {
+        cur.tags = [...cur.tags, ...tags];
+        return cur.isSelected ? [...acc, cur] : acc;
+      }
+      const folder = cur as BookmarksFolder;
+      const filteredItems = this.getSelectedBookmarks(folder.children, [...tags, folder.title]);
+      return [...acc, ...filteredItems];
+    };
+    return items.reduce(iterator, accumulator);
+  }
 
-  ngOnDestroy(): void {
-    this.componentDestroy$.next();
-    this.componentDestroy$.complete();
+  toggleTag(event: ToggleTagEvent) {
+    if (event.isSelected) {
+      this.inputTags = [...this.inputTags, event.tagId];
+    } else {
+      this.inputTags = this.inputTags.filter(tagId => tagId !== event.tagId);
+    }
   }
 
   parseFile(event): void {
@@ -75,25 +59,38 @@ export class ImportBulkPageComponent implements OnDestroy {
     const isTxt = file && file.type === 'text/plain';
     const isHtml = file && file.type === 'text/html';
     if (!isHtml && !isTxt) {
-      this.error$.next('Please choose Bookmarks file (.html) or Text file (usually .txt)');
+      this.logger.error({
+        messageForDev: 'Wrong file type was selected for Import Bulk',
+        messageForUser: 'Please choose Bookmarks file (.html) or Text file (usually .txt)',
+        params: { type: file.type }
+      });
       return;
     }
     const reader = new FileReader();
     reader.readAsText(file, 'UTF-8');
-    reader.onload = ev => {
+    reader.onload = event => {
       try {
-        this.bookmarksImport$.next(parseBookmarks(ev.target['result'].toString(), isTxt && 'txt'));
+        this.bookmarksImport$.next(parseBookmarks(event.target['result'].toString(), isTxt && 'txt'));
       } catch (error) {
-        this.error$.next(error.message);
+        this.logger.error({
+          messageForDev: error.message,
+          messageForUser: error.message,
+          error,
+        });
       }
     };
-    reader.onerror = ev => {
-      console.error(ev);
-      this.error$.next('Error while reading file');
+    reader.onerror = event => {
+      this.logger.error({
+        messageForDev: 'Error while reading file',
+        messageForUser: 'File couldn\'t be read.',
+        params: { event }
+      });
     };
   }
-
-  async saveBookmarks({ bookmarks, tags, priority }: ImportData): Promise<void> {
+  async save(): Promise<void> {
+    const bookmarks = this.getSelectedBookmarks(this.bookmarksImport$.value.bookmarks, []),
+      tags = [...this.getCommonTags(), ...this.inputTags],
+      priority = this.priority;
     const items: ItemSkeleton[] = bookmarks.map(b => ({
       title: b.title,
       tags: Array.from(new Set<string>([...b.tags, ...tags])),
@@ -102,12 +99,22 @@ export class ImportBulkPageComponent implements OnDestroy {
       priority
     }));
     this.importState$.next('sending');
-    const isSuccessful = await this.itemsService.bulkCreate(items);
+    const isSuccessful = await this.itemService.bulkCreate(items);
     this.importState$.next(isSuccessful ? 'success' : 'error');
   }
 
-  cancelImportBookmarks(): void {
-    this.importState$.next(null);
+  reset(): void {
+    this.importState$.next('editing');
     this.bookmarksImport$.next(null);
+  }
+
+  private getCommonTags(): string[] {
+    const today = new Date();
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[today.getMonth()];
+    const day = today.getDate();
+    const time = `${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()}`;
+    const date = `${day} ${month} ${time}`;
+    return [`Import ${date}`];
   }
 }

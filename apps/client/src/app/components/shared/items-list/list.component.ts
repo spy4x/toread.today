@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Item, ItemPriority, ItemRating } from '../../../interfaces/item.interface';
-import { Tag } from '../../../interfaces/tag.interface';
+import { Item, ItemPriority, ItemRating, Tag } from '../../../interfaces';
 import { Pagination } from '../../../pages/items/pagination.interface';
-import { trackByFn } from '../../../helpers/trackBy.helper';
+import { trackByFn } from '../../../helpers';
 
 export interface ToggleTagEvent {
   tagId: string

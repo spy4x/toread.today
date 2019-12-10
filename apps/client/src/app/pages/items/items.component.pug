@@ -1,47 +1,43 @@
-.notification.is-warning('*ngIf'='error$ | async as error')
-  button.delete('(click)'='error$.next(null)')
-  | {{error}}
-
 nav.panel
   .notification.is-small.text-decoration-none(*ngIf="existingItem$ | async as existingItem")
     p.ml-1 Item with this URL already exists:
     button.delete('(click)'='existingItem$ = null')
     tt-list-item(
         [item]="existingItem",
-        [tags]="tags$ | async",
-        (startReading)="itemsService.startReading($event)",
-        (finishReading)="itemsService.finishReading($event)",
-        (undoReading)="itemsService.markAsNew($event)",
-        (delete)="existingItem$ = null; itemsService.remove($event)",
-        (retryURLParsing)="itemsService.retryURLParsing($event)",
-        (toggleTag)="itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
-        (toggleFavourite)="itemsService.toggleFavourite($event.id, $event.isFavourite)",
+        [tags]="tagService.tags$ | async",
+        (startReading)="itemService.startReading($event)",
+        (finishReading)="itemService.finishReading($event)",
+        (undoReading)="itemService.markAsNew($event)",
+        (delete)="existingItem$ = null; itemService.remove($event)",
+        (retryURLParsing)="itemService.retryURLParsing($event)",
+        (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+        (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
         (tagClick)="routerHelper.toItemsWithFilter({tagId: $event})",
-        (changeRating)="itemsService.changeRating($event.id, $event.rating)",
-        (changeComment)="itemsService.changeComment($event.id, $event.comment)",
-        (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
-        (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
-        (setURL)="itemsService.setURL($event.item.id, $event.url)",
+        (changeRating)="itemService.changeRating($event.id, $event.rating)",
+        (changeComment)="itemService.changeComment($event.id, $event.comment)",
+        (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
+        (setTitle)="itemService.setTitle($event.item.id, $event.title)",
+        (setURL)="itemService.setURL($event.item.id, $event.url)",
     )
-  tt-items-add('(add)'='create($event)', '[tags]'='tags$ | async')
-  tt-items-filter('[tags]'='tags$ | async', '[filter]'='filter$ | async', [counter]="counter$ | async", '(changed)'='routerHelper.toItemsWithFilter($event)')
+  tt-items-add('(add)'='create($event)', '[tags]'='tagService.tags$ | async')
+  tt-items-filter('[tags]'='tagService.tags$ | async', '[filter]'='filter$ | async', [counter]="counter$ | async", '(changed)'='routerHelper.toItemsWithFilter($event)')
   tt-list('[items]'='items$ | async',
-          '[tags]'='tags$ | async',
+          '[tags]'='tagService.tags$ | async',
           '[pagination]'='pagination$ | async',
-          '(startReading)'='itemsService.startReading($event)',
-          '(finishReading)'='itemsService.finishReading($event)',
-          '(undoReading)'='itemsService.markAsNew($event)',
-          '(toggleTag)'='itemsService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
-          '(toggleFavourite)'='itemsService.toggleFavourite($event.id, $event.isFavourite)',
-          '(delete)'='itemsService.remove($event)',
-          '(retryURLParsing)'='itemsService.retryURLParsing($event)',
+          '(startReading)'='itemService.startReading($event)',
+          '(finishReading)'='itemService.finishReading($event)',
+          '(undoReading)'='itemService.markAsNew($event)',
+          '(toggleTag)'='itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)',
+          '(toggleFavourite)'='itemService.toggleFavourite($event.id, $event.isFavourite)',
+          '(delete)'='itemService.remove($event)',
+          '(retryURLParsing)'='itemService.retryURLParsing($event)',
           '(loadPrev)'='loadPrev()',
           '(loadNext)'='loadNext()',
           '(tagClick)'='routerHelper.toItemsWithFilter({tagId: $event})',
-          '(changeRating)'='itemsService.changeRating($event.id, $event.rating)',
-          '(changeComment)'='itemsService.changeComment($event.id, $event.comment)',
-          (setPriority)="itemsService.setPriority($event.item.id, $event.priority)",
-          (setTitle)="itemsService.setTitle($event.item.id, $event.title)",
-          (setURL)="itemsService.setURL($event.item.id, $event.url)",
+          '(changeRating)'='itemService.changeRating($event.id, $event.rating)',
+          '(changeComment)'='itemService.changeComment($event.id, $event.comment)',
+          (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
+          (setTitle)="itemService.setTitle($event.item.id, $event.title)",
+          (setURL)="itemService.setURL($event.item.id, $event.url)",
   )
 
