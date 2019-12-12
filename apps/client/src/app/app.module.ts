@@ -1,26 +1,17 @@
 import { ErrorHandler, NgModule } from '@angular/core';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { BrowserModule } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { environment } from '../environments/environment';
-
-import { AppComponent } from './app.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { ConnectionStatusService } from './services/connection-status/connection-status.service';
-import { LoggerService, SentryErrorHandler } from './services/logger.service';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ItemService } from './services/items/items.service';
-import { ROUTER_CONSTANTS } from './helpers/router.constants';
-import { UIService } from './services/ui.service';
-import { RouterHelperService } from './services/routerHelper.service';
-import { UserService } from './services/user.service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { PushNotificationsService } from './services/push-notifications.service';
-import { NotificationsService } from './services/notifications.service';
-import { TagService } from './services/tags/tags.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from './app.component';
 import { CoreModule } from './components/core/core.module';
+import { UpdateService, NotificationsService, ConnectionStatusService, LoggerService, ItemService, TagService, UIService, RouterHelperService, UserService, PushNotificationsService, SentryErrorHandler } from './services';
+import { environment } from '../environments/environment';
+import { ROUTER_CONSTANTS } from './helpers';
 
 const routes: Routes = [
   {
@@ -83,6 +74,7 @@ const routes: Routes = [
     UserService,
     PushNotificationsService,
     NotificationsService,
+    UpdateService,
     { provide: ErrorHandler, useClass: SentryErrorHandler }
   ],
   bootstrap: [AppComponent]

@@ -1,0 +1,35 @@
+@import variables
+  
+.widget
+  &:last-child
+    margin-bottom: $baseSize * 3 // to have padding from bottom of the screen
+  & + .widget
+    margin-top: $baseSize
+  &__header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    @include border(bottom)
+    padding: 0 $sidePadding
+    &__title
+      font-size: $size-4
+    &__subtitle
+      font-size: $size-7
+      color: $grey-light
+      margin-left: $textSpacer
+      @media (max-width: $tablet)
+        display: none
+    &__action
+      color: $grey-light
+      a
+        color: $grey-light
+        &:hover
+          color: $grey-darker
+  &__body
+    padding: $baseSize $sidePadding 0
+  &__info
+    font-size: $size-4
+    color: $grey-light
+    text-align: center
+    padding: $sidePadding
+    padding-top: $baseSize * 2

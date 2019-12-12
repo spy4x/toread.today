@@ -1,0 +1,27 @@
+@import variables
+  
+.notification-messages
+  > .mark-all-as-read
+    font-size: $size-6
+    color: $cyan
+    display: flex
+    justify-content: center
+
+  > .notif
+    > .line
+      &.second
+        display: flex
+        align-items: center
+        > .indicator
+          $indicatorSize: $baseSize / 2
+          width: $indicatorSize
+          height: $indicatorSize
+          flex: 0 0 $indicatorSize
+          border-radius: 50%
+          margin-right: $indicatorSize
+  > hr
+    margin: $baseSize / 2 0
+  > .last-items-shown
+    color: $grey
+    text-align: center
+    margin-top: $baseSize / 2

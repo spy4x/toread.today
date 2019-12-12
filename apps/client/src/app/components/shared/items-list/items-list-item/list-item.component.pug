@@ -1,12 +1,12 @@
-.item
-  .line.first
-    a([href]='item.url',
-      target='_blank',
-      (click)='read(item)',
-      [title]='item.url',) {{item.title || item.url}}
+.line.first
+  a([href]='item.url',
+    target='_blank',
+    (click)='read(item)',
+    [title]='item.url',) {{item.title || item.url}}
 
-  .line.second
-    tt-tag-selector.action(
+.line.second
+  .actions.icon-alignment--first
+    tt-tag-selector(
       [tags]="tags",
       [selectedIds]="item.tags",
       [isDropdownLeft]="true",
@@ -14,107 +14,107 @@
       (tagClick)="tagClick.emit($event)",
     )
 
-    .actions.ml-auto
-      .icon.is-small.has-text-info(
-      *ngIf='item.urlParseStatus === "notStarted"',
-      title='URL parsing is in progress..')
-        i.fas.fa-sync
-      a.icon.is-small.has-text-danger(
-          *ngIf='item.urlParseStatus === "error"',
-          '(click)'='retryURLParsing.emit(item.id)'
-          '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
-        i.fas.fa-exclamation-triangle
-      a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='item.url', target='_blank', (click)='read(item)')
-        span.icon
-          i.fas.fa-play
-        span Start reading
+  .actions.ml-auto.icon-alignment--last
+    .icon.is-small.has-text-info(
+    *ngIf='item.urlParseStatus === "notStarted"',
+    title='URL parsing is in progress..')
+      i.fas.fa-sync
+    a.icon.is-small.has-text-danger(
+        *ngIf='item.urlParseStatus === "error"',
+        '(click)'='retryURLParsing.emit(item.id)'
+        '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
+      i.fas.fa-exclamation-triangle
+    a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='item.url', target='_blank', (click)='read(item)')
+      span.icon
+        i.fas.fa-play
+      span Start reading
 
-      ng-container(*ngIf="item.status === 'finished'")
-        a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
-          i.far.fa-comment-alt
-        .dropdown.is-hoverable.is-right
-          .dropdown-trigger
-            a.icon([ngClass]="{'has-text-primary': item.rating === 1, 'has-text-danger': item.rating === -1, 'has-text-grey-light': !item.rating}")
-              i.far([ngClass]="{'fa-thumbs-up': item.rating !== -1, 'fa-thumbs-down': item.rating === -1}")
-          .dropdown-menu.dropdown-menu--w-none(role='menu')
-            .dropdown-content
-              a.dropdown-item((click)="setRating(item.id, 1)", [class.is-hidden]="item.rating === 1")
-                span.icon.has-text-success
-                  i.far.fa-thumbs-up
-                span Mark as Useful
-              a.dropdown-item((click)="setRating(item.id, -1)", [class.is-hidden]="item.rating === -1")
-                span.icon.has-text-danger
-                  i.far.fa-thumbs-down
-                span Mark as Useless
-      .dropdown.is-hoverable.is-right(*ngIf="item.status === 'opened'")
+    ng-container(*ngIf="item.status === 'finished'")
+      a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
+        i.far.fa-comment-alt
+      .dropdown.is-hoverable.is-right
         .dropdown-trigger
-          button.button.finish.is-primary.is-small
-            span.icon
-              i.fas.fa-check
-            span Mark as finished
+          a.icon([ngClass]="{'has-text-primary': item.rating === 1, 'has-text-danger': item.rating === -1, 'has-text-grey-light': !item.rating}")
+            i.far([ngClass]="{'fa-thumbs-up': item.rating !== -1, 'fa-thumbs-down': item.rating === -1}")
         .dropdown-menu.dropdown-menu--w-none(role='menu')
           .dropdown-content
+            a.dropdown-item((click)="setRating(item.id, 1)", [class.is-hidden]="item.rating === 1")
+              span.icon.has-text-success
+                i.far.fa-thumbs-up
+              span Mark as Useful
+            a.dropdown-item((click)="setRating(item.id, -1)", [class.is-hidden]="item.rating === -1")
+              span.icon.has-text-danger
+                i.far.fa-thumbs-down
+              span Mark as Useless
+    .dropdown.is-hoverable.is-right(*ngIf="item.status === 'opened'")
+      .dropdown-trigger
+        button.button.finish.is-primary.is-small
+          span.icon
+            i.fas.fa-check
+          span Mark as finished
+      .dropdown-menu.dropdown-menu--w-none(role='menu')
+        .dropdown-content
+          a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
+            span.icon.has-text-success
+              i.far.fa-thumbs-up
+            span ... & useful
+          a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
+            span.icon.has-text-danger
+              i.far.fa-thumbs-down
+            span ... & useless
+
+    tt-priority-selector([priority]="item.priority", (set)="setPriority.emit({item: item, priority: $event})")
+
+    .dropdown.is-hoverable.is-right
+      .dropdown-trigger
+        a
+          span.icon.has-text-primary
+            i.fas.fa-ellipsis-v(aria-hidden='true')
+      .dropdown-menu(role='menu')
+        .dropdown-content
+          a.dropdown-item('(click)'='toggleFavouriteHandler(item)')
+            span.icon.has-text-warning
+              i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
+            span {{item.isFavourite ? 'Remove from favorites' : 'Add to favorites'}}
+          a.dropdown-item((click)="toggleComment()")
+            span.icon
+              i.far.fa-comment-alt
+            span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
+          hr.dropdown-divider
+          a.dropdown-item((click)="editTitle(item)")
+            span.icon.has-text-info
+              i.far.fa-edit
+            span Edit title
+          a.dropdown-item((click)="editURL(item)")
+            span.icon.has-text-info
+              i.fas.fa-globe-americas
+            span Edit URL
+          hr.dropdown-divider
+          a.dropdown-item(*ngIf='item.status !== "new"', '(click)'='undoReading.emit(item.id)')
+            span.icon
+              i.far.fa-circle
+            span Mark as New
+          a.dropdown-item(*ngIf='item.status === "finished"', '(click)'='startReading.emit(item.id)')
+            span.icon.has-text-info
+              i.far.fa-envelope-open
+            span Mark as Opened
+          ng-container(*ngIf='item.status === "new"')
             a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
               span.icon.has-text-success
                 i.far.fa-thumbs-up
-              span ... & useful
+              span Mark as Finished & Useful
             a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
               span.icon.has-text-danger
                 i.far.fa-thumbs-down
-              span ... & useless
+              span Mark as Finished & Useless
+          hr.dropdown-divider
+          a.dropdown-item('(click)'='delete.emit(item.id)')
+            span.icon.has-text-danger
+              i.far.fa-trash-alt
+            span Delete
 
-      tt-priority-selector([priority]="item.priority", (set)="setPriority.emit({item: item, priority: $event})")
-
-      .dropdown.is-hoverable.is-right
-        .dropdown-trigger
-          a
-            span.has-text-primary
-              i.fas.fa-ellipsis-v(aria-hidden='true')
-        .dropdown-menu(role='menu')
-          .dropdown-content
-            a.dropdown-item('(click)'='toggleFavouriteHandler(item)')
-              span.icon.has-text-warning
-                i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
-              span {{item.isFavourite ? 'Remove from favorites' : 'Add to favorites'}}
-            a.dropdown-item((click)="toggleComment()")
-              span.icon
-                i.far.fa-comment-alt
-              span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
-            hr.dropdown-divider
-            a.dropdown-item((click)="editTitle(item)")
-              span.icon.has-text-info
-                i.far.fa-edit
-              span Edit title
-            a.dropdown-item((click)="editURL(item)")
-              span.icon.has-text-info
-                i.fas.fa-globe-americas
-              span Edit URL
-            hr.dropdown-divider
-            a.dropdown-item(*ngIf='item.status !== "new"', '(click)'='undoReading.emit(item.id)')
-              span.icon
-                i.far.fa-circle
-              span Mark as New
-            a.dropdown-item(*ngIf='item.status === "finished"', '(click)'='startReading.emit(item.id)')
-              span.icon.has-text-info
-                i.far.fa-envelope-open
-              span Mark as Opened
-            ng-container(*ngIf='item.status === "new"')
-              a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
-                span.icon.has-text-success
-                  i.far.fa-thumbs-up
-                span Mark as Finished & Useful
-              a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
-                span.icon.has-text-danger
-                  i.far.fa-thumbs-down
-                span Mark as Finished & Useless
-            hr.dropdown-divider
-            a.dropdown-item('(click)'='delete.emit(item.id)')
-              span.icon.has-text-danger
-                i.far.fa-trash-alt
-              span Delete
-
-  .line.third(*ngIf='isNoteVisible')
-      textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='', placeholder="Personal note")
-      .buttons.is-right
-        button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save personal note
-        button.button.mr-0('(click)'='toggleComment(false)') Cancel
+.line.third(*ngIf='isNoteVisible')
+    textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='', placeholder="Personal note")
+    .buttons.is-right
+      button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save personal note
+      button.button('(click)'='toggleComment(false)') Cancel

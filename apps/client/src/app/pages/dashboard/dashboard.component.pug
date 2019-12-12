@@ -1,70 +1,74 @@
-.widget.you-were-reading
+.widget.widget--you-were-reading
   .widget__header
     h2.widget__header__title You were reading...
       span.widget__header__subtitle (recently opened)
-    a.widget__header__action(routerLink="/items", [queryParams]="{status: 'opened'}")
+    a.widget__header__action.icon-alignment--last(routerLink="/items", [queryParams]="{status: 'opened'}")
       span More
       span.icon
         i.fas.fa-chevron-right
-  tt-list(*ngIf="(openedItems$ | async)?.length",
-          [items]="openedItems$ | async",
-          [tags]="tagService.tags$ | async",
-          (startReading)="itemService.startReading($event)",
-          (finishReading)="itemService.finishReading($event)",
-          (undoReading)="itemService.markAsNew($event)",
-          (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
-          (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
-          (delete)="itemService.remove($event)",
-          (retryURLParsing)="itemService.retryURLParsing($event)",
-          (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
-          (changeRating)="itemService.changeRating($event.id, $event.rating)",
-          (changeComment)="itemService.changeComment($event.id, $event.comment)",
-          (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
-          (setTitle)="itemService.setTitle($event.item.id, $event.title)",
-          (setURL)="itemService.setURL($event.item.id, $event.url)",
-  )
+  .widget__body.is-paddingless
+    tt-list(
+      *ngIf="(openedItems$ | async)?.length",
+      [items]="openedItems$ | async",
+      [tags]="tagService.tags$ | async",
+      (startReading)="itemService.startReading($event)",
+      (finishReading)="itemService.finishReading($event)",
+      (undoReading)="itemService.markAsNew($event)",
+      (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+      (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
+      (delete)="itemService.remove($event)",
+      (retryURLParsing)="itemService.retryURLParsing($event)",
+      (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
+      (changeRating)="itemService.changeRating($event.id, $event.rating)",
+      (changeComment)="itemService.changeComment($event.id, $event.comment)",
+      (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
+      (setTitle)="itemService.setTitle($event.item.id, $event.title)",
+      (setURL)="itemService.setURL($event.item.id, $event.url)",
+    )
   .widget__info(*ngIf="!(openedItems$ | async)?.length") You don't have unfinished items. Good job! 👍
 
-.widget.read-today
+.widget.widget--read-today
   .widget__header
     h2.widget__header__title Read Today
       span.widget__header__subtitle (random items)
-    a.widget__header__action((click)="getNewRandom$.next()")
+    a.widget__header__action.icon-alignment--last((click)="getNewRandom$.next()")
       span Shuffle
       span.icon
         i.fas.fa-sync
-  tt-list(*ngIf="(randomItems$ | async)?.length",
-          [items]="randomItems$ | async",
-          [tags]="tagService.tags$ | async",
-          (startReading)="itemService.startReading($event)",
-          (finishReading)="itemService.finishReading($event)",
-          (undoReading)="itemService.markAsNew($event)",
-          (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
-          (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
-          (delete)="itemService.remove($event)",
-          (retryURLParsing)="itemService.retryURLParsing($event)",
-          (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
-          (changeRating)="itemService.changeRating($event.id, $event.rating)",
-          (changeComment)="itemService.changeComment($event.id, $event.comment)",
-          (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
-          (setTitle)="itemService.setTitle($event.item.id, $event.title)",
-          (setURL)="itemService.setURL($event.item.id, $event.url)",
-  )
+  .widget__body.is-paddingless
+    tt-list(
+      *ngIf="(randomItems$ | async)?.length",
+      [items]="randomItems$ | async",
+      [tags]="tagService.tags$ | async",
+      (startReading)="itemService.startReading($event)",
+      (finishReading)="itemService.finishReading($event)",
+      (undoReading)="itemService.markAsNew($event)",
+      (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+      (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
+      (delete)="itemService.remove($event)",
+      (retryURLParsing)="itemService.retryURLParsing($event)",
+      (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
+      (changeRating)="itemService.changeRating($event.id, $event.rating)",
+      (changeComment)="itemService.changeComment($event.id, $event.comment)",
+      (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
+      (setTitle)="itemService.setTitle($event.item.id, $event.title)",
+      (setURL)="itemService.setURL($event.item.id, $event.url)",
+    )
   .widget__info(*ngIf="!(randomItems$ | async)?.length")
     span You have nothing to read yet.&nbsp;
     a(routerLink="/items") Add something by URL 🔗
     span &nbsp;or&nbsp;
     a(routerLink="/fast-fast-add-and-import") Import your bookmarks 🔖
 
-.widget.statistics
+.widget.widget--statistics
   .widget__header
     h2.widget__header__title Statistics
       span.widget__header__subtitle (do you read or just save?)
     .widget__header__action
-      a.icon((click)="prevMonth()")
+      a.icon((click)="prevMonth()", title="Show prev month")
         i.fas.fa-chevron-left
-      span.mx-2 {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
-      a.icon(*ngIf="doesNextMonthExist$ | async", (click)="nextMonth()")
+      span {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
+      a.icon.icon-alignment--last(*ngIf="doesNextMonthExist$ | async", (click)="nextMonth()", title="Show next month")
         i.fas.fa-chevron-right
   .widget__body.px-0
     tt-dashboard-statistics([statistics]="statistics$ | async")

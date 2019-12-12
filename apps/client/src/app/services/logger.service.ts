@@ -24,17 +24,17 @@ export class LoggerService {
   }
 
   setVersion(version: string): void {
-    this.debug(`Version: ${version}`);
+    this.log(`Version: ${version}`);
     Sentry.configureScope(scope => {
       scope.setExtra('Version', version);
     });
   }
 
-  debug(message: string, params?: { [key: string]: any }) {
+  log(message: string, params?: { [key: string]: any }) {
     if (environment.production) {
       Sentry.withScope(scope => {
         scope.addBreadcrumb({
-          type: 'debug',
+          type: 'log',
           message,
           data: params,
           timestamp: Date.now()

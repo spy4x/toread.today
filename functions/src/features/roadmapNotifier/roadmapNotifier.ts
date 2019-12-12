@@ -16,18 +16,19 @@ export const featureRoadmapNotifier = {
 async function onCreate(brick: RoadmapBrick, logPrefix: string): Promise<void> {
   try {
     console.log(`${logPrefix} Working on:`, brick);
-    const promises = [];
-    if (brick.createdBy !== antonId) {
-      promises.push(createNotification({
+    const promises = [
+      createNotification({
         text: `New ${brick.type} has been created: Id:${brick.id} "${brick.title}" by userId:${brick.createdBy}.`,
-        userId: antonId, type: 'roadmap'
-      }));
-    }
-    promises.push(createNotification({
-      text:
-        `Your ${brick.type} has been registered! Thank you for your commitment. 🤟`,
-      userId: brick.createdBy, type: 'roadmap'
-    }));
+        userId: antonId, 
+        type: 'roadmap'
+      }),
+      createNotification({
+        text:
+          `Your ${brick.type} has been registered! Thank you for your commitment. 🤟`,
+        userId: brick.createdBy, 
+        type: 'roadmap'
+      })
+    ];
     await Promise.all(promises);
     console.log(`${logPrefix} Success`);
   } catch (error) {
@@ -37,7 +38,7 @@ async function onCreate(brick: RoadmapBrick, logPrefix: string): Promise<void> {
 
 async function onUpdate(before: RoadmapBrick, after: RoadmapBrick, logPrefix: string): Promise<void> {
   try {
-    console.log(`${logPrefix} Working on:`, {before, after});
+    console.log(`${logPrefix} Working on:`, { before, after });
     const promises = [];
     // Like START
     const newLikeId = after.likedBy.find(userId => before.likedBy.indexOf(userId) === -1);

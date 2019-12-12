@@ -1,12 +1,14 @@
+@import variables
+  
 tt-add
   display: block
   .success-message
-    max-width: 500px
+    max-width: $mobile
     margin: 0 auto
   tt-list-item
-    margin: 1rem 0 2rem 0
-    border-top: 1px solid grey
-    border-bottom: 1px solid grey
+    margin: $baseSize 0 $baseSize * 2 0
+    @include border(top)
+    @include border(bottom)
   .button.is-loading
     display: block
     margin: 0 auto

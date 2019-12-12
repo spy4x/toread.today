@@ -1,16 +1,24 @@
-@import ~bulma/sass/utilities/initial-variables
+@import variables
 
 tt-items-filter
-  .panel-block
-    padding-right: 12px !important
+  display: flex
+  align-items: baseline
+  padding: 0 $sidePadding
+  @media(min-width: $desktop)
+    padding: 0 $sidePadding 0 0
+  @include border(bottom)
+  > *:not(:last-child)
+    margin-right: $textSpacer
   .tabs
     flex: 1 0
-    margin-bottom: -1px !important
+    margin-bottom: -$px1 !important
     li
       text-transform: capitalize
-      @media(max-width: 768px)
+      a
+        padding-bottom: $textSpacer/2
+      @media(max-width: $tablet)
         a
-          padding: 0.75rem 0.5rem
+          padding: $textSpacer*.5 $textSpacer
         &.favourite
           a
             padding-left: 0

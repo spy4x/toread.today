@@ -1,22 +1,23 @@
-.dropdown.is-hoverable.is-right('[class.is-active]'='(error$ | async) || (isAnyNewNotification$ | async)', '#dropdown'='')
+.dropdown.is-hoverable.is-right
   .dropdown-trigger(title='Show notifications')
     a
-      span.icon.is-white.has-text-white.px-3
+      span.icon.is-white.has-text-white
         i.far.fa-bell
-      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async) && !(isAnyUnreadRoadmapNotifications$ | async)')
+      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async) && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)')
   .dropdown-menu(role='notifications')
     .dropdown-content.notification-messages
       //- Error
       .dropdown-item('*ngIf'='error$ | async as error; else notifications')
         p.has-text-danger {{error}}
-        button.button.is-fullwidth.is-small('(click)'='hideError()')
-          span.icon
-            i.fas.fa-times
-          span Ignore and show notifications
+        .buttons.are-small.is-right
+          button.button('(click)'='hideError()')
+            span.icon
+              i.fas.fa-times
+            span Close
       ng-template('#notifications'='')
         ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
-          a.dropdown-item.mark-all-as-read('[class.is-hidden]'='!(isAnyNewNotification$ | async)', '(click)'='markNewAsRead()')
-            span.icon.mr-1
+          a.dropdown-item.mark-all-as-read(*ngIf='isAnyNewNotification$ | async', '(click)'='markNewAsRead()')
+            span.icon
               i.fas.fa-check
             span Mark as read
           ng-container('*ngFor'='let notification of notifications; last as isLast')
@@ -39,13 +40,23 @@
               i.fab.fa-dev
             span You have unread roadmap activity
 
-          .dropdown-item.notif('*ngIf'='!notifications.length && !(isAnyUnreadRoadmapNotifications$ | async)')
-            span No notifications yet&nbsp;
-            span.ml-auto ※\(^o^)/※
+          .dropdown-item(*ngIf="isPushNotificationsQuestionVisible$ | async")
+            div You have push notifications enabled on other device. 
+            div Do you want to receive them on this device as well?
+            .buttons.is-right.are-small
+              button.button((click)="dismissPushNotifications()") No
+              button.button.is-primary((click)="activatePushNotifications()") Yes
 
+          .dropdown-item(*ngIf="updateService.newVersionAvailable$ | async as updateInfo")
+            div New version {{updateInfo.version}} is available.
+            div {{updateInfo.description}}
+            .buttons.is-right.are-small
+              button.button.is-primary((click)="updateService.update()") Update
 
+          .dropdown-item('*ngIf'='!notifications.length && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)')
+            span No notifications yet.
 
         ng-template('#loading'='')
           .dropdown-item
-            span Loading...
+            button.button.is-loading.is-white.is-fullwidth Loading
 

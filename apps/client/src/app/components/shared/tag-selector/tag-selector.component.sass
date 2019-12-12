@@ -1,15 +1,21 @@
+@import variables
+  
 tt-tag-selector
   display: inline-block
   .dropdown-content
-    min-width: 100px
+    min-width: $baseSize * 8
   .dropdown-item
     display: flex
     align-items: center
   .tiny-tag
-    margin-top: 0.3rem
+    margin-top: $baseSize / 3
     &:after
       content: ','
     &:last-of-type:after
       content: ''
     + .tiny-tag
-      margin-left: 0.25rem
+      margin-left: $textSpacer / 2
+
+span + tt-tag-selector, tt-tag-selector + span
+  // horizontal spacing when tag-selector is inlined into text
+  margin-left: $textSpacer

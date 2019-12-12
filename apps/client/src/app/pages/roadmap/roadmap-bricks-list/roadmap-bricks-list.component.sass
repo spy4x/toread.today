@@ -1,15 +1,18 @@
+@import variables
+
 tt-bricks-list
   .brick
-    padding: .5rem .8rem
-    &:nth-child(even)
-      background: hsl(0, 0%, 98%)
-      border-radius: 4px
+    padding: $baseSize/2 $sidePadding
+    @include striped
     .line
       &.actions
         display: flex
         align-items: center
         > *
-          margin: .5rem .3rem 0 0
+          margin: $baseSize/2 $baseSize/3 0 0
         > button
-          font-size: .7rem
+          font-size: $baseSize*.7
+      &.editor
+        .buttons
+          margin-top: $baseSize/2
 

@@ -1,43 +1,7 @@
 ng-template("#notAuthorized"="")
-  section.hero.is-primary.is-fullheight.sign-in
-    .hero-body.has-text-centered
-      .container
-        div.logo
-          i.far.fa-bookmark
-        ng-container([ngSwitch]="userService.authState$ | async")
-          ng-container(*ngSwitchCase="AuthStates.authenticating")
-            button.button.is-loading.is-text.is-large :)
-          ng-container(*ngSwitchCase="AuthStates.notAuthenticated")
-            .text
-              h1.title
-                | Manage your URLs as a GOD!
-              h2.subtitle
-                | Just sign in and sell your soul...
-              button.button.is-medium.is-primary.is-inverted.is-outlined('(click)'='signIn()')
-                span Sign in with
-                span.icon
-                  i.fab.fa-google
-          ng-container(*ngSwitchCase="AuthStates.authorising")
-            h1.title.welcome-back(*ngIf="userService.firebaseUser$ | async as firebaseUser") Welcome, {{firebaseUser.displayName || 'Dear Reader!'}}
-            button.button.is-loading.is-text.is-large :)
-
-        .notification.is-warning('*ngIf'='error$ | async as error') {{error}}
+  tt-sign-in
 
 ng-container(*ngIf="userService.user$ | async as user; else notAuthorized")
-  tt-navbar([user]="user", (signOut)="signOut()", [appVersionInfo]="appVersionInfo")
-
-  .section.pt-3
-    .container.app-component-container
-
-      .notification.is-warning(*ngIf="!isOnline")
-        | You are Offline
-
-      .notification.is-info.update-available(*ngIf="isNewVersionAvailable")
-        div
-          p New version is available&nbsp;
-          p(*ngIf="appUpdateInfo") {{appUpdateInfo.version}}: What's new: {{appUpdateInfo.description}}
-        button.button((click)="update()") Update
-
-      tt-ask-push-notifications
-
-      router-outlet
+  tt-navbar
+  .container
+    router-outlet

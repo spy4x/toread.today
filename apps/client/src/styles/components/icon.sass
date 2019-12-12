@@ -1,0 +1,21 @@
+@import variables
+
+$iconWidth: $baseSize * 2 
+i.fas, i.far, i.fab
+  // use styles of ".fa-fw" for all icons
+  text-align: center
+  width: $iconWidth
+span.icon + span, span + span.icon
+  // spacing between icon and text
+  margin-left: $textSpacer
+  .button > &
+    margin-left: 0
+  .title > &, .subtitle > &
+    margin-left: $textSpacer * 2
+
+.icon-alignment
+  $margin: -$iconWidth/6
+  &--first
+    margin-left: $margin !important
+  &--last
+    margin-right: $margin !important

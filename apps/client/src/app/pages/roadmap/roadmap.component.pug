@@ -1,50 +1,49 @@
-.widget.mb-3
-  .columns
-    .column.is-6
-      .widget.add
-        .widget__header.mb-3
-          h2.widget__header__title Add
-            span.widget__header__subtitle (share your idea / report a bug)
-        .widget__body
-          form.mb-3
-            .field
-              .control
-                label.radio
-                  input(type='radio', name='type', '#suggestion'='', checked, value='suggestion')
-                  span.ml-1 Suggestion
-                label.radio.ml-1
-                  input(type='radio', name='type', '#bug'='', value='bug')
-                  span.ml-1 Bug
-
-            .field
-              .control
-                textarea.textarea('#textarea'='', placeholder='Enter description (more details would help your idea to be implemented faster)')
-            .field
-              .control
-                button.button.is-primary('(click)'='add(textarea.value, suggestion.checked ? "suggestion" : "bug"); textarea.value = ""') Submit
-
-    .column.is-6
-      .widget.activity
-        .widget__header.mb-3
-          h2.widget__header__title Activity
-            span.widget__header__subtitle (for your ideas, bugs or liked items)
-          a.widget__header__action.icon(routerLink="/profile", title="Settings")
-            i.fas.fa-cog(aria-hidden='true')
-
-        .widget__body
-          tt-roadmap-activity([user]="userService.user$ | async",
-                              (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
-          .field(*ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications === null")
+.columns
+  .column.is-6
+    .widget.add
+      .widget__header
+        h2.widget__header__title Add
+          span.widget__header__subtitle (share your idea / report a bug)
+      .widget__body
+        form
+          .field
             .control
-              .notification.is-small
-                p Do you want to receive push notifications for related Roadmap activity? For example:
-                .content
-                  ul
-                    li When your idea is approved/released, liked/commented by other users
-                    li When idea you liked is released
-                .buttons.is-right.mt-2.are-small
-                  button.button((click)="userService.setSettingSendRoadmapActivityPushNotifications(false)") No, thanks
-                  button.button.is-primary((click)="userService.setSettingSendRoadmapActivityPushNotifications(true)") Yes, please send
+              label.radio
+                input(type='radio', name='type', '#suggestion'='', checked, value='suggestion')
+                span Suggestion
+              label.radio
+                input(type='radio', name='type', '#bug'='', value='bug')
+                span Bug
+
+          .field
+            .control
+              textarea.textarea('#textarea'='', placeholder='Enter description (more details would help your idea to be implemented faster)')
+          .field
+            .control
+              button.button.is-primary('(click)'='add(textarea.value, suggestion.checked ? "suggestion" : "bug"); textarea.value = ""') Submit
+
+  .column.is-6
+    .widget.activity
+      .widget__header
+        h2.widget__header__title Activity
+          span.widget__header__subtitle (for your ideas, bugs or liked items)
+        a.widget__header__action.icon(routerLink="/profile", title="Settings")
+          i.fas.fa-cog(aria-hidden='true')
+
+      .widget__body
+        tt-roadmap-activity([user]="userService.user$ | async",
+                            (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
+        .field(*ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications === null")
+          .control
+            .notification.is-small
+              p Do you want to receive push notifications for related Roadmap activity? For example:
+              .content
+                ul
+                  li When your idea is approved/released, liked/commented by other users
+                  li When idea you liked is released
+              .buttons.is-right.are-small
+                button.button((click)="userService.setSettingSendRoadmapActivityPushNotifications(false)") No, thanks
+                button.button.is-primary((click)="userService.setSettingSendRoadmapActivityPushNotifications(true)") Yes, please send
 
 .columns
   .column.is-one-third
@@ -52,34 +51,43 @@
       .widget__header
         h2.widget__header__title New
         .widget__header__action {{(bricksNew$ | async)?.length}}
-      tt-bricks-list('[bricks]'='bricksNew$ | async',
-        '[userId]'='(userService.authorizedUserOnly$ | async).id',
-        '(vote)'="vote($event)",
-        '(changeTitle)'="changeTitle($event)",
-        '(changeType)'="changeType($event)",
-        '(changeStatus)'="changeStatus($event)",
-        '(remove)'="remove($event)",)
+      .widget__body.is-paddingless
+        tt-bricks-list(
+          '[bricks]'='bricksNew$ | async',
+          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '(vote)'="vote($event)",
+          '(changeTitle)'="changeTitle($event)",
+          '(changeType)'="changeType($event)",
+          '(changeStatus)'="changeStatus($event)",
+          '(remove)'="remove($event)",
+        )
   .column.is-one-third
     .widget
       .widget__header
         h2.widget__header__title In Progress
         .widget__header__action {{(bricksInProgress$ | async)?.length}}
-      tt-bricks-list('[bricks]'='bricksInProgress$ | async',
-        '[userId]'='(userService.authorizedUserOnly$ | async).id',
-        '(vote)'="vote($event)",
-        '(changeTitle)'="changeTitle($event)",
-        '(changeType)'="changeType($event)",
-        '(changeStatus)'="changeStatus($event)",
-        '(remove)'="remove($event)",)
+      .widget__body.is-paddingless
+        tt-bricks-list(
+          '[bricks]'='bricksInProgress$ | async',
+          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '(vote)'="vote($event)",
+          '(changeTitle)'="changeTitle($event)",
+          '(changeType)'="changeType($event)",
+          '(changeStatus)'="changeStatus($event)",
+          '(remove)'="remove($event)",
+        )
   .column.is-one-third
     .widget
       .widget__header
         h2.widget__header__title Done
         .widget__header__action {{(bricksDone$ | async)?.length}}
-      tt-bricks-list('[bricks]'='bricksDone$ | async',
-        '[userId]'='(userService.authorizedUserOnly$ | async).id',
-        '(vote)'="vote($event)",
-        '(changeTitle)'="changeTitle($event)",
-        '(changeType)'="changeType($event)",
-        '(changeStatus)'="changeStatus($event)",
-        '(remove)'="remove($event)",)
+      .widget__body.is-paddingless
+        tt-bricks-list(
+          '[bricks]'='bricksDone$ | async',
+          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '(vote)'="vote($event)",
+          '(changeTitle)'="changeTitle($event)",
+          '(changeType)'="changeType($event)",
+          '(changeStatus)'="changeStatus($event)",
+          '(remove)'="remove($event)",
+        )

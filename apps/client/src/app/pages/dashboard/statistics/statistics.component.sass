@@ -1,8 +1,10 @@
+@import variables
+  
 tt-dashboard-statistics
   .chart-wrapper
     display: block
     width: 100%
-    min-height: 200px
-    @media (min-width: 1024px)
-      min-height: 300px
+    min-height: $baseSize * 20
+    @media (min-width: $desktop)
+      min-height: $baseSize * 30
 

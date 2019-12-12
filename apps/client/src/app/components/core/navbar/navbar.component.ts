@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { AppVersionInfo } from '../../../../appVersionInfo.interface';
-import { UIService } from '../../../services';
-import { User } from '../../../interfaces';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { UIService, UserService, ConnectionStatusService, UpdateService } from '../../../services';
 
 @Component({
   selector: 'tt-navbar',
@@ -11,12 +9,14 @@ import { User } from '../../../interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent {
-  @Input() user: User;
-  @Input() appVersionInfo: AppVersionInfo;
-  @Output() signOut = new EventEmitter<void>();
   isMenuExpanded = false;
 
-  constructor(public uiService: UIService) {}
+  constructor(
+    public uiService: UIService,
+    public userService: UserService,  
+    public updateService: UpdateService,  
+    public connectionStatus: ConnectionStatusService,  
+  ) {}
 
   toggleMenu(): void {
     this.isMenuExpanded = !this.isMenuExpanded;

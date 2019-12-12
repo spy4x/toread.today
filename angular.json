@@ -24,8 +24,13 @@
               "apps/client/src/firebase-messaging-sw.js"
             ],
             "styles": [
-              "apps/client/src/styles.sass"
+              "apps/client/src/styles/+index.sass"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/client/src/styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {

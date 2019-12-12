@@ -1,6 +1,9 @@
 nav.panel
-  .notification.is-small.text-decoration-none(*ngIf="existingItem$ | async as existingItem")
-    p.ml-1 Item with this URL already exists:
+  .notification.notification--item-exists(*ngIf="existingItem$ | async as existingItem")
+    h2.subtitle
+      span.icon
+        i.fas.fa-exclamation-triangle 
+      span Link with this URL has been already saved earlier:
     button.delete('(click)'='existingItem$ = null')
     tt-list-item(
         [item]="existingItem",
@@ -40,4 +43,3 @@ nav.panel
           (setTitle)="itemService.setTitle($event.item.id, $event.title)",
           (setURL)="itemService.setURL($event.item.id, $event.url)",
   )
-

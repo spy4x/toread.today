@@ -15,7 +15,7 @@
     .dropdown-content
       .dropdown-item(*ngIf="helpText") {{helpText}}
       a.dropdown-item.has-text-grey-light('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
-        span.icon.mr-2
+        span.icon
           i.fas.fa-check('[ngStyle]'='{"visibility": selectedIds.length ? "hidden" : "visible"}')
         span All tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
@@ -27,7 +27,7 @@
           href="javascript:;",
           (click)="toggleTag(tag.id)",
           [attr.data-badge]="counter ? counter['tags.'+tag.id] : ''")
-        span.icon.mr-1([style.color]="tag.color")
+        span.icon([style.color]="tag.color")
           i.fas.fa-check('[ngStyle]'='{"visibility": isSelected(tag.id) ? "visible" : "hidden"}')
         span([style.color]="tag.color") {{ tag.title }}
 

@@ -1,18 +1,21 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   Input,
   OnDestroy,
-  OnInit,
   ViewChild,
-  ViewEncapsulation
+  ViewEncapsulation,
+  AfterViewInit,
+  OnInit,
 } from '@angular/core';
-import { catchError, first, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, takeUntil, merge, filter } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
-import { Notification } from '../../../interfaces';
-import { LoggerService } from '../../../services';
+import { Notification, User } from '../../../interfaces';
+import { LoggerService, UserService, PushNotificationsService, UpdateService } from '../../../services';
+import { DropdownDirective } from '../../shared/dropdown/dropdown.directive';
+
+const USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE_KEY = 'USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE';
 
 @Component({
   selector: 'tt-notifications',
@@ -21,24 +24,33 @@ import { LoggerService } from '../../../services';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationsComponent implements OnInit, OnDestroy {
+export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() userId: string;
-  @ViewChild('dropdown', { static: true }) dropdown: ElementRef;
+  @ViewChild(DropdownDirective, { static: true }) dropdown: DropdownDirective;
   componentDestroy$ = new Subject<void>();
   error$ = this.logger.lastErrorMessage$;
   dateFormat = 'd MMM yyyy HH:mm';
   notificationsLimit = 5;
+  recentlyDeletedIds: string[] = [];
 
   allNotifications$: Observable<Notification[]>;
   newNotifications$: Observable<Notification[]>;
   isAnyNewNotification$: Observable<boolean>;
   isAnyUnreadRoadmapNotifications$: Observable<boolean>;
+  isPushNotificationsQuestionVisible$ = this.userService
+    .authorizedUserOnly$
+    .pipe(map((user: User) =>
+      !!user.sendRoadmapActivityPushNotifications && this.pushNotificationsService.isDefault() && !this.arePushNotificationsDisabledInLocalStorage())
+    );
 
-  recentlyDeletedIds: string[] = [];
 
-
-  constructor(private firestore: AngularFirestore,
-              private logger: LoggerService) { }
+  constructor(
+    public updateService: UpdateService,
+    private firestore: AngularFirestore,
+    private logger: LoggerService,
+    private userService: UserService,
+    private pushNotificationsService: PushNotificationsService
+  ) { }
 
   ngOnInit(): void {
     this.allNotifications$ = this.firestore
@@ -86,16 +98,15 @@ export class NotificationsComponent implements OnInit, OnDestroy {
           return of(false);
         })
       );
+  }
 
-    this.error$.pipe(takeUntil(this.componentDestroy$)).subscribe(error => {
-      if (error) {
-        // make sure dropdown has class "is-active"
-        const el = this.dropdown.nativeElement as HTMLElement;
-        const cssClass = 'is-active';
-        if (!el.classList.contains(cssClass)) {
-          el.classList.add(cssClass);
-        }
-      }
+  ngAfterViewInit(): void {
+    this.error$.pipe(
+      merge(this.isAnyNewNotification$),
+      takeUntil(this.componentDestroy$),
+      filter(v => !!v),
+    ).subscribe(v => {
+      this.dropdown.open();
     });
   }
 
@@ -145,5 +156,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   hideError(): void {
     this.logger.hideLastErrorMessage();
+  }
+
+  activatePushNotifications(): void {
+    this.userService.activatePushNotifications();
+    this.isPushNotificationsQuestionVisible$ = of(false);
+  }
+
+  dismissPushNotifications(): void {
+    localStorage.setItem(USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE_KEY, 'true');
+    this.isPushNotificationsQuestionVisible$ = of(false);
+  }
+
+  private arePushNotificationsDisabledInLocalStorage(): boolean {
+    return localStorage.getItem(USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE_KEY) === 'true';
   }
 }

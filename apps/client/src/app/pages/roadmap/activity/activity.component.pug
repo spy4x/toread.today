@@ -2,10 +2,11 @@
 ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
   .notification-messages
 
-    a.dropdown-item.mark-all-as-read('[class.is-hidden]'='!(isAnyNewNotification$ | async)', '(click)'='markNewAsRead()')
-      span.icon.mr-1
-        i.fas.fa-check
-      span Mark as read
+    .buttons.is-centered('[class.is-hidden]'='!(isAnyNewNotification$ | async)', '(click)'='markNewAsRead()')
+      button.button.is-info
+        span.icon
+          i.fas.fa-check
+        span Mark as read
 
     ng-container('*ngFor'='let notification of notifications; last as isLast')
       .notif
@@ -22,8 +23,8 @@ ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
 
     .last-items-shown('*ngIf'='notifications.length === notificationsLimit') Last {{notificationsLimit}} items shown
 
-    .has-text-centered.mb-3('*ngIf'='!notifications.length') No activity yet
+    .has-text-centered('*ngIf'='!notifications.length') No activity yet
 
 ng-template('#loading'='')
-  .has-text-centered.mb-3 Loading...
+  button.button.is-white.is-loading.is-fullwidth Loading...
 

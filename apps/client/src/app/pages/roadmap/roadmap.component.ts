@@ -3,19 +3,17 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, shareReplay, takeUntil } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
-import { UserService, PushNotificationsService, LoggerService } from '../../services';
+import { UserService, PushNotificationsService, LoggerService, UpdateService } from '../../services';
 import {
   defaultRoadmapBrick,
   RoadmapBrick,
   RoadmapBrickType
 } from '../../interfaces';
-import { AppVersionInfo } from '../../../appVersionInfo.interface';
 import {
   RoadmapBrickChangeStatusEvent,
   RoadmapBrickChangeTitleEvent,
   RoadmapBrickChangeTypeEvent
 } from './roadmap-bricks-list/roadmap-bricks-list.component';
-const { appData } = require('../../../../ngsw-config.json');
 
 
 const collectionPath = 'roadmapBricks';
@@ -31,7 +29,7 @@ export class RoadmapComponent implements OnDestroy {
   componentDestroy$ = new Subject<void>();
   bricksNew$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('status','==','new').orderBy('type').orderBy('score', 'desc'))
+      ref => ref.where('status', '==', 'new').orderBy('type').orderBy('score', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userService.signedOut$),
@@ -45,7 +43,7 @@ export class RoadmapComponent implements OnDestroy {
     );
   bricksInProgress$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('status','==','inProgress').orderBy('startWorkingAt', 'asc'))
+      ref => ref.where('status', '==', 'inProgress').orderBy('startWorkingAt', 'asc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userService.signedOut$),
@@ -59,7 +57,7 @@ export class RoadmapComponent implements OnDestroy {
     );
   bricksDone$: Observable<RoadmapBrick[]> = this.firestore
     .collection<RoadmapBrick>(collectionPath,
-      ref => ref.where('status','==','done').orderBy('releasedAt', 'desc'))
+      ref => ref.where('status', '==', 'done').orderBy('releasedAt', 'desc'))
     .valueChanges({ idField: 'id' })
     .pipe(
       takeUntil(this.userService.signedOut$),
@@ -72,12 +70,14 @@ export class RoadmapComponent implements OnDestroy {
       shareReplay(1)
     );
   antonId = 'carcBWjBqlNUY9V2ekGQAZdwlTf2';
-  appVersionInfo = appData as AppVersionInfo;
 
-  constructor(private firestore: AngularFirestore,
-              private logger: LoggerService,
-              public userService: UserService,
-              public messagingService: PushNotificationsService) { }
+  constructor(
+    public userService: UserService,
+    public updateService: UpdateService,
+    public messagingService: PushNotificationsService,
+    private firestore: AngularFirestore,
+    private logger: LoggerService,
+  ) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();
@@ -109,7 +109,7 @@ export class RoadmapComponent implements OnDestroy {
         scoreDiff = 1;
         likedBy = remove;
         dislikedBy = remove;
-      }else{
+      } else {
         likedBy = remove;
         dislikedBy = add;
         if (brick.likedBy.includes(this.userService.user.id)) {
@@ -163,8 +163,8 @@ export class RoadmapComponent implements OnDestroy {
       type,
       createdBy: this.userService.user.id,
       createdAt: new Date(),
-      score: this.userService.user.id === this.antonId ? 0 : 1,
-      likedBy: this.userService.user.id === this.antonId ? [] : [this.userService.user.id]
+      score: 1,
+      likedBy: [this.userService.user.id]
     };
     try {
       await this.firestore
@@ -225,7 +225,7 @@ export class RoadmapComponent implements OnDestroy {
     }
     if (status === 'done') {
       data.releasedAt = new Date();
-      data.releasedInVersion = prompt(`Enter version name:`, this.appVersionInfo.version);
+      data.releasedInVersion = prompt(`Enter version name:`, this.updateService.versionInfo.version);
       if (!data.releasedInVersion) {
         return; // if user clicked "Cancel" in popup
       }

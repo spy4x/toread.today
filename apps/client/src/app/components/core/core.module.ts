@@ -3,22 +3,24 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { AskPushNotificationsComponent } from './ask-push-notifications/ask-push-notifications.component';
+import { SignInComponent } from './signIn/signIn.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
+    SignInComponent,
     NotificationsComponent,
     NavbarComponent,
-    AskPushNotificationsComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
+    SharedModule,
   ],
   exports: [
+    SignInComponent,
     NotificationsComponent,
     NavbarComponent,
-    AskPushNotificationsComponent,
   ],
 })
 export class CoreModule {}

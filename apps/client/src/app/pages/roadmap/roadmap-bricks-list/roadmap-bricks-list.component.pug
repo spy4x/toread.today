@@ -3,20 +3,23 @@
   .line.text
     p(*ngIf='!isInEditMode(brick.id)') {{brick.title}}
     span.tag(*ngIf='brick.status === "done"') Released: {{(brick.startWorkingAt?.toDate() | date) || 'No date'}} in v{{brick.releasedInVersion}}
+  
   .line.editor(*ngIf='isInEditMode(brick.id)')
     textarea.textarea(
-    placeholder='Suggestion text',
-    '#input'='',
-    '[value]'='brick.title')
-    .buttons.is-right.mt-2
+      placeholder='Suggestion text',
+      '#input'='',
+      '[value]'='brick.title',
+    )
+    .buttons.is-right
       button.button('(click)'='toggleEditMode(brick.id)', title='Cancel edit')
         span.icon.is-small
           i.fas.fa-times
         span Cancel
-      button.button.is-primary.mr-0('(click)'='changeTitleHandler(brick, input.value)', title='Save suggestion text')
+      button.button.is-primary('(click)'='changeTitleHandler(brick, input.value)', title='Save suggestion text')
         span.icon.is-small
           i.far.fa-save
         span Save
+  
   .line.actions
     button.button.is-small(type="button",
                                     (click)="vote.emit({brick: brick, rate: 1})",
@@ -48,7 +51,7 @@
 
     span.is-size-7(*ngIf="brick.createdBy === userId") My idea
 
-    .dropdown.is-hoverable.is-right.ml-auto.mr-0(*ngIf='userId === antonId || userId === brick.createdBy')
+    .dropdown.is-hoverable.is-right.ml-auto.icon-alignment--last(*ngIf='userId === antonId || userId === brick.createdBy')
       .dropdown-trigger
         a
           span.icon.has-text-primary
@@ -56,43 +59,42 @@
       .dropdown-menu.dropdown-menu--w-none(role='menu')
         .dropdown-content
           a.dropdown-item((click)="toggleEditMode(brick.id)")
-            span.icon.mr-1.has-text-info
+            span.icon.has-text-info
               i.far.fa-edit
             span Edit
           a.dropdown-item(*ngIf="userId === antonId || (brick.createdBy === userId && brick.type !== 'features' && brick.status === 'new')", (click)="remove.emit(brick.id)")
-            span.icon.has-text-danger.mr-1
+            span.icon.has-text-danger
               i.far.fa-trash-alt
             span Delete
           ng-container(*ngIf="userId === antonId")
             hr.dropdown-divider
             a.dropdown-item('[href]'='"https://console.firebase.google.com/project/toread-today/database/firestore/data~2FroadmapBricks~2F" + brick.id', target="_blank")
-              span.icon.mr-1.has-text-info
+              span.icon.has-text-info
                 i.far.fa-edit
               span Edit in console
             a.dropdown-item(*ngIf='brick.type === "feature"', '(click)'='changeType.emit({brick: brick, type: "suggestion"})')
-              span.icon.mr-1.has-text-warning
+              span.icon.has-text-warning
                 i.far.fa-lightbulb
               span Mark as "Suggestion"
             a.dropdown-item(*ngIf='brick.type === "suggestion"', '(click)'='changeType.emit({brick: brick, type: "feature"})')
-              span.icon.mr-1.has-text-primary
+              span.icon.has-text-primary
                 i.fas.fa-bolt
               span Mark as "Feature"
             ng-container(*ngIf='brick.type === "feature" || brick.type === "bug"')
               a.dropdown-item(*ngIf='brick.status === "inProgress"', '(click)'='changeStatus.emit({brick: brick, status:"new"})')
-                span.icon.mr-1.has-text-warning
+                span.icon.has-text-warning
                   i.fas.fa-circle
                 span Mark as "New"
               hr.dropdown-divider
               a.dropdown-item(*ngIf='brick.status === "done"', '(click)'='changeStatus.emit({brick: brick, status:"inProgress"})')
-                span.icon.mr-1.has-text-warning
+                span.icon.has-text-warning
                   i.fas.fa-undo
                 span Back to "In Progress"
               a.dropdown-item(*ngIf='brick.status === "new"', '(click)'='changeStatus.emit({brick: brick, status:"inProgress"})')
-                span.icon.mr-1.has-text-info
+                span.icon.has-text-info
                   i.fas.fa-play
                 span Start working
               a.dropdown-item(*ngIf='brick.status === "inProgress"', '(click)'='changeStatus.emit({brick: brick, status:"done"})')
-                span.icon.mr-1.has-text-success
+                span.icon.has-text-success
                   i.fas.fa-check
                 span Complete
-

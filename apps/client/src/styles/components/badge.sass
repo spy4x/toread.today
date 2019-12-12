@@ -1,0 +1,13 @@
+@import variables
+  
+[data-badge]
+  position: relative
+  &:after
+    min-width: $baseSize / 2
+    font-size: $baseSize / 2
+    top: 0
+    right: $baseSize / 5
+    content: attr(data-badge)
+    z-index: 10
+    position: absolute
+    color: $blackTransparent

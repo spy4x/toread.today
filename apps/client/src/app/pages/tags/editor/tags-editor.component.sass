@@ -1,10 +1,15 @@
+@import variables
+
 tt-tags-editor
+  > .add-input
+    margin-bottom: $baseSize / 4 !important
+    padding: 0 $sidePadding
+    @media(min-width: $desktop)
+      padding: 0
   .tag-item    
-    padding: .5rem 12px
+    padding: $baseSize/2 $sidePadding
     display: flex
-    &:nth-child(even)
-      background: hsl(0, 0%, 98%)
-      border-radius: 4px
+    @include striped
     &--title
       flex: 1 0
       display: flex
@@ -12,11 +17,11 @@ tt-tags-editor
       .field
         margin-bottom: 0 !important
       .counter
-        color: rgba(0,0,0,0.3)
-        font-size: 0.6rem
-        margin-left: .3rem
+        color: $blackTransparent
+        font-size: $size-7
+        margin-left: $baseSize/3
     &--actions
       display: flex
       align-items: center
       > *
-        margin-left: .75rem
+        margin-left: $textSpacer

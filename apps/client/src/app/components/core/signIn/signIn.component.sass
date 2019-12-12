@@ -1,0 +1,25 @@
+@import variables
+
+tt-sign-in
+  .logo
+    font-size: $baseSize * 5
+  .text
+    animation: $second * 2 fadeInSlow
+    @keyframes fadeInSlow
+      from
+        opacity: 0
+      30%
+        opacity: 0
+      to
+        opacity: 1
+  .welcome-back
+    animation: $second fadeInFast
+    margin-bottom: 0
+    @keyframes fadeInFast
+      from
+        opacity: 0
+      to
+        opacity: 1
+
+  button.is-loading
+    margin-left: $baseSize * 1.3

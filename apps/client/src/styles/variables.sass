@@ -1,0 +1,32 @@
+@import ~bulma/sass/utilities/initial-variables
+
+
+// Sizes
+$baseSize: 1rem
+$sidePadding: $baseSize * .75 // Left/Right padding from screen (in case screen touches element)
+$textSpacer: $baseSize / 2 // Space between text & something, for example icon 
+$px1: 1px
+$buttonHeight: 36px
+$mobile: 480px !default
+$borderRadius: $baseSize / 4
+@mixin pageWrapper($displayType)
+  display: $displayType
+  padding: 0 $sidePadding $baseSize
+
+
+// Colors
+$blackTransparent: rgba(0, 0, 0, 0.3)
+$nthChildBackgroundColor: hsl(0, 0%, 98%)
+@mixin striped
+  &:nth-child(even)
+    background: $nthChildBackgroundColor
+    border-radius: $borderRadius
+
+
+// Time
+$second: 1s
+
+
+// Border
+@mixin border($side)
+  border-#{$side}: $px1/2 solid $grey-lighter

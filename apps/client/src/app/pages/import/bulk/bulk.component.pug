@@ -1,14 +1,14 @@
 h1.title
   a(routerLink="/import") Add & Import
-  span.mx-2.has-text-grey-light /
+  span.text-divider /
   span Import URLs bulk
 h2.subtitle Here you can import batch of URLs by uploading a file.
 
 ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
   ng-container(*ngIf="(importState$ | async) === 'editing' || (importState$ | async) === 'error'") 
-    .notification.mb-2(*ngIf="(importState$ | async) === 'error'")
+    .notification(*ngIf="(importState$ | async) === 'error'")
       span.has-text-weight-semibold.has-text-danger
-        span.icon.mr-2
+        span.icon
           i.fas.fa-exclamation-triangle
         span Import failed. Please try again.
     .notification.common-actions
@@ -16,9 +16,9 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
       div.text-decoration-none
         p.has-text-weight-semibold File has been parsed.
         span You can set priority 
-        tt-priority-selector.mr-1([priority]="priority", [asButton]="true", (set)="priority = $event")
+        tt-priority-selector([priority]="priority", [asButton]="true", (set)="priority = $event")
         span and tags 
-        tt-tag-selector.mr-1(
+        tt-tag-selector(
           [tags]="tagService.tags$ | async",
           [selectedIds]="inputTags",
           (toggle)="toggleTag($event)",
@@ -28,23 +28,24 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
         span for all links. 
       div 
         span Also below you can uncheck links/folders that you don't need to be imported. Once ready - click 
-        button.button.is-primary.ml-1((click)="save()") Submit
+        button.button.is-primary((click)="save()") Submit
   
       span.has-text-weight-semibold Links for import:
       tt-items-import-list([items]="import.bookmarks")
   
   .notification(*ngIf="(importState$ | async) === 'sending'") 
     span.has-text-weight-semibold Importing data...
-    progress.progress.is-small.is-primary.mt-2(max="100") 15%
+    progress.progress.is-small.is-primary(max="100") 15%
   
   .notification(*ngIf="(importState$ | async) === 'success'") 
     button.delete((click)="reset()")
     span.has-text-weight-semibold.has-text-success
       p
-        span.icon.mr-2
+        span.icon
           i.far.fa-check-circle
         span Import has been completed.
-      a.button.is-primary.mt-2(routerLink="/items", [queryParams]="{status: 'new'}") Go to imported links
+      br
+      a.button.is-primary(routerLink="/items", [queryParams]="{status: 'new'}") Go to imported links
 
 
 ng-template("#instructions"="")
@@ -55,7 +56,7 @@ ng-template("#instructions"="")
       li Pocket app URLs (.html file, tags will be saved as well)
 
   p You can drag and drop a file as well.
-  tt-upload-input.my-3((selected)="parseFile($event)")
+  tt-upload-input((selected)="parseFile($event)")
   
 
 

@@ -2,43 +2,42 @@
   button.delete('(click)'='errors = []')
   p('*ngFor'='let error of errors') {{error}}
 
-.pb-3.top-control
-  .field.has-addons.is-fullwidth
-    .control.is-expanded
-      input.input(
-          placeholder='Enter URL',
-          '[(ngModel)]'='inputValue',
-          '(keydown.enter)'='addItem(0)',)
+.field.has-addons.is-fullwidth
+  .control.is-expanded
+    input.input(
+        placeholder='Enter URL',
+        '[(ngModel)]'='inputValue',
+        '(keydown.enter)'='addItem(0)',)
 
-    .control
-      tt-priority-selector([priority]="priority", [asButton]="true", (set)="priority = $event")
+  .control
+    tt-priority-selector([priority]="priority", [asButton]="true", (set)="priority = $event")
 
-    .control
-      tt-tag-selector(
-        [tags]="tags",
-        [selectedIds]="inputTags",
-        (toggle)="toggleTag($event)",
-        [asButton]="true",
-        [hideSelected]="true",
-      )
+  .control
+    tt-tag-selector(
+      [tags]="tags",
+      [selectedIds]="inputTags",
+      (toggle)="toggleTag($event)",
+      [asButton]="true",
+      [hideSelected]="true",
+    )
 
-    .control
-      button.button--add-as-finished.button.dropdown.is-hoverable.is-right.button--add-as-finished
-        .dropdown-trigger
-          span.icon.has-text-grey-light
-            i.fas.fa-caret-down
-        .dropdown-menu.dropdown-menu--w-none(role='menu')
-          .dropdown-content
-            a.dropdown-item((click)="addItem(1)")
-              span.icon.has-text-success
-                i.far.fa-thumbs-up
-              span Add as finished & useful
-            a.dropdown-item((click)="addItem(-1)")
-              span.icon.has-text-danger
-                i.far.fa-thumbs-down
-              span Add as finished & useless
+  .control
+    button.button.button--add-as-finished.dropdown.is-hoverable.is-right
+      .dropdown-trigger
+        span.icon.has-text-grey-light
+          i.fas.fa-caret-down
+      .dropdown-menu.dropdown-menu--w-none(role='menu')
+        .dropdown-content
+          a.dropdown-item((click)="addItem(1)")
+            span.icon.has-text-success
+              i.far.fa-thumbs-up
+            span Add as finished & useful
+          a.dropdown-item((click)="addItem(-1)")
+            span.icon.has-text-danger
+              i.far.fa-thumbs-down
+            span Add as finished & useless
 
-    .control
-      button.button.is-primary('(click)'='addItem(0)', title='Add')
-        span.icon
-          i.fas.fa-plus
+  .control
+    button.button.is-primary('(click)'='addItem(0)', title='Add')
+      span.icon
+        i.fas.fa-plus

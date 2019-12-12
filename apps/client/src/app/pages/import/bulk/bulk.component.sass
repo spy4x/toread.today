@@ -1,4 +1,8 @@
+@import variables
+  
 tt-import-bulk-page
+  @include pageWrapper(block)
   .common-actions
-    font-size: 1rem
-    line-height: 36px
+    line-height: $buttonHeight
+  tt-upload-input
+    margin: $baseSize*2 0

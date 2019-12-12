@@ -1,11 +1,16 @@
-@import ../../../../../../../node_modules/bulma/sass/utilities/initial-variables
+@import variables
 
 tt-items-add
+  display: block
+  padding-bottom: $baseSize/2
+  @media(max-width: $desktop)
+    padding-left: $sidePadding
+    padding-right: $sidePadding
   .is-fullwidth
     width: 100%
   .button--add-as-finished
-    padding-left: .5rem
-    padding-right: .5rem
+    padding-left: $textSpacer
+    padding-right: $textSpacer
   tt-priority-selector
     .dropdown-trigger
       .has-text-dark

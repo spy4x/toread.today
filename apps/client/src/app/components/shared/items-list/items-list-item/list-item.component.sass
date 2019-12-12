@@ -1,30 +1,30 @@
+@import variables
+  
 tt-list-item
   display: block
-  .item
-    padding: 12px
-    &:nth-child(even)
-      background: hsl(0, 0%, 98%)
-      border-radius: 4px
+  padding: ($sidePadding * 3 / 4) $sidePadding
+  @include striped
 
-    .line
-      &.second
+  .line
+    $marginTop: $baseSize / 3
+    &.second
+      display: flex
+      flex-wrap: wrap
+      align-items: center
+
+      .bigger-margin
+        margin-left: $baseSize / 4
+        margin-right: $baseSize * 3 / 4
+      .actions
         display: flex
-        flex-wrap: wrap
         align-items: center
-
-        .bigger-margin
-          margin-left: .25rem
-          margin-right: .75rem
-        .action
-          color: #b5b5b5
-          margin-right: .5rem
-          margin-top: .3rem // margin from ".line.first" and for case where many tags goes multiple lines
-        .actions
-          display: flex
-          align-items: center
-          > *
-            margin-left: .75rem
-      &.third
-        margin-top: .3rem
-        .buttons
-          margin-top: .3rem
+        > *
+          margin: $marginTop ($baseSize / 2) 0 0
+          &:first-child
+            margin-left: 0
+          &:last-child
+            margin-right: 0
+    &.third
+      margin-top: $baseSize / 2
+      .buttons
+        margin-top: $marginTop

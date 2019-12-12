@@ -12,11 +12,10 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
   clickEventType = 'click';
   isActive = false;
   isMobileSafari = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-  constructor(private dropdownElRef: ElementRef, private logger: LoggerService) {}
+  constructor(private dropdownElRef: ElementRef, private logger: LoggerService) { }
 
   ngAfterViewInit(): void {
     if (!this.dropdownElRef || !this.dropdownElRef.nativeElement) {
-      this.logger.debug('dropdown directive: no dropdown element presented');
       return;
     }
 
@@ -30,14 +29,12 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
     this.triggerEl = this.dropdownEl.querySelector('.dropdown-trigger') as HTMLElement;
 
     if (!this.triggerEl) {
-      this.logger.debug('dropdown directive: no trigger element presented');
       return;
     }
 
     this.triggerEl.addEventListener(this.clickEventType, this.onTriggerClick.bind(this));
 
     if (!window) {
-      this.logger.debug('dropdown directive: no window presented');
       return;
     }
     window.addEventListener(this.clickEventType, this.onWindowClick.bind(this));
@@ -61,7 +58,7 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
   }
 
   onWindowClick(event: MouseEvent): void {
-    if(!this.isActive){
+    if (!this.isActive) {
       return;
     }
     const isClosestToTrigger = this.isClosest(event.target as HTMLElement, this.dropdownEl);
@@ -73,6 +70,12 @@ export class DropdownDirective implements AfterViewInit, OnDestroy {
   triggerIsActive(): void {
     this.dropdownEl.classList.toggle(this.isActiveClass);
     this.isActive = this.dropdownEl.classList.contains(this.isActiveClass);
+  }
+
+  open(): void {
+    if (!this.dropdownEl.classList.contains(this.isActiveClass)) {
+      this.dropdownEl.classList.add(this.isActiveClass);
+    }
   }
 
   isClosest(element: HTMLElement, target: HTMLElement): boolean {

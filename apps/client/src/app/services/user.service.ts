@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { BehaviorSubject, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { User as FirebaseUser } from 'firebase/app';
+import { User as FirebaseUser, auth } from 'firebase/app';
 import { FCMToken, User } from '../interfaces';
 import { LoggerService } from './logger.service';
 import { PushNotificationsService } from './push-notifications.service';
@@ -31,6 +31,7 @@ export class UserService {
   user$ = this._user$.asObservable();
   authorizedUserOnly$ = this.user$.pipe(filter(v => !!v));
   isAuthorized$ = this._user$.pipe(map(v => !!v));
+  authStates = AuthStates;
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -113,6 +114,14 @@ export class UserService {
     return !!this.user;
   }
 
+  signIn(): void {
+    this.auth.auth.signInWithPopup(new auth.GoogleAuthProvider());
+  }
+
+  signOut(): void {
+    this.auth.auth.signOut();
+  }
+
   async setSettingSendRoadmapActivityPushNotifications(value: boolean): Promise<void> {
     await this.update({ sendRoadmapActivityPushNotifications: value }, 'Failed to update push notification setting.');
     if (value) {
@@ -137,6 +146,10 @@ export class UserService {
             first(),
             switchMap((token: string) => this.saveFCMToken(token)),
             catchError(error => {
+              if(error.name === 'EmptyError'){
+                // User denied browser's notifications request. We can do nothing now.
+                return of(null);
+              }
               this.logger.error({
                 error,
                 messageForUser: 'Failed to activate push notifications.',

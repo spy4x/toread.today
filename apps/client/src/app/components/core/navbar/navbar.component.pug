@@ -1,76 +1,85 @@
-nav.navbar.is-primary(role='navigation' aria-label='main navigation')
-  .navbar-brand
-    a.navbar-item(routerLink='/', '(click)'='closeMenu()')
-      span.icon.mr-1
-        i.far.fa-bookmark
-      span Toread.today {{appVersionInfo?.version}}
+ng-container(*ngIf="userService.user$ | async as user")
+  nav.navbar.is-primary(role='navigation' aria-label='main navigation')
+    .navbar-brand
+      a.navbar-item(routerLink='/', (click)='closeMenu()')
+        span.icon
+          i.far.fa-bookmark
+        span Toread.today v{{updateService.versionInfo.version}}
 
-    tt-notifications.navbar-item.ml-auto('*ngIf'='uiService.isMobile$ | async', '[userId]'='user.id')
+      .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
+        span.icon.has-text-warning
+          i.fas.fa-exclamation-triangle 
 
-    a.navbar-burger.burger.is-marginless(
-        role='button',
-        aria-label='menu',
-        '[class.is-active]'='isMenuExpanded',
-        '(click)'='toggleMenu()')
-      span(aria-hidden='true')
-      span(aria-hidden='true')
-      span(aria-hidden='true')
+      tt-notifications.navbar-item(*ngIf='uiService.isMobile$ | async', '[userId]'='user.id', [class.ml-auto]="connectionStatus.isOnline$ | async")
+      
 
-  .navbar-menu('[class.is-active]'='isMenuExpanded')
+      a.navbar-burger.burger(
+          role='button',
+          aria-label='menu',
+          '[class.is-active]'='isMenuExpanded',
+          (click)='toggleMenu()')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
 
-    .navbar-start
-      a.navbar-item(routerLink='/dashboard', routerLinkActive='is-active', '(click)'='closeMenu()')
-        span.icon.mr-1
-          i.fas.fa-chart-line
-        span Dashboard
-      a.navbar-item(routerLink='/items', [queryParams]="{status: 'new'}", routerLinkActive='is-active', '(click)'='closeMenu()')
-        span.icon.mr-1
-          i.fas.fa-list-ul
-        span Links
-      a.navbar-item(routerLink='/tags', routerLinkActive='is-active', '(click)'='closeMenu()')
-        span.icon.mr-1
-          i.fas.fa-tags
-        span Tags
-      a.navbar-item(routerLink='/import', routerLinkActive='is-active', '(click)'='closeMenu()')
-        span.icon.mr-1
-          i.fas.fa-cloud-upload-alt
-        span Add & Import
-      a.navbar-item(routerLink='/roadmap', routerLinkActive='is-active', '(click)'='closeMenu()')
-        span.icon.mr-1
-          i.fas.fa-road
-        span Project roadmap
+    .navbar-menu('[class.is-active]'='isMenuExpanded')
 
-    .navbar-end
-      //- mobile menu
-      ng-container('*ngIf'='isMenuExpanded; else desktopMenu')
-        a.navbar-item(routerLink='/profile', routerLinkActive='is-active', '(click)'='closeMenu()')
-          span.icon.mr-1
-            i.fas.fa-cog
-          span Profile settings
+      .navbar-start
+        a.navbar-item(routerLink='/dashboard', routerLinkActive='is-active', (click)='closeMenu()')
+          span.icon
+            i.fas.fa-chart-line
+          span Dashboard
+        a.navbar-item(routerLink='/items', [queryParams]="{status: 'new'}", routerLinkActive='is-active', (click)='closeMenu()')
+          span.icon
+            i.fas.fa-list-ul
+          span Links
+        a.navbar-item(routerLink='/tags', routerLinkActive='is-active', (click)='closeMenu()')
+          span.icon
+            i.fas.fa-tags
+          span Tags
+        a.navbar-item(routerLink='/import', routerLinkActive='is-active', (click)='closeMenu()')
+          span.icon
+            i.fas.fa-cloud-upload-alt
+          span Add & Import
+        a.navbar-item(routerLink='/roadmap', routerLinkActive='is-active', (click)='closeMenu()')
+          span.icon
+            i.fas.fa-road
+          span Project roadmap
 
-        a.navbar-item('(click)'='signOut.emit()')
-          span.icon.mr-1
-            i.fas.fa-sign-out-alt
-          span Sign out
+      .navbar-end
+        //- mobile menu
+        ng-container(*ngIf='isMenuExpanded; else desktopMenu')
+          a.navbar-item(routerLink='/profile', routerLinkActive='is-active', (click)='closeMenu()')
+            span.icon
+              i.fas.fa-cog
+            span Profile settings
 
-      ng-template('#desktopMenu'='')
-        .navbar-item
+          a.navbar-item((click)='userService.signOut()')
+            span.icon
+              i.fas.fa-sign-out-alt
+            span Sign out
+
+        ng-template('#desktopMenu'='')
           .navbar-item
-            tt-notifications('*ngIf'='!(uiService.isMobile$ | async)', '[userId]'='user.id')
-          .navbar-item
-            .dropdown.is-hoverable.is-right
-              .dropdown-trigger
-                a
-                  figure.image.is-24x24
-                    img.is-rounded('[src]'='user.photoURL')
-              .dropdown-menu(role='menu')
-                .dropdown-content
-                  a.dropdown-item(routerLink='/profile', routerLinkActive='is-active', '(click)'='closeMenu()')
-                    span.icon.mr-1
-                      i.fas.fa-cog
-                    span Profile settings
-                  hr.dropdown-divider
-                  a.dropdown-item('(click)'='signOut.emit()')
-                    span.icon.mr-1
-                      i.fas.fa-sign-out-alt
-                    | Sign out
+            .navbar-item(*ngIf="!(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
+              span.icon.has-text-warning
+                i.fas.fa-exclamation-triangle 
+            .navbar-item
+              tt-notifications(*ngIf='!(uiService.isMobile$ | async)', '[userId]'='user.id')
+            .navbar-item
+              .dropdown.is-hoverable.is-right
+                .dropdown-trigger
+                  a
+                    figure.image.is-24x24
+                      img.is-rounded('[src]'='user.photoURL')
+                .dropdown-menu(role='menu')
+                  .dropdown-content
+                    a.dropdown-item(routerLink='/profile', routerLinkActive='is-active', (click)='closeMenu()')
+                      span.icon
+                        i.fas.fa-cog
+                      span Profile settings
+                    hr.dropdown-divider
+                    a.dropdown-item((click)='userService.signOut()')
+                      span.icon
+                        i.fas.fa-sign-out-alt
+                      span Sign out

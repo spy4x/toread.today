@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class ConnectionStatusService {
-
-  private connectionMonitor = new BehaviorSubject<boolean>(navigator.onLine);
+  private _connectionMonitor = new BehaviorSubject<boolean>(navigator.onLine);
+  isOnline$ = this._connectionMonitor.asObservable();
 
   constructor() {
     window.addEventListener('offline', () => {
-      this.connectionMonitor.next(false);
+      this._connectionMonitor.next(false);
     });
     window.addEventListener('online', () => {
-      this.connectionMonitor.next(true);
+      this._connectionMonitor.next(true);
     });
-  }
-
-  isOnline(): Observable<boolean> {
-    return this.connectionMonitor.asObservable();
   }
 }

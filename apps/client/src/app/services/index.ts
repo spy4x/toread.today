@@ -7,3 +7,4 @@ export * from './connection-status/connection-status.service';
 export * from './notifications.service';
 export * from './push-notifications.service';
 export * from './routerHelper.service';
+export * from './update.service';
