@@ -8,12 +8,21 @@ import { FCMToken, User } from '../interfaces';
 import { LoggerService } from './logger.service';
 import { PushNotificationsService } from './push-notifications.service';
 import { NotificationsService } from './notifications.service';
+import { environment } from '../../environments/environment';
 
-export enum AuthStates {
+enum AuthStates {
   authenticating = 'authenticating',
   notAuthenticated = 'notAuthenticated',
   authorising = 'authorising',
   authorized = 'authorized',
+}
+
+export enum AuthMethod {
+  google = 'google',
+  facebook = 'facebook',
+  github = 'github',
+  password = 'password',
+  link = 'link',
 }
 
 @Injectable()
@@ -22,6 +31,9 @@ export class UserService {
   private _authState$ = new BehaviorSubject<AuthStates>(AuthStates.authenticating);
   private _userDoc$ = new BehaviorSubject<null | AngularFirestoreDocument<User>>(null);
   private _user$ = new BehaviorSubject<null | User>(null);
+  private _signError$ = new BehaviorSubject<null | string>(null);
+  private _signMessage$ = new BehaviorSubject<null | string>(null);
+  private _isSignInProgress$ = new BehaviorSubject<boolean>(false);
   collectionPath = `users`;
   firebaseUser$ = this._firebaseUser$.asObservable();
   isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
@@ -32,16 +44,32 @@ export class UserService {
   authorizedUserOnly$ = this.user$.pipe(filter(v => !!v));
   isAuthorized$ = this._user$.pipe(map(v => !!v));
   authStates = AuthStates;
+  authMethods = AuthMethod;
+  oAuthMethods = [AuthMethod.google, AuthMethod.facebook, AuthMethod.github];
+  signError$ = this._signError$.asObservable();
+  signMessage$ = this._signMessage$.asObservable();
+  isSignInProgress$ = this._isSignInProgress$.asObservable();
+  pendingCredential: auth.AuthCredential;
 
   constructor(private auth: AngularFireAuth,
-              private firestore: AngularFirestore,
-              private pushNotificationsService: PushNotificationsService,
-              private notificationsService: NotificationsService,
-              private logger: LoggerService) {
+    private firestore: AngularFirestore,
+    private pushNotificationsService: PushNotificationsService,
+    private notificationsService: NotificationsService,
+    private logger: LoggerService) {
     this.auth.authState.pipe(
-      tap(user => {
+      tap(async user => {
         this.logger.setUser(user);
         this._authState$.next(user ? AuthStates.authorising : AuthStates.notAuthenticated);
+        if (user) {
+          this._isSignInProgress$.next(false);
+          if (this.pendingCredential) {
+            try {
+              await user.linkWithCredential(this.pendingCredential);
+            } catch (error) {
+              this._signError$.next('Linking accounts failed.');
+            }
+          }
+        }
       }),
       catchError(error => {
         this.logger.error({
@@ -114,12 +142,200 @@ export class UserService {
     return !!this.user;
   }
 
-  signIn(): void {
-    this.auth.auth.signInWithPopup(new auth.GoogleAuthProvider());
+  async restorePassword(email: string): Promise<void> {
+    this._signMessage$.next(null);
+    this._signError$.next(null);
+    try {
+      if (!email) {
+        this._signError$.next('Please fill email.');
+        return;
+      }
+      this._isSignInProgress$.next(true);
+      await this.auth.auth.sendPasswordResetEmail(email);
+      this._isSignInProgress$.next(false);
+      this._signMessage$.next('Check your email.');
+    } catch (error) {
+      this.logger.error({
+        messageForDev: 'restorePassword() error',
+        error
+      });
+      this._signError$.next(error.message);
+      this._isSignInProgress$.next(false);
+    }
+  }
+
+  async signUp(email: string, password?: string): Promise<void> {
+    this._signMessage$.next(null);
+    this._signError$.next(null);
+    try {
+      if (!email || !password) {
+        this._signError$.next('Please fill email & password.');
+        return;
+      }
+      this._isSignInProgress$.next(true);
+      await this.auth.auth.createUserWithEmailAndPassword(email, password);
+    } catch (error) {
+      this.logger.error({
+        messageForDev: 'signUp() error',
+        error
+      });
+      this._signError$.next(error.message);
+      this._isSignInProgress$.next(false);
+    }
+  }
+
+  async signIn(provider: AuthMethod, email?: string, password?: string): Promise<void> {
+    this._signMessage$.next(null);
+    this._signError$.next(null);
+    try {
+      switch (provider) {
+        case AuthMethod.google: {
+          this._isSignInProgress$.next(true);
+          await this.auth.auth.signInWithPopup(new auth.GoogleAuthProvider());
+          break;
+        }
+        case AuthMethod.facebook: {
+          this._isSignInProgress$.next(true);
+          await this.auth.auth.signInWithPopup(new auth.FacebookAuthProvider());
+          break;
+        }
+        case AuthMethod.github: {
+          this._isSignInProgress$.next(true);
+          await this.auth.auth.signInWithPopup(new auth.GithubAuthProvider());
+          break;
+        }
+        case AuthMethod.password: {
+          if (!email || !password) {
+            this._signError$.next('Please fill email & password.');
+            return;
+          }
+          this._isSignInProgress$.next(true);
+          await this.auth.auth.signInWithEmailAndPassword(email, password);
+          break;
+        }
+        case AuthMethod.link: {
+          if (!email) {
+            this._signError$.next('Please fill email.');
+            return;
+          }
+          this._isSignInProgress$.next(true);
+          await this.auth.auth.sendSignInLinkToEmail(email, {
+            handleCodeInApp: true,
+            url: environment.frontendUrl
+          });
+          this._isSignInProgress$.next(false);
+          localStorage.setItem('emailForSignIn', email);
+          this._signMessage$.next('Check your email.');
+          break;
+        }
+      }
+    } catch (error) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        this.pendingCredential = error.credential;
+        const methods = await this.auth.auth.fetchSignInMethodsForEmail(error.email);
+        this._signError$.next(`You already have account for ${error.mail}. To link ${this.pendingCredential.providerId} to it - sign in with one of: ${methods.join(', ')}.`);
+        this._isSignInProgress$.next(false);
+        return;
+      }
+
+      this.logger.error({
+        messageForDev: 'signIn() error',
+        error
+      });
+      this._signError$.next(error.message);
+      this._isSignInProgress$.next(false);
+    }
+  }
+
+  async link(provider: AuthMethod): Promise<void> {
+    this._signMessage$.next(null);
+    this._signError$.next(null);
+    this._isSignInProgress$.next(true);
+    const providerObj = {
+      'google': new auth.GoogleAuthProvider(),
+      'facebook': new auth.FacebookAuthProvider(),
+      'github': new auth.GithubAuthProvider(),
+    }[provider]
+    if (!providerObj) {
+      return;
+    }
+    try {
+      await this.firebaseUser.linkWithPopup(providerObj);
+      this._isSignInProgress$.next(false);
+      this._firebaseUser$.next(this.firebaseUser);
+    } catch (error) {
+      this.logger.error({
+        messageForDev: 'link() error',
+        error
+      });
+      this._signError$.next(error.message);
+      this._isSignInProgress$.next(false);
+    }
+  }
+
+  async unlink(provider: AuthMethod): Promise<void> {
+    this._signMessage$.next(null);
+    this._signError$.next(null);
+    this._isSignInProgress$.next(true);
+    const providerObj = {
+      'google': new auth.GoogleAuthProvider(),
+      'facebook': new auth.FacebookAuthProvider(),
+      'github': new auth.GithubAuthProvider(),
+    }[provider]
+    if (!providerObj) {
+      return;
+    }
+    try {
+      await this.firebaseUser.unlink(providerObj.providerId);
+      this._isSignInProgress$.next(false);
+      this._firebaseUser$.next(this.firebaseUser);
+    } catch (error) {
+      this.logger.error({
+        messageForDev: 'unlink() error',
+        error
+      });
+      this._signError$.next(error.message);
+      this._isSignInProgress$.next(false);
+    }
+  }
+
+  async finishSignInWithEmailLink(): Promise<void> {
+    try {
+      if (!this.auth.auth.isSignInWithEmailLink(window.location.href)) {
+        return;
+      }
+      var email = localStorage.getItem('emailForSignIn');
+      if (!email) {
+        // User opened the link on a different device. To prevent session fixation
+        // attacks, ask the user to provide the associated email again. For example:
+        email = window.prompt('Please provide your email for confirmation');
+        if (!email) {
+          this._signError$.next('Email wasn\'t provided to finish Magic Link sign in. You can refresh page to try again');
+          return;
+        }
+      }
+      await this.auth.auth.signInWithEmailLink(email, window.location.href);
+      localStorage.removeItem('emailForSignIn');
+    } catch (error) {
+      this.logger.error({
+        messageForDev: 'finishSignInWithEmailLink() error',
+        error
+      });
+      this._signError$.next(error.message);
+    }
   }
 
   signOut(): void {
     this.auth.auth.signOut();
+  }
+
+  clearNotification(type: 'error' | 'message'): void {
+    if (type === 'error') {
+      this._signError$.next(null);
+    }
+    if (type === 'message') {
+      this._signMessage$.next(null);
+    }
   }
 
   async setSettingSendRoadmapActivityPushNotifications(value: boolean): Promise<void> {
@@ -146,7 +362,7 @@ export class UserService {
             first(),
             switchMap((token: string) => this.saveFCMToken(token)),
             catchError(error => {
-              if(error.name === 'EmptyError'){
+              if (error.name === 'EmptyError') {
                 // User denied browser's notifications request. We can do nothing now.
                 return of(null);
               }

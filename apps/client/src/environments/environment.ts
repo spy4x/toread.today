@@ -14,7 +14,8 @@ export const environment = {
     appId: '1:95014496389:web:b2e97188906c31fe1c61ec'
   },
   sentry: '',
-  apiPath: 'https://toread-today-staging.web.app/api/'
+  apiPath: 'https://toread-today-staging.web.app/api/',
+  frontendUrl: 'http://localhost:4200/',
 };
 
 /*

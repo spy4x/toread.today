@@ -19,11 +19,11 @@ export class BookmarkletPageComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.title.setTitle('Toread.today');
+    this.title.setTitle('Toread.Today');
   }
 
   getBookmarkletCode(): string {
-    const s = environment.production ? `https://toread-today.web.app` : `http://localhost:4200`;
+    const s = environment.production ? `https://toread.today` : `http://localhost:4200`;
     return `javascript:location.href='${s}/add?url='+encodeURIComponent(location.href)`;
   }
 
@@ -33,7 +33,7 @@ export class BookmarkletPageComponent implements OnDestroy {
     if (!location.href.includes(bookmarkletCode)) {
       window.history.replaceState('', '', `${location.href}#${bookmarkletCode}`);
     }
-    this.title.setTitle('Save to Toread.today');
+    this.title.setTitle('Save to Toread.Today');
   }
 
   getYouTubeCode(): SafeUrl {

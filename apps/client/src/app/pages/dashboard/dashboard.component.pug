@@ -70,6 +70,6 @@
       span {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
       a.icon.icon-alignment--last(*ngIf="doesNextMonthExist$ | async", (click)="nextMonth()", title="Show next month")
         i.fas.fa-chevron-right
-  .widget__body.px-0
+  .widget__body.widget__body--is-side-paddingless
     tt-dashboard-statistics([statistics]="statistics$ | async")
   .widget__info(*ngIf="!(statistics$ | async)") No statistics for this period yet... What about to read something?

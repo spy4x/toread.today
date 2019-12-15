@@ -4,7 +4,7 @@ ng-container(*ngIf="userService.user$ | async as user")
       a.navbar-item(routerLink='/', (click)='closeMenu()')
         span.icon
           i.far.fa-bookmark
-        span Toread.today v{{updateService.versionInfo.version}}
+        span Toread.Today v{{updateService.versionInfo.version}}
 
       .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
         span.icon.has-text-warning
@@ -70,8 +70,11 @@ ng-container(*ngIf="userService.user$ | async as user")
               .dropdown.is-hoverable.is-right
                 .dropdown-trigger
                   a
-                    figure.image.is-24x24
-                      img.is-rounded('[src]'='user.photoURL')
+                    figure.image.is-24x24(*ngIf="user.photoURL; else userIcon")
+                      img.is-rounded([src]="user.photoURL")
+                    ng-template("#userIcon"="")
+                      span.icon.has-text-white
+                        i.far.fa-user-circle
                 .dropdown-menu(role='menu')
                   .dropdown-content
                     a.dropdown-item(routerLink='/profile', routerLinkActive='is-active', (click)='closeMenu()')

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { LoggerService, UserService, ConnectionStatusService } from '../../../services';
 
 @Component({
@@ -8,10 +8,17 @@ import { LoggerService, UserService, ConnectionStatusService } from '../../../se
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
+  email: string;
+  password: string;
+
   constructor(
     public userService: UserService,
     public connectionStatus: ConnectionStatusService,
     public logger: LoggerService,
   ) { }
+
+  ngOnInit(): void {
+    this.userService.finishSignInWithEmailLink();
+  }
 }

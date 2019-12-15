@@ -1,24 +1,57 @@
 section.hero.is-primary.is-fullheight
   .hero-body.has-text-centered
     .container
-      div.logo
-        i.far.fa-bookmark
       ng-container([ngSwitch]="userService.authState$ | async")
         ng-container(*ngSwitchCase="userService.authStates.authenticating")
           button.button.is-loading.is-text.is-large :)
         ng-container(*ngSwitchCase="userService.authStates.notAuthenticated")
           .text
+            div.logo
+              span.icon
+                i.far.fa-bookmark
             h1.title
-              | Manage your URLs as a GOD!
+              | Manage links for reading
             h2.subtitle
-              | Just sign in and sell your soul...
+              | Sign in with
             .notification.is-warning.has-text-white(*ngIf="!(connectionStatus.isOnline$ | async); else signIn") 
               span Your device is offline. Please restore connection to continue.
             ng-template("#signIn"="")
-              button.button.is-medium.is-primary.is-inverted.is-outlined((click)="userService.signIn('google')")
-                span Sign in with
-                span.icon
-                  i.fab.fa-google
+              .buttons.is-centered
+                button.button.is-primary.is-inverted.is-outlined(*ngFor="let provider of userService.oAuthMethods", (click)="userService.signIn(provider)")
+                  span.icon
+                    i.fab([ngClass]="'fa-'+provider")
+                  span.capitalize {{provider}}
+              .buttons.is-centered
+                .button.is-primary([class.is-loading]="userService.isSignInProgress$ | async") OR
+                
+              form((ngSubmit)="userService.signIn('password', email, password)")
+                .field
+                  p.control.has-icons-left.has-button-right
+                    input.input(type='email', placeholder='Email', [(ngModel)]="email", name="email")
+                    span.icon.is-small.is-left
+                      i.fas.fa-envelope
+                    button.button.is-text.is-right(type="button", (click)="userService.signIn('link', email)") Send link
+
+                .field
+                  p.control.has-icons-left.has-button-right
+                    input.input(type='password', placeholder='Password', [(ngModel)]="password", name="password")
+                    span.icon.is-small.is-left
+                      i.fas.fa-lock
+                    button.button.is-text.is-right(type="button", (click)="userService.restorePassword(email)") Restore
+
+                .field
+                  .buttons.is-space-between
+                    button.button.is-primary.is-text.button--sign-up(type="button", (click)="userService.signUp(email, password)") Don't have an account yet?
+                    button.button.is-white Sign in
+
+                .notification.is-warning(*ngIf="userService.signError$ | async as signError") 
+                  button.delete((click)="userService.clearNotification('error')")
+                  span {{signError}}
+
+                .notification.is-info(*ngIf="userService.signMessage$ | async as signMessage") 
+                  button.delete((click)="userService.clearNotification('message')")
+                  span {{signMessage}}
+
         ng-container(*ngSwitchCase="userService.authStates.authorising")
           h1.title.welcome-back(*ngIf="userService.firebaseUser$ | async as firebaseUser") Welcome, {{firebaseUser.displayName || 'Dear Reader!'}}
           button.button.is-loading.is-text.is-large :)

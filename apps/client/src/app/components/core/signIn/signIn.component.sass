@@ -4,6 +4,8 @@ tt-sign-in
   .logo
     font-size: $baseSize * 5
   .text
+    max-width: $mobile
+    margin: 0 auto
     animation: $second * 2 fadeInSlow
     @keyframes fadeInSlow
       from
@@ -23,3 +25,9 @@ tt-sign-in
 
   button.is-loading
     margin-left: $baseSize * 1.3
+  .button--sign-up
+    &:focus
+      background-color: transparent !important
+      background-color: darken($turquoise, 5%) !important
+      border-color: transparent !important
+      color: white !important
