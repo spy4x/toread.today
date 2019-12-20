@@ -27,14 +27,14 @@ section.hero.is-primary.is-fullheight
               form((ngSubmit)="userService.signIn('password', email, password)")
                 .field
                   p.control.has-icons-left.has-button-right
-                    input.input(type='email', placeholder='Email', [(ngModel)]="email", name="email")
+                    input.input(type='email', placeholder='Email', [(ngModel)]="email", name="email", id="email")
                     span.icon.is-small.is-left
                       i.fas.fa-envelope
                     button.button.is-text.is-right(type="button", (click)="userService.signIn('link', email)") Send link
 
                 .field
                   p.control.has-icons-left.has-button-right
-                    input.input(type='password', placeholder='Password', [(ngModel)]="password", name="password")
+                    input.input(type='password', placeholder='Password', [(ngModel)]="password", name="password", id="password")
                     span.icon.is-small.is-left
                       i.fas.fa-lock
                     button.button.is-text.is-right(type="button", (click)="userService.restorePassword(email)") Restore
