@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { switchMap, takeUntil, catchError, shareReplay } from 'rxjs/operators';
-import { User, Tag } from '../../interfaces';
+import { User, Tag } from '../../protected/interfaces';
 import { UserService } from '../user.service';
 import { LoggerService } from '../logger.service';
 

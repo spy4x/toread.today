@@ -5,8 +5,8 @@ import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 import { LoggerService } from '../logger.service';
 import { UserService } from '../user.service';
-import { BatchSwarm, setStateProperties } from '../../helpers';
-import { Item, ItemPriority, ItemRating, ItemSkeleton, ItemsCounter, Tag } from '../../interfaces';
+import { BatchSwarm, setStateProperties } from '../../protected/helpers';
+import { Item, ItemPriority, ItemRating, ItemSkeleton, ItemsCounter, Tag } from '../../protected/interfaces';
 
 @Injectable()
 export class ItemService {

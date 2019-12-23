@@ -2327,6 +2327,11 @@ builtins@^1.0.3:
   resolved "https://registry.yarnpkg.com/builtins/-/builtins-1.0.3.tgz#cb94faeb61c8696451db36534e1422f94f0aee88"
   integrity sha1-y5T662HIaWRR2zZTThQi+U8K7og=
 
+bulma-steps-component@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/bulma-steps-component/-/bulma-steps-component-0.5.3.tgz#9f2f9843b16ed8d1fb724bdd6942540911c3d101"
+  integrity sha512-r8SldfFvKm7/Dk9K2P4319fQDyDckHYVpbf2V6CjMJVxG2kFhobvTtqsPOfr+kLfURtPmijzMcHszwBw5FRGow==
+
 bulma@^0.7.5:
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/bulma/-/bulma-0.7.5.tgz#35066c37f82c088b68f94450be758fc00a967208"

@@ -8,43 +8,33 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { AppComponent } from './app.component';
-import { CoreModule } from './components/core/core.module';
-import { UpdateService, NotificationsService, ConnectionStatusService, LoggerService, ItemService, TagService, UIService, RouterHelperService, UserService, PushNotificationsService, SentryErrorHandler } from './services';
+import {
+  ConnectionStatusService,
+  ItemService,
+  LoggerService,
+  NotificationsService,
+  PushNotificationsService,
+  RouterHelperService,
+  SentryErrorHandler,
+  TagService,
+  UIService,
+  UpdateService,
+  UserService
+} from './services';
 import { environment } from '../environments/environment';
-import { ROUTER_CONSTANTS } from './helpers';
 
 const routes: Routes = [
   {
-    path: 'add',
-    loadChildren: './pages/add/add.module#AddModule'
+    path: 'app',
+    loadChildren: './protected/protected.module#ProtectedModule',
   },
   {
-    path: 'dashboard',
-    loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
-  },
-  {
-    path: ROUTER_CONSTANTS.items.path,
-    loadChildren: './pages/items/items.module#ItemsModule'
-  },
-  {
-    path: 'tags',
-    loadChildren: './pages/tags/tags.module#TagsModule'
-  },
-  {
-    path: 'import',
-    loadChildren: './pages/import/import.module#ImportModule'
-  },
-  {
-    path: 'roadmap',
-    loadChildren: './pages/roadmap/roadmap.module#RoadmapModule'
-  },
-  {
-    path: 'profile',
-    loadChildren: './pages/profile/profile.module#ProfileModule'
+    path: '',
+    loadChildren: './public/public.module#PublicModule',
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'app'
   }
 ];
 
@@ -55,7 +45,6 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     NoopAnimationsModule,
-    CoreModule,
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),

@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Filter } from '../pages/items/filter/filter.interface';
+import { Filter } from '../protected/pages/items/filter/filter.interface';
 
 @Injectable()
 export class RouterHelperService {
@@ -9,7 +9,7 @@ export class RouterHelperService {
               private route: ActivatedRoute){}
 
   toItemsWithFilter(filter: Partial<Filter>): void {
-    const pathToItems = `/items`;
+    const pathToItems = `/app/items`;
     const isCurrentPageItems = this.router.url.startsWith(pathToItems);
     const path = isCurrentPageItems ? [] : [pathToItems];
     this.router.navigate(

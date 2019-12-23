@@ -4,7 +4,7 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { BehaviorSubject, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { User as FirebaseUser, auth } from 'firebase/app';
-import { FCMToken, User } from '../interfaces';
+import { FCMToken, User } from '../protected/interfaces';
 import { LoggerService } from './logger.service';
 import { PushNotificationsService } from './push-notifications.service';
 import { NotificationsService } from './notifications.service';
@@ -221,7 +221,7 @@ export class UserService {
           this._isSignInProgress$.next(true);
           await this.auth.auth.sendSignInLinkToEmail(email, {
             handleCodeInApp: true,
-            url: environment.frontendUrl
+            url: environment.frontendUrl + 'sign-in'
           });
           this._isSignInProgress$.next(false);
           localStorage.setItem('emailForSignIn', email);

@@ -1,0 +1,7 @@
+ng-template("#notAuthorized"="")
+  tt-sign-in
+
+ng-container(*ngIf="userService.user$ | async as user; else notAuthorized")
+  tt-navbar
+  .container
+    router-outlet

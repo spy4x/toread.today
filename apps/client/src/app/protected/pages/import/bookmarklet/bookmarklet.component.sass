@@ -1,0 +1,10 @@
+@import variables
+
+tt-import-bookmarklet-page
+  @include pageWrapper(block)
+  .accordion
+    & + .accordion
+      margin-top: $baseSize
+    &__title
+      text-decoration: underline
+      text-decoration-style: dashed
