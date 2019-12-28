@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.35.0",
-    "description": "Add landing page."
+    "version": "1.35.3",
+    "description": "Inner improvements."
   },
   "assetGroups": [
     {

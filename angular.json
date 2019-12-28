@@ -21,7 +21,9 @@
             "assets": [
               "apps/client/src/favicon.ico",
               "apps/client/src/assets",
-              "apps/client/src/firebase-messaging-sw.js"
+              "apps/client/src/firebase-messaging-sw.js",
+              "apps/client/src/manifest.webmanifest",
+              "apps/client/src/robots.txt"
             ],
             "styles": [
               "apps/client/src/styles/+index.sass"

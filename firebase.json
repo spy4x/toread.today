@@ -35,20 +35,7 @@
     ],
     "headers": [
       {
-        "source": "**/*.@(jpg|jpeg|gif|png|svg)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=86400"
-          },
-          {
-            "key": "Content-Encoding",
-            "value": "gzip"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(js|css)",
+        "source": "**/*.@(js|css|jpg|jpeg|gif|png|svg|ico|eot|ttf|woff|woff2|txt)",
         "headers": [
           {
             "key": "Cache-Control",
