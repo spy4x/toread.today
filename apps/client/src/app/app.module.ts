@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFirestoreModule, FirestoreSettingsToken, Settings } from '@angular/fire/firestore';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { AppComponent } from './app.component';
 import {
@@ -22,16 +22,16 @@ import {
   UserService
 } from './services';
 import { environment } from '../environments/environment';
-import {firestore} from 'firebase/app';
+import { firestore as Firestore } from 'firebase/app';
 
 const routes: Routes = [
   {
     path: 'app',
-    loadChildren: './protected/protected.module#ProtectedModule',
+    loadChildren: './protected/protected.module#ProtectedModule'
   },
   {
     path: '',
-    loadChildren: './public/public.module#PublicModule',
+    loadChildren: './public/public.module#PublicModule'
   },
   {
     path: '**',
@@ -47,7 +47,7 @@ const routes: Routes = [
     BrowserModule,
     NoopAnimationsModule,
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-    AngularFireModule.initializeApp({...environment.firebase, cacheSizeBytes: firestore.CACHE_SIZE_UNLIMITED}),
+    AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireMessagingModule,
@@ -65,7 +65,15 @@ const routes: Routes = [
     PushNotificationsService,
     NotificationsService,
     UpdateService,
-    { provide: ErrorHandler, useClass: SentryErrorHandler }
+    { 
+      provide: ErrorHandler,
+      useClass: SentryErrorHandler
+    },
+    {
+      provide: FirestoreSettingsToken, useValue: <Settings>{
+        cacheSizeBytes: Firestore.CACHE_SIZE_UNLIMITED
+      }
+    }
   ],
   bootstrap: [AppComponent]
 })
