@@ -3,5 +3,18 @@
 tt-navbar
   display: block
   margin-bottom: $sidePadding
+
+  .navbar-brand
+    > .navbar-item:first-child
+      flex-grow: 1
+    &.is-active
+      .navbar-item
+        width: 100%
+
+
   .navbar-burger
     margin: 0
+
+  .navbar-end
+    > .navbar-item:last-child
+      padding-right: 0

@@ -1,11 +1,9 @@
 ng-container(*ngIf="userService.user$ | async as user")
   nav.navbar.is-primary(role='navigation' aria-label='main navigation')
     .container
-      .navbar-brand
-        a.navbar-item(routerLink='/app/', (click)='closeMenu()')
-          span.icon.is-size-4.has-text-weight-bold
-            i.far.fa-bookmark
-          span Toread.Today v{{updateService.versionInfo.version}}
+      .navbar-brand([class.is-active]="addComponent.inputValue")
+        .navbar-item
+          tt-items-add("#addComponent"="")
 
         .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
           span.icon.has-text-warning
@@ -38,22 +36,36 @@ ng-container(*ngIf="userService.user$ | async as user")
             span.icon
               i.fas.fa-tags
             span Tags
-          a.navbar-item(routerLink='/app/import', routerLinkActive='is-active', (click)='closeMenu()')
-            span.icon
-              i.fas.fa-cloud-upload-alt
-            span Add & Import
-          a.navbar-item(routerLink='/app/roadmap', routerLinkActive='is-active', (click)='closeMenu()')
-            span.icon
-              i.fas.fa-road
-            span Project roadmap
 
         .navbar-end
           //- mobile menu
           ng-container(*ngIf='isMenuExpanded; else desktopMenu')
+
+            hr.dropdown-divider
+
             a.navbar-item(routerLink='/app/profile', routerLinkActive='is-active', (click)='closeMenu()')
               span.icon
                 i.fas.fa-cog
               span Profile settings
+
+            a.navbar-item(routerLink='/app/import', routerLinkActive='is-active', (click)='closeMenu()')
+              span.icon
+                i.fas.fa-cloud-upload-alt
+              span Fast Add & Import
+
+            hr.dropdown-divider
+
+            .navbar-item
+              span.icon
+                i.fas.fa-info-circle
+              span Version {{updateService.versionInfo.version}}
+
+            a.navbar-item(routerLink='/app/roadmap', routerLinkActive='is-active', (click)='closeMenu()')
+              span.icon
+                i.fas.fa-road
+              span Project roadmap
+
+            hr.dropdown-divider
 
             a.navbar-item((click)='userService.signOut()')
               span.icon
@@ -78,11 +90,31 @@ ng-container(*ngIf="userService.user$ | async as user")
                           i.far.fa-user-circle
                   .dropdown-menu(role='menu')
                     .dropdown-content
+
                       a.dropdown-item(routerLink='/app/profile', routerLinkActive='is-active', (click)='closeMenu()')
                         span.icon
                           i.fas.fa-cog
                         span Profile settings
+
+                      a.dropdown-item(routerLink='/app/import', routerLinkActive='is-active', (click)='closeMenu()')
+                        span.icon
+                          i.fas.fa-cloud-upload-alt
+                        span Fast Add & Import
+
                       hr.dropdown-divider
+
+                      .dropdown-item
+                        span.icon
+                          i.fas.fa-info-circle
+                        span Version {{updateService.versionInfo.version}}
+
+                      a.dropdown-item(routerLink='/app/roadmap', routerLinkActive='is-active', (click)='closeMenu()')
+                        span.icon
+                          i.fas.fa-road
+                        span Project roadmap
+
+                      hr.dropdown-divider
+
                       a.dropdown-item((click)='userService.signOut()')
                         span.icon
                           i.fas.fa-sign-out-alt

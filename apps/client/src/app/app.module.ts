@@ -22,6 +22,7 @@ import {
   UserService
 } from './services';
 import { environment } from '../environments/environment';
+import {firestore} from 'firebase/app';
 
 const routes: Routes = [
   {
@@ -46,7 +47,7 @@ const routes: Routes = [
     BrowserModule,
     NoopAnimationsModule,
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule.initializeApp({...environment.firebase, cacheSizeBytes: firestore.CACHE_SIZE_UNLIMITED}),
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireMessagingModule,

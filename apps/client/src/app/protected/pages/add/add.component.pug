@@ -1,12 +1,23 @@
-ng-container(*ngIf="isSaved; else isLoading")
-  .success-message
+ng-container(*ngIf="isSaving; else saveFinished")
+  button.button.is-loading.is-white.is-large Saving...
+
+ng-template("#saveFinished"="")
+  .error-message(*ngIf="isError; else success")
     .has-text-centered
-      h1.title.has-text-primary
+      h1.title.has-text-danger
         span.icon
-          i.far.fa-check-circle
-        span Saved successfully.
-      h2.subtitle You can close this tab.
-    tt-list-item(
+          i.fas.fa-exclamation-triangle
+        span Save failed :(
+      h2.subtitle Refresh page to retry
+  ng-template("#success"="")
+    .success-message
+      .has-text-centered
+        h1.title.has-text-primary
+          span.icon
+            i.far.fa-check-circle
+          span Saved successfully.
+        h2.subtitle(*ngIf="shouldClose") You can close this tab.
+      tt-list-item(
         *ngIf="item$ | async as item",
         [item]="item",
         [tags]="tagService.tags$ | async",
@@ -23,16 +34,14 @@ ng-container(*ngIf="isSaved; else isLoading")
         (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
         (setTitle)="itemService.setTitle($event.item.id, $event.title)",
         (setURL)="itemService.setURL($event.item.id, $event.url)",
-    )
-    .buttons.is-centered
-      a.button((click)="goBack()")
-        span.icon
-          i.fas.fa-chevron-left
-        span Go back
-      a.button(routerLink="/app/items")
-        span.icon
-          i.fas.fa-list
-        span To the list
+      )
+      .buttons.is-centered
+        a.button((click)="goBack()")
+          span.icon
+            i.fas.fa-chevron-left
+          span Go back
+        a.button(routerLink="/app/items")
+          span.icon
+            i.fas.fa-list
+          span To the list
 
-ng-template("#isLoading"="")
-  button.button.is-loading.is-white.is-large Saving...

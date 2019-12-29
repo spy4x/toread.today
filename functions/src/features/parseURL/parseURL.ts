@@ -1,6 +1,6 @@
 import { Item, ItemType } from '../../+utils/interfaces';
 import { firestore } from '../../+utils/firebase/firebase';
-import { isUrl } from '../../+utils/common';
+import {isURL} from 'validator';
 
 const ogs = require('open-graph-scraper');
 
@@ -17,7 +17,7 @@ export const featureParseURL = {
 
 async function parseURL(item: Item, logPrefix: string): Promise<void> {
   try {
-    if (!isUrl(item.url)) {
+    if (!isURL(item.url)) {
       await saveFailStatus(item, new Error('Provided URL is not valid'), logPrefix);
       return;
     }

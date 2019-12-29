@@ -10,10 +10,12 @@ import { FormsModule } from '@angular/forms';
 import { ListComponent } from './items-list/list.component';
 import { ListItemComponent } from './items-list/items-list-item/list-item.component';
 import { UploadInputComponent } from './upload-input/upload-input.component';
+import { ItemsAddComponent } from './items-add/items-add.component';
 
 @NgModule({
   declarations: [
     DropdownDirective,
+    ItemsAddComponent,
     FilterByFieldPipe,
     PrioritySelectorComponent,
     TagSelectorComponent,
@@ -36,6 +38,7 @@ import { UploadInputComponent } from './upload-input/upload-input.component';
     TagsByIdsPipe,
     FilterByFieldPipe,
     DropdownDirective,
+    ItemsAddComponent,
     ListComponent,
     ListItemComponent,
     UploadInputComponent,

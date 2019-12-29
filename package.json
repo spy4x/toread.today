@@ -52,6 +52,7 @@
     "ng-cli-pug-loader": "^0.2.0",
     "rxjs": "^6.5.3",
     "smoothscroll-polyfill": "^0.4.4",
+    "validator": "^12.1.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

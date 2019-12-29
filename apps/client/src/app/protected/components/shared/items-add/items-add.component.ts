@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { first } from 'rxjs/operators';
-import { ItemPriority, ItemRating, Tag } from '../../../interfaces';
-import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
-import { isURL } from '../../../helpers';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { ItemPriority, ItemRating } from '../../../interfaces';
+import { ToggleTagEvent } from '../items-list/list.component';
+import { ItemService, RouterHelperService, TagService } from '../../../../services';
+import isURL from 'validator/es/lib/isURL';
 
 export interface ItemAddEvent {
   url: string
@@ -20,23 +19,19 @@ export interface ItemAddEvent {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ItemsAddComponent {
-  @Input() tags: Tag[] = [];
-  @Output() add = new EventEmitter<ItemAddEvent>();
   inputValue = '';
   inputTags: string[] = [];
   priority: ItemPriority = 0;
   errors: string[] = [];
 
-  constructor(private route: ActivatedRoute) {
-    this.route.queryParams.pipe(first()).subscribe(params => {
-      const url = params['url'];
-      if (url) {
-        this.inputValue = url;
-      }
-    });
-  }
+  constructor(
+    public tagService: TagService,
+    private itemService: ItemService,
+    private routerHelper: RouterHelperService,
+    private cd: ChangeDetectorRef,
+  ) {}
 
-  addItem(rating: number): void {
+  async addItem(rating: number): Promise<void> {
     if (!this.inputValue) {
       return;
     }
@@ -48,12 +43,14 @@ export class ItemsAddComponent {
       url: this.inputValue,
       tags: this.inputTags,
       rating: rating as ItemRating || 0,
-      priority: this.priority,
+      priority: this.priority
     };
-    this.add.emit(item);
+    this.routerHelper.createItem(item);
     this.inputValue = '';
     this.inputTags = [];
     this.priority = 0;
+    this.errors = [];
+    this.cd.detectChanges();
   }
 
   toggleTag(event: ToggleTagEvent) {

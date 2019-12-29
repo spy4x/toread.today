@@ -1,45 +1,45 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     match /items/{id} {
-      allow get: if isUser(getDoc().createdBy);
+      allow get: if resource == null || isUser(getDoc().createdBy);
       allow list: if isUser(getDoc().createdBy);
       allow create: if isItem(getDocInc(), id);
       allow update: if isItem(getDocInc(), id);
       allow delete: if isUser(getDoc().createdBy);
     }
     match /tags/{id} {
-      allow get: if isUser(getDoc().createdBy);
+      allow get: if resource == null || isUser(getDoc().createdBy);
       allow list: if isUser(getDoc().createdBy);
       allow create: if isTag(getDocInc(), id);
       allow update: if isTag(getDocInc(), id);
       allow delete: if isUser(getDoc().createdBy);
     }
     match /notifications/{id} {
-      allow get: if isUser(getDoc().userId);
+      allow get: if resource == null || isUser(getDoc().userId);
       allow list: if isUser(getDoc().userId);
       allow create: if isUser(getDocInc().userId);
       allow update: if isNotification(getDocInc(), id);
       allow delete: if isUser(getDoc().userId);
     }
     match /roadmapBricks/{id} {
-      allow get: if isAuthenticated();
+      allow get: if resource == null || isAuthenticated();
       allow list: if isAuthenticated();
       allow create: if isRoadmapBrick(getDocInc(), id);
       allow update: if isRoadmapBrick(getDocInc(), id);
       allow delete: if canDeleteRoadmapBrick(getDoc());
     }
     match /users/{id} {
-      allow get: if isUser(id);
+      allow get: if resource == null || isUser(id);
       allow list: if false;
       allow create: if false;
       allow update: if isUserDoc(getDocInc(), id);
       allow delete: if false;
     }
     match /counterItems/{id} {
-      allow get: if isUser(id);
+      allow get: if resource == null || isUser(id);
     }
     match /counterNewFinished/{id} {
-      allow get: if isUser(getDoc().userId);
+      allow get: if resource == null || isUser(getDoc().userId);
     }
   }
 }

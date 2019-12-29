@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../components/shared/shared.module';
 import { ItemsComponent } from './items.component';
 import { ItemsFilterComponent } from './filter/filter.component';
-import { ItemsAddComponent } from './items-add/items-add.component';
 
 const routes: Routes = [
   {
@@ -15,12 +14,11 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     ItemsComponent,
-    ItemsFilterComponent,
-    ItemsAddComponent,
+    ItemsFilterComponent
   ],
   imports: [
     SharedModule,
     RouterModule.forChild(routes)
-  ],
+  ]
 })
 export class ItemsModule {}

@@ -33,5 +33,7 @@
 
       .dropdown-item('*ngIf'='!tags?.length')
         span(style='min-width: 85px') No tags yet.&nbsp;
-          br
-          a(routerLink='/app/tags', target="_blank") Create new
+      a.dropdown-item.has-text-info(routerLink='/app/tags', target="_blank")
+        span.icon
+          i.fas.fa-plus
+        span Create tag

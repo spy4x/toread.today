@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 import { LoggerService } from '../logger.service';
 import { UserService } from '../user.service';
 import { BatchSwarm, setStateProperties } from '../../protected/helpers';
-import { Item, ItemPriority, ItemRating, ItemSkeleton, ItemsCounter, Tag } from '../../protected/interfaces';
+import { Item, ItemPriority, ItemRating, ItemsCounter, ItemSkeleton, Tag } from '../../protected/interfaces';
 
 @Injectable()
 export class ItemService {
   constructor(private firestore: AngularFirestore,
-    private userService: UserService,
-    private logger: LoggerService) { }
+              private userService: UserService,
+              private logger: LoggerService) { }
 
   scaffold(item: Partial<Item>): Item {
     const defaults: Item = {
@@ -39,40 +39,83 @@ export class ItemService {
   /**
    * Returns "null" in case of successful creation, "Item" in case of Item exists.
    * @param skeleton
-   * @param shouldReturnCreatedItemId or null
    */
-  create(skeleton: ItemSkeleton, shouldReturnCreatedItemId?: boolean): Promise<null | string | Item> {
-    const item = this.scaffold(skeleton);
+  create(skeleton: ItemSkeleton): Promise<string> {
+    const itemToCreate = this.scaffold(skeleton);
     return this.firestore
       .collection<Item>('items',
-        ref => ref.where('url', '==', item.url).where('createdBy', '==', this.userService.user.id).limit(1))
+        ref => ref.where('url', '==', itemToCreate.url).where('createdBy', '==', this.userService.user.id).limit(1))
       .valueChanges({ idField: 'id' })
       .pipe(
         first(),
-        switchMap(async results => {
+        map(results => {
           if (results.length) {
-            return results[0];
-          }
-          if (item.rating !== 0) {
-            item.finishedAt = new Date();
-            item.status = 'finished';
-          }
-          try {
-            const docRef = await this.firestore
-              .collection('items')
-              .add(this.getBodyWithoutId(item));
-            if (!shouldReturnCreatedItemId) {
-              return null;
+            const itemExisting = results[0] as Item;
+            const defaultSkeleton = this.scaffold({});
+            const diff: Partial<Item> = {};
+            if (itemToCreate.rating !== itemExisting.rating && itemToCreate.rating !== defaultSkeleton.rating) {
+              diff.rating = itemToCreate.rating;
+              diff.finishedAt = new Date();
+              diff.status = 'finished';
             }
-            return docRef.id;
-          } catch (error) {
-            this.logger.error({
-              messageForDev: 'add():',
-              messageForUser: 'Failed to save new item to database.',
-              error,
-              params: { ...item }
+            if (itemToCreate.priority !== itemExisting.priority && itemToCreate.priority !== defaultSkeleton.priority) {
+              diff.priority = itemToCreate.priority;
+            }
+            itemToCreate.tags.forEach(newTag => {
+              if(!itemExisting.tags.includes(newTag)){
+                diff.tags = diff.tags ? [...diff.tags, newTag] : [newTag];
+              }
             });
+            if (JSON.stringify(diff) !== JSON.stringify({})) {
+              const data: any = {
+                ...diff,
+              };
+              if (diff.tags) {
+                data.tags = firestore.FieldValue.arrayUnion(...diff.tags);
+              }
+              console.log(data);
+              this.firestore
+                .doc(`items/${itemExisting.id}`)
+                .update(data)
+                .catch(error => {
+                  this.logger.error({
+                    messageForDev: 'Failed to update existing item during saving link.',
+                    messageForUser: 'Failed to update existing item during saving link.',
+                    error,
+                    params: { ...itemToCreate }
+                  });
+                })
+            }
+            return itemExisting.id;
           }
+
+          if (itemToCreate.rating !== 0) {
+            itemToCreate.finishedAt = new Date();
+            itemToCreate.status = 'finished';
+          }
+          const id = this.firestore.createId();
+          const promise = this.firestore
+            .collection('items')
+            .doc(id)
+            .set(this.getBodyWithoutId(itemToCreate));
+          promise.catch(error => {
+            this.logger.error({
+              messageForDev: 'Failed to save new link to database.',
+              messageForUser: 'Failed to save new link to database.',
+              error,
+              params: { ...itemToCreate }
+            });
+          });
+          return id;
+        }),
+        catchError(error => {
+          this.logger.error({
+            messageForDev: 'add():',
+            messageForUser: 'Failed to save new item to database.',
+            error,
+            params: { ...itemToCreate }
+          });
+          return throwError(error);
         })
       )
       .toPromise();
@@ -179,8 +222,8 @@ export class ItemService {
     return this.update({
       id,
       tags: (isSelected
-        ? firestore.FieldValue.arrayUnion(tagId)
-        : firestore.FieldValue.arrayRemove(tagId)) as unknown as string[]
+             ? firestore.FieldValue.arrayUnion(tagId)
+             : firestore.FieldValue.arrayRemove(tagId)) as unknown as string[]
     }, 'Failed to toggle item tag.');
   }
 

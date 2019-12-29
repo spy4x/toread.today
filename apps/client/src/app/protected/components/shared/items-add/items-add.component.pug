@@ -1,0 +1,51 @@
+.field.has-addons.is-fullwidth
+  .control.is-expanded.has-icons-left
+    input.input(
+      placeholder="Add link",
+      [(ngModel)]="inputValue",
+      (keydown.enter)="addItem(0)",
+    )
+    span.icon.is-small.is-left
+      i.fas.fa-link
+
+  .control(*ngIf="inputValue")
+    tt-tag-selector(
+      [tags]="tagService.tags$ | async",
+      [selectedIds]="inputTags",
+      (toggle)="toggleTag($event)",
+      [hideSelected]="true",
+      [asButton]="true",
+    )
+
+  .control(*ngIf="inputValue")
+    tt-priority-selector(
+      [priority]="priority",
+      (set)="priority = $event",
+      [asButton]="true",
+    )
+
+  .control(*ngIf="inputValue")
+    .dropdown.is-hoverable.is-right
+      .dropdown-trigger
+        button.button
+          span.icon
+            i.fas.fa-plus
+      .dropdown-menu.dropdown-menu--w-none(role='menu')
+        .dropdown-content
+          a.dropdown-item((click)="addItem(0)")
+            span.icon
+              i.fas.fa-plus
+            span Add as new
+          hr.dropdown-divider
+          a.dropdown-item((click)="addItem(1)")
+            span.icon.has-text-success
+              i.far.fa-thumbs-up
+            span Add as finished & useful
+          a.dropdown-item((click)="addItem(-1)")
+            span.icon.has-text-danger
+              i.far.fa-thumbs-down
+            span Add as finished & useless
+
+.notification.is-warning.is-small('*ngIf'='errors.length')
+  button.delete('(click)'='errors = []')
+  p('*ngFor'='let error of errors') {{error}}

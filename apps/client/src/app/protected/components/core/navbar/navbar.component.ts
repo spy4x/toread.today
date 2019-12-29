@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { UIService, UserService, ConnectionStatusService, UpdateService } from '../../../../services';
+import { DropdownDirective } from '../../shared/dropdown/dropdown.directive';
+import { ItemsAddComponent } from '../../shared/items-add/items-add.component';
 
 @Component({
   selector: 'tt-navbar',

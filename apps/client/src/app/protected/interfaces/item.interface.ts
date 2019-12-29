@@ -14,7 +14,7 @@ export interface ItemSkeleton {
   priority: ItemPriority
 }
 
-export interface Item extends ItemSkeleton, BaseEntity{
+export interface Item extends ItemSkeleton, BaseEntity {
   createdBy: string
   createdAt: Date
   comment: string

@@ -8,14 +8,19 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { User, Item, ItemPriority } from '../../interfaces';
+import { Item, ItemPriority, User } from '../../interfaces';
 import { defaultFilter, Filter } from './filter/filter.interface';
-import { ItemAddEvent } from './items-add/items-add.component';
 import { ROUTER_CONSTANTS } from '../../helpers';
 import { defaultPagination, Pagination } from './pagination.interface';
-import { UserService, ItemService, TagService as TagService, LoggerService, RouterHelperService } from '../../../services';
+import {
+  ItemService,
+  LoggerService,
+  RouterHelperService,
+  TagService as TagService,
+  UserService
+} from '../../../services';
 
 const LOAD_ITEMS_LIMIT = 20;
 
@@ -34,7 +39,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
   items$ = new BehaviorSubject<Item[]>(null);
   counter$ = this.itemService.getCounter$();
   reloadItems$ = new BehaviorSubject<void>(void 0);
-  existingItem$: Observable<null | Item> = of(null);
 
   constructor(
     public itemService: ItemService,
@@ -176,19 +180,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.componentDestroy$.next();
     this.componentDestroy$.complete();
-  }
-
-  async create(item: ItemAddEvent): Promise<void> {
-    const existingItem = await this.itemService.create({ ...item, title: null });
-    if (!existingItem) {
-      if (this.filter$.value.status !== 'new') {
-        this.routerHelper.toItemsWithFilter({ status: 'new' });
-      }
-      this.existingItem$ = of(null);
-    } else {
-      this.existingItem$ = this.itemService.getById$((existingItem as Item).id);
-    }
-    this.cd.detectChanges();
   }
 
   async loadPrev() {
