@@ -17,7 +17,7 @@
       a.dropdown-item.has-text-grey-light('*ngIf'='isAllTagsVisible', '(click)'='deselectAll()')
         span.icon
           i.fas.fa-check('[ngStyle]'='{"visibility": selectedIds.length ? "hidden" : "visible"}')
-        span All tags
+        span Any tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
       .dropdown-item
         input.input.is-small(placeholder="Search", [(ngModel)]="searchText")

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.36.0",
-    "description": "Improve UX by moving \"Add link\" input to the header."
+    "version": "1.37.0",
+    "description": "Rework Dashboard page to improve UX."
   },
   "assetGroups": [
     {

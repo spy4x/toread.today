@@ -1,5 +1,5 @@
 .line.first
-  a([href]='item.url',
+  a([href]='getURL(item)',
     target='_blank',
     (click)='read(item)',
     [title]='item.url',) {{item.title || item.url}}
@@ -24,7 +24,7 @@
         '(click)'='retryURLParsing.emit(item.id)'
         '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
       i.fas.fa-exclamation-triangle
-    a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='item.url', target='_blank', (click)='read(item)')
+    a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='getURL(item)', target='_blank', (click)='read(item)')
       span.icon
         i.fas.fa-play
       span Start reading
@@ -72,24 +72,6 @@
             i.fas.fa-ellipsis-v(aria-hidden='true')
       .dropdown-menu(role='menu')
         .dropdown-content
-          a.dropdown-item('(click)'='toggleFavouriteHandler(item)')
-            span.icon.has-text-warning
-              i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
-            span {{item.isFavourite ? 'Remove from favorites' : 'Add to favorites'}}
-          a.dropdown-item((click)="toggleComment()")
-            span.icon
-              i.far.fa-comment-alt
-            span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
-          hr.dropdown-divider
-          a.dropdown-item((click)="editTitle(item)")
-            span.icon.has-text-info
-              i.far.fa-edit
-            span Edit title
-          a.dropdown-item((click)="editURL(item)")
-            span.icon.has-text-info
-              i.fas.fa-globe-americas
-            span Edit URL
-          hr.dropdown-divider
           a.dropdown-item(*ngIf='item.status !== "new"', '(click)'='undoReading.emit(item.id)')
             span.icon
               i.far.fa-circle
@@ -107,6 +89,24 @@
               span.icon.has-text-danger
                 i.far.fa-thumbs-down
               span Mark as Finished & Useless
+          hr.dropdown-divider
+          a.dropdown-item('(click)'='toggleFavouriteHandler(item)')
+            span.icon.has-text-warning
+              i.fa-star('[class.fas]'='item.isFavourite', '[class.far]'='!item.isFavourite')
+            span {{item.isFavourite ? 'Remove from favorites' : 'Add to favorites'}}
+          a.dropdown-item((click)="toggleComment()")
+            span.icon
+              i.far.fa-comment-alt
+            span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
+          hr.dropdown-divider
+          a.dropdown-item((click)="editTitle(item)")
+            span.icon.has-text-info
+              i.far.fa-edit
+            span Edit title
+          a.dropdown-item((click)="editURL(item)")
+            span.icon.has-text-info
+              i.fas.fa-globe-americas
+            span Edit URL
           hr.dropdown-divider
           a.dropdown-item('(click)'='delete.emit(item.id)')
             span.icon.has-text-danger

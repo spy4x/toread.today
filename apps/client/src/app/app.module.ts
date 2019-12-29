@@ -65,7 +65,7 @@ const routes: Routes = [
     PushNotificationsService,
     NotificationsService,
     UpdateService,
-    { 
+    {
       provide: ErrorHandler,
       useClass: SentryErrorHandler
     },

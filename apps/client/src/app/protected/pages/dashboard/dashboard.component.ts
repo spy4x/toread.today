@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { catchError, debounceTime, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { ItemService, TagService, LoggerService, RouterHelperService, UserService } from '../../../services';
-import { NewFinishedMonthlyStatistics, User } from '../../interfaces';
+import { catchError, debounceTime, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
+import { ItemService, LoggerService, RouterHelperService, TagService, UserService } from '../../../services';
+import { Item, NewFinishedMonthlyStatistics, User } from '../../interfaces';
 
 @Component({
   selector: 'tt-dashboard',
@@ -13,6 +13,8 @@ import { NewFinishedMonthlyStatistics, User } from '../../interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnDestroy {
+  RECENT_ITEMS_LIMIT = 3;
+  READ_TODAY_ITEMS_LIMIT = 10;
   componentDestroy$ = new Subject<void>();
   user$ = this.userService.authorizedUserOnly$;
   month$ = new BehaviorSubject<number>(new Date().getMonth() + 1);
@@ -26,15 +28,17 @@ export class DashboardComponent implements OnDestroy {
   getNewRandom$ = new BehaviorSubject<void>(null);
 
   // TODO: Move to ItemService
-  randomItems$ = this.getNewRandom$
+  readTodayItems$ = this.getNewRandom$
     .pipe(
       switchMap(() => this.user$),
       switchMap((user: User) => this.firestore
-        .collection('items',
+        .collection<Item>('items',
           ref => ref
             .where('createdBy', '==', user.id)
-            .where('__name__', '>=', this.firestore.createId())
-            .where('status', '==', 'new').limit(3)
+            .where('status', '==', 'new')
+            .orderBy('priority', 'desc')
+            .orderBy('createdAt', 'desc')
+            .limit(this.READ_TODAY_ITEMS_LIMIT)
         )
         .valueChanges({ idField: 'id' })
         .pipe(
@@ -43,8 +47,9 @@ export class DashboardComponent implements OnDestroy {
           takeUntil(this.componentDestroy$)
         )),
       catchError(error => {
-        this.logger.error({ messageForDev: 'randomItems$ error', messageForUser: 'Failed to fetch random items.', error });
-        return of([]);
+        this.logger.error(
+          { messageForDev: 'readTodayItems$ error', messageForUser: 'Failed to fetch recommended links.', error });
+        return of([] as Item[]);
       }),
       shareReplay(1)
     );
@@ -52,12 +57,12 @@ export class DashboardComponent implements OnDestroy {
   // TODO: Move to ItemService
   openedItems$ = this.user$.pipe(
     switchMap((user: User) => this.firestore
-      .collection('items',
+      .collection<Item>('items',
         ref => ref
           .where('createdBy', '==', user.id)
           .where('status', '==', 'opened')
           .orderBy('openedAt', 'desc')
-          .limit(3)
+          .limit(this.RECENT_ITEMS_LIMIT)
       )
       .valueChanges({ idField: 'id' })
       .pipe(
@@ -65,8 +70,9 @@ export class DashboardComponent implements OnDestroy {
         takeUntil(this.componentDestroy$)
       )),
     catchError(error => {
-      this.logger.error({ messageForDev: 'openedItems$ error', messageForUser: 'Failed to fetch recently opened item.', error });
-      return of([]);
+      this.logger.error(
+        { messageForDev: 'openedItems$ error', messageForUser: 'Failed to fetch recently opened item.', error });
+      return of([] as Item[]);
     }),
     shareReplay(1)
   );
@@ -101,7 +107,7 @@ export class DashboardComponent implements OnDestroy {
     private userService: UserService,
     private firestore: AngularFirestore,
     private logger: LoggerService
-    ) { }
+  ) { }
 
   ngOnDestroy(): void {
     this.componentDestroy$.next();
@@ -128,5 +134,17 @@ export class DashboardComponent implements OnDestroy {
     } else {
       this.month$.next(month + 1);
     }
+  }
+
+  focusOnAddInput(): void {
+    const input = document.querySelector('input#addLinkInput') as null | HTMLInputElement;
+    if (!input) {
+      this.logger.error({
+        messageForDev:'input#addLinkInput not found to focus.',
+        messageForUser: 'Ops, I can\'t find add link input.',
+      });
+      return;
+    }
+    input.focus();
   }
 }

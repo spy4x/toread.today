@@ -8,6 +8,7 @@ import {
   ToggleItemTagEvent,
   ToggleTagEvent
 } from '../list.component';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'tt-list-item',
@@ -33,6 +34,8 @@ export class ListItemComponent {
   @Output() setTitle = new EventEmitter<SetItemTitleEvent>();
   @Output() setURL = new EventEmitter<SetItemURLEvent>();
   isNoteVisible = false;
+
+  constructor(private sanitizer: DomSanitizer) {}
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
@@ -82,5 +85,10 @@ export class ListItemComponent {
       return;
     }
     this.setURL.emit({item, url});
+  }
+
+  getURL(item: Item): SafeUrl {
+    const url = item.url.includes('://') ? item.url : `//${item.url}`;
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 }
