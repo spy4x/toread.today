@@ -1,0 +1,30 @@
+nav.navbar.is-fixed-top.is-primary.has-text-weight-medium(role='navigation' aria-label='main navigation')
+  .container
+    .navbar-brand
+      a.navbar-item(routerLink='/', (click)='closeMenu()')
+        span.icon.is-size-4.has-text-weight-bold
+          i.far.fa-bookmark
+        span Toread.Today
+
+      a.navbar-burger.burger.ml-auto(
+          role='button',
+          aria-label='menu',
+          '[class.is-active]'='isMenuExpanded',
+          (click)='toggleMenu()')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
+
+    .navbar-menu('[class.is-active]'='isMenuExpanded')
+      .navbar-end
+        a.navbar-item(routerLink='/', routerLinkActive='has-text-weight-bold', [routerLinkActiveOptions]="{exact: true}", (click)='closeMenu()')
+          span HOW IT WORKS
+        //a.navbar-item(routerLink='/features', routerLinkActive='has-text-weight-bold', (click)='closeMenu()')
+        //  span FEATURES
+        a.navbar-item(routerLink='/pricing', routerLinkActive='has-text-weight-bold', (click)='closeMenu()')
+          span PRICING
+        a.navbar-item#sign-in(routerLink='/app')
+          span SIGN IN
+        .navbar-item
+          a.button.is-info(routerLink='/app')
+            span TRY IT FREE

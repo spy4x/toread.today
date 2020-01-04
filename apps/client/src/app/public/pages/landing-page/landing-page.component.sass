@@ -1,0 +1,85 @@
+@import variables
+
+tt-landing-page
+  section
+    .title
+      margin-bottom: 3*$baseSize !important
+  #hero
+    margin-top: -$sidePadding
+    .title, .subtitle, .cta
+      text-align: center
+      @media(min-width: $mobile)
+        text-align: left
+    .no-credit-card-required
+      margin-top: $baseSize / 2
+      font-size: $size-7
+  #safe-net-cta
+    .no-credit-card-required
+      margin-top: $baseSize
+      font-size: $size-6
+
+  #story
+    max-width: $tablet
+    margin: 0 auto
+
+    img#photo
+      width: 8*$baseSize
+    p
+      margin-bottom: $baseSize
+
+    @media(min-width: $mobile)
+      font-size: $baseSize * 1.2
+      line-height: 1.6
+
+
+    .quote
+      margin: 1rem 0
+      font-size: 1.5rem
+      text-align: center
+      font-style: italic
+      color: $grey-light
+      img.screenshot
+        margin-top: 0
+        @media(min-width: $mobile)
+          max-width: $mobile
+      @media(min-width: $mobile)
+        margin: 2rem
+      img.screenshot + p
+        margin-top: -$baseSize
+
+
+  #benefits
+    padding-top: 1.5*$baseSize
+    padding-bottom: 1.5*$baseSize
+    .column + .column
+      margin-top: 2rem
+      @media(min-width: $tablet)
+        margin-top: 0
+
+    .benefits, .coming-soon
+      .item
+        &__title
+          font-size: $size-4
+          line-height: 1.2
+          margin-bottom: $baseSize
+        .icon
+          $size: 3*$baseSize
+          font-size: $size
+          margin-bottom: 1.5*$baseSize
+          width: $size
+          height: $size
+          i
+            width: $size
+            height: $size
+
+    .coming-soon
+      margin-top: 4*$baseSize
+      .item__title
+        font-size: $size-5
+
+  #how-it-works
+    .steps-segment
+      padding-bottom: $baseSize
+      .steps-content
+        padding-top: 0
+        padding-bottom: 0

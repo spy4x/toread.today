@@ -1,0 +1,45 @@
+section.hero
+  .hero-body
+    .container
+      .columns
+        .column
+          p.subtitle
+            a(routerLink='/')
+              span.icon.icon-alignment--first
+                i.far.fa-bookmark
+              span Toread.Today
+          ul
+            li
+              a(routerLink='/app') Sign in
+            li
+              a(routerLink='/app') Sign up
+            li
+              a(routerLink='/app') Try it for Free
+        .column
+          p.subtitle
+            span
+              span.icon.icon-alignment--first
+                i.far.fa-lightbulb
+              span Service
+          ul
+            li
+              a(routerLink='/') How it works
+            //-li
+            //-  a(routerLink='/features') Features
+            li
+              a(routerLink='/pricing') Pricing
+        .column
+          p.subtitle
+            span
+              span.icon.icon-alignment--first
+                i.far.fa-file
+              span Resources
+          ul
+            // -li
+            // -  a(routerLink="/about") About
+            li
+              a(href="mailto:2spy4x@gmail.com") Contact
+            li
+              a(routerLink="/terms-and-conditions") Terms & Conditions
+            li
+              a(routerLink="/privacy-policy") Privacy Policy

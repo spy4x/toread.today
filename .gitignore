@@ -40,6 +40,6 @@ Thumbs.db
 
 # Firebase
 .firebase/
-public
+/public
 firebase-debug.log
 /functions/dist/
