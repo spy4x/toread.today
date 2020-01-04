@@ -29,7 +29,7 @@ export class AddComponent implements OnDestroy {
       this.isSaving = true;
       this.isError = false;
       const defaultSkeleton = this.itemService.scaffold({});
-      const url: string = params['url'];
+      const url: string = params['url'] || params['text'] || params['title']; // "text" and "title" are here because of PWA WebShare API detail - some apps share URL in "text" or "title" fields
       const tags: string[] = params['tags'] ? (Array.isArray(
         params['tags']) ? params['tags'] : [params['tags']]) : defaultSkeleton.tags;
       const rating = +params['rating'] as ItemRating || defaultSkeleton.rating;

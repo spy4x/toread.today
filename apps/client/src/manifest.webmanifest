@@ -5,7 +5,7 @@
   "lang": "en-GB",
   "start_url": "/app?utm_source=a2hs",
   "scope": "/",
-  "display": "browser",
+  "display": "standalone",
   "theme_color": "#00d1b2",
   "background_color": "#00d1b2",
   "icons": [
@@ -19,5 +19,14 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "/app/add",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
