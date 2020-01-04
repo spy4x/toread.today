@@ -10,14 +10,14 @@ export class RouterHelperService {
               private route: ActivatedRoute){}
 
   toItemsWithFilter(filter: Partial<Filter>): void {
-    const pathToItems = `/app/items`;
+    const pathToItems = `/app/links`;
     const isCurrentPage = this.router.url.startsWith(pathToItems);
     const path = isCurrentPage ? [] : [pathToItems];
     this.router.navigate(
       path,
       {
         relativeTo: isCurrentPage ? this.route : undefined,
-        queryParams: { ...filter },
+        queryParams: { ...filter, statusNull: filter.status === null ? true: undefined },
         queryParamsHandling: 'merge'
       });
   }

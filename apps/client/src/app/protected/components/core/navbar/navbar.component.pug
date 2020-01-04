@@ -5,9 +5,10 @@ ng-container(*ngIf="userService.user$ | async as user")
         .navbar-item
           tt-items-add("#addComponent"="")
 
-        .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
+        .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Offline mode is on.\n" +
+        "Looks like you're not connected to the Internet. Changes you make in offline mode will be synced when you reconnect.")
           span.icon.has-text-warning
-            i.fas.fa-exclamation-triangle
+            i.fas.fa-signal
 
         tt-notifications.navbar-item(*ngIf='uiService.isMobile$ | async', '[userId]'='user.id', [class.ml-auto]="connectionStatus.isOnline$ | async")
 
@@ -24,11 +25,7 @@ ng-container(*ngIf="userService.user$ | async as user")
       .navbar-menu('[class.is-active]'='isMenuExpanded')
 
         .navbar-start
-          a.navbar-item(routerLink='/app/dashboard', routerLinkActive='is-active', (click)='closeMenu()')
-            span.icon
-              i.fas.fa-chart-line
-            span Dashboard
-          a.navbar-item(routerLink='/app/items', [queryParams]="{status: 'new'}", routerLinkActive='is-active', (click)='closeMenu()')
+          a.navbar-item(routerLink='/app/links', [queryParams]="{status: 'new'}", routerLinkActive='is-active', (click)='closeMenu()')
             span.icon
               i.fas.fa-list-ul
             span Links
@@ -74,9 +71,10 @@ ng-container(*ngIf="userService.user$ | async as user")
 
           ng-template('#desktopMenu'='')
             .navbar-item
-              .navbar-item(*ngIf="!(connectionStatus.isOnline$ | async)", title="Your device is offline. Please restore connection to continue.")
+              .navbar-item(*ngIf="!(connectionStatus.isOnline$ | async)", title="Offline mode is on.\n" +
+              "Looks like you're not connected to the Internet. Changes you make in offline mode will be synced when you reconnect.")
                 span.icon.has-text-warning
-                  i.fas.fa-exclamation-triangle
+                  i.fas.fa-signal
               .navbar-item
                 tt-notifications(*ngIf='!(uiService.isMobile$ | async)', '[userId]'='user.id')
               .navbar-item

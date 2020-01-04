@@ -1,4 +1,4 @@
-.dropdown.is-hoverable.is-right
+.dropdown.is-hoverable([class.is-right]="!isDropdownLeft")
   .dropdown-trigger
     div([class.button]="asButton")
       a.icon([ngClass]="{'has-text-danger': is(3), 'has-text-warning': is(2), 'has-text-info': is(1), 'has-text-dark': is(0), 'has-text-grey-light': is(null) }")

@@ -6,6 +6,9 @@
 
 .line.second
   .actions.icon-alignment--first
+    tt-priority-selector([priority]="item.priority", [isDropdownLeft]="true", (set)="setPriority.emit({item: item, priority: $event})")
+
+  .actions
     tt-tag-selector(
       [tags]="tags",
       [selectedIds]="item.tags",
@@ -27,10 +30,10 @@
     a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='getURL(item)', target='_blank', (click)='read(item)')
       span.icon
         i.fas.fa-play
-      span Start reading
+      span Start
 
     ng-container(*ngIf="item.status === 'finished'")
-      a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open personal note")
+      a.icon(*ngIf="item.withComment", (click)="toggleComment()", title="Open private note")
         i.far.fa-comment-alt
       .dropdown.is-hoverable.is-right
         .dropdown-trigger
@@ -51,19 +54,17 @@
         button.button.finish.is-primary.is-small
           span.icon
             i.fas.fa-check
-          span Mark as finished
+          span Finish
       .dropdown-menu.dropdown-menu--w-none(role='menu')
         .dropdown-content
           a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
             span.icon.has-text-success
               i.far.fa-thumbs-up
-            span ... & useful
+            span Finish & mark as useful
           a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
             span.icon.has-text-danger
               i.far.fa-thumbs-down
-            span ... & useless
-
-    tt-priority-selector([priority]="item.priority", (set)="setPriority.emit({item: item, priority: $event})")
+            span Finish & mark as useless
 
     .dropdown.is-hoverable.is-right
       .dropdown-trigger
@@ -97,7 +98,7 @@
           a.dropdown-item((click)="toggleComment()")
             span.icon
               i.far.fa-comment-alt
-            span {{item.withComment ? 'Edit personal note' : 'Add personal note'}}
+            span {{item.withComment ? 'Edit private note' : 'Add private note'}}
           hr.dropdown-divider
           a.dropdown-item((click)="editTitle(item)")
             span.icon.has-text-info
@@ -112,9 +113,8 @@
             span.icon.has-text-danger
               i.far.fa-trash-alt
             span Delete
-
 .line.third(*ngIf='isNoteVisible')
-    textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='', placeholder="Personal note")
+    textarea.textarea('[ngModel]'='item.comment', '#commentTextArea'='', placeholder="Private note")
     .buttons.is-right
-      button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save personal note
+      button.button.is-primary('(click)'='setComment(item.id, commentTextArea.value)') Save private note
       button.button('(click)'='toggleComment(false)') Cancel

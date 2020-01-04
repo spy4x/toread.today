@@ -22,12 +22,12 @@ import { ItemsAddComponent } from './items-add/items-add.component';
     TagsByIdsPipe,
     ListComponent,
     ListItemComponent,
-    UploadInputComponent,
+    UploadInputComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
+    FormsModule
   ],
   exports: [
     CommonModule,
@@ -41,7 +41,7 @@ import { ItemsAddComponent } from './items-add/items-add.component';
     ItemsAddComponent,
     ListComponent,
     ListItemComponent,
-    UploadInputComponent,
-  ],
+    UploadInputComponent
+  ]
 })
 export class SharedModule {}

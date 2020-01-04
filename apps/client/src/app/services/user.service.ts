@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { User as FirebaseUser, auth } from 'firebase/app';
 import { FCMToken, User } from '../protected/interfaces';
@@ -41,7 +41,7 @@ export class UserService {
   signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
   authState$ = this._authState$.asObservable();
   user$ = this._user$.asObservable();
-  authorizedUserOnly$ = this.user$.pipe(filter(v => !!v));
+  authorizedUserOnly$: Observable<User> = this.user$.pipe(filter(v => !!v));
   isAuthorized$ = this._user$.pipe(map(v => !!v));
   authStates = AuthStates;
   authMethods = AuthMethod;

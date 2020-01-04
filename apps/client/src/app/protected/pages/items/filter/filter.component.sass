@@ -3,26 +3,12 @@
 tt-items-filter
   display: flex
   align-items: baseline
-  padding: 0 $sidePadding
-  @media(min-width: $desktop)
-    padding: 0 $sidePadding 0 0
-  @include border(bottom)
+  color: $grey-light
+
   > *:not(:last-child)
     margin-right: $textSpacer
-  .tabs
-    flex: 1 0
-    margin-bottom: -$px1 !important
-    li
+  .dropdown
+    .dropdown-trigger
       text-transform: capitalize
-      a
-        padding-bottom: $textSpacer/2
-      @media(max-width: $tablet)
-        a
-          padding: $textSpacer*.5 $textSpacer
-        &.favourite
-          a
-            padding-left: 0
-            padding-right: 0
-      &:not(.is-active)
-        a
-          color: $grey-light
+    span.icon + span
+      margin-left: $baseSize / 5

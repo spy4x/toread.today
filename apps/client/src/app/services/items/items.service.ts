@@ -1,12 +1,34 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, throwError } from 'rxjs';
+import { catchError, first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 import { LoggerService } from '../logger.service';
 import { UserService } from '../user.service';
 import { BatchSwarm, setStateProperties } from '../../protected/helpers';
-import { Item, ItemPriority, ItemRating, ItemsCounter, ItemSkeleton, Tag } from '../../protected/interfaces';
+import { Item, ItemPriority, ItemRating, ItemsCounter, ItemSkeleton, Tag, User } from '../../protected/interfaces';
+
+export interface RequestParams {
+  filter: { [field: string]: any },
+  pagination: {
+    limit: number,
+    page: number,
+  },
+  sort: { field: string, direction: 'asc' | 'desc' }[]
+}
+
+export interface ResponseMeta {
+  page: number,
+  isLoading: boolean;
+  error: null | Error;
+  nextItemsAvailable: boolean
+}
+
+interface RequestObject<T> {
+  response$: Observable<T>;
+  responseMeta$: Observable<ResponseMeta>;
+  params$: BehaviorSubject<RequestParams>;
+}
 
 @Injectable()
 export class ItemService {
@@ -62,18 +84,17 @@ export class ItemService {
               diff.priority = itemToCreate.priority;
             }
             itemToCreate.tags.forEach(newTag => {
-              if(!itemExisting.tags.includes(newTag)){
+              if (!itemExisting.tags.includes(newTag)) {
                 diff.tags = diff.tags ? [...diff.tags, newTag] : [newTag];
               }
             });
             if (JSON.stringify(diff) !== JSON.stringify({})) {
               const data: any = {
-                ...diff,
+                ...diff
               };
               if (diff.tags) {
                 data.tags = firestore.FieldValue.arrayUnion(...diff.tags);
               }
-              console.log(data);
               this.firestore
                 .doc(`items/${itemExisting.id}`)
                 .update(data)
@@ -84,7 +105,7 @@ export class ItemService {
                     error,
                     params: { ...itemToCreate }
                   });
-                })
+                });
             }
             return itemExisting.id;
           }
@@ -171,6 +192,156 @@ export class ItemService {
           return of(null);
         })
       );
+  }
+
+  getRequest(initialParams: RequestParams, takeUntil$: Observable<void>): RequestObject<Item[]> {
+    let data: Item[] = [];
+    let queryCache: firestore.Query;
+    const responseMetaSubject = new BehaviorSubject<ResponseMeta>({
+      page: initialParams.pagination.page,
+      error: null,
+      isLoading: false,
+      nextItemsAvailable: false
+    });
+    const params$ = new BehaviorSubject<RequestParams>(initialParams);
+    const response$: Observable<Item[]> = combineLatest(
+      params$,
+      this.userService.authorizedUserOnly$,
+      (params, user) => ({ params, user })
+    )
+      .pipe(
+        tap((v: { params: RequestParams, user: User }) => {
+          if(!v.params.sort.length){
+            this.logger.error({
+              messageForDev: 'getRequest() error',
+              error: new Error('No sort options were provided. Pagination cannot work without sorting.'),
+              params: { ...v.params }
+            });
+          }
+          responseMetaSubject.next({
+            ...responseMetaSubject.value,
+            isLoading: true,
+            error: null
+          });
+        }),
+        switchMap(({ params, user }: { params: RequestParams, user: User }) => this.firestore
+          .collection<Item>('items',
+            ref => {
+              // Basic query
+              const limit = params.pagination.limit;
+              let query = ref.where('createdBy', '==', user.id).limit(limit);
+
+              // Filters
+              if (params.filter.status) {
+                query = query.where('status', '==', params.filter.status);
+              }
+              if (params.filter.isFavourite) {
+                query = query.where('isFavourite', '==', true);
+              }
+              if (typeof params.filter.priority === 'number') { // check for null|undefined to make sure priority === 0 works fine
+                query = query.where('priority', '==', params.filter.priority);
+                params.sort = params.sort.filter(s => s.field !== 'priority');
+              }
+              if (params.filter.tagId) {
+                query = query.where('tags', 'array-contains', params.filter.tagId);
+              }
+
+              // Sorting
+              params.sort.forEach(s => {
+                query = query.orderBy(s.field, s.direction);
+              });
+
+              // Pagination
+              if (params.pagination.page && data.length && params.sort.length) {
+                query = query.startAfter(...this.getValuesForStartAfter(params, data));
+              }
+
+              queryCache = query;
+              return query;
+            }
+          )
+          .valueChanges({ idField: 'id' })
+          .pipe(
+            tap(async v => data = v),
+            tap((items: Item[]) => {
+              if (!items.length && params.pagination.page) {
+                // if suddenly no items on a page (deleted/changed)
+                params$.next({
+                  ...params,
+                  pagination: {
+                    ...params.pagination,
+                    page: 0
+                  }
+                });
+                return;
+              }
+            }),
+            takeUntil(this.userService.signedOut$),
+            takeUntil(takeUntil$),
+            catchError(error => {
+              this.logger.error({
+                messageForDev: 'getRequest() firestore error',
+                messageForUser: 'Failed to fetch links.',
+                error,
+                params: { params, user }
+              });
+              responseMetaSubject.next({
+                ...responseMetaSubject.value,
+                error
+              });
+              return of([] as Item[]);
+            }),
+            tap(async args => {
+              const nextItemsAvailable = data.length ? await this.firestore
+                .collection<Item>('items', () => {
+                  let query = queryCache.limit(1);
+                  query = query.startAfter(...this.getValuesForStartAfter(params, data));
+                  return query;
+                })
+                .valueChanges()
+                .pipe(
+                  first(),
+                  catchError(error => {
+                    this.logger.error({
+                      messageForDev: 'getRequest() error',
+                      messageForUser: 'Failed to fetch next page of links.',
+                      error: new Error(error),
+                      params: { params, user }
+                    });
+                    return of([] as Item[]);
+                  }),
+                  map(v => !!v.length)
+                )
+                .toPromise() : false;
+              responseMetaSubject.next({
+                ...responseMetaSubject.value,
+                page: params.pagination.page,
+                isLoading: false,
+                nextItemsAvailable,
+              });
+            })
+          )
+        ),
+        catchError(error => {
+          this.logger.error({
+            messageForDev: 'getRequest() stream error',
+            messageForUser: 'Failed to fetch links.',
+            error: new Error(error),
+            params: { params: params$.value, user: this.userService.user }
+          });
+          responseMetaSubject.next({
+            ...responseMetaSubject.value,
+            error
+          });
+          return of([] as Item[]);
+        }),
+      );
+
+    return {
+      response$,
+      responseMeta$: responseMetaSubject.asObservable(),
+      params$
+    };
   }
 
   getCounter$(): Observable<null | ItemsCounter> {
@@ -338,5 +509,12 @@ export class ItemService {
 
   private getPathForId(id: string): string {
     return `items/${id}`;
+  }
+
+  private getValuesForStartAfter(params: RequestParams, data: Item[]): any[] {
+    return params.sort.map(s => {
+      const field = s.field;
+      return data[data.length - 1][field];
+    });
   }
 }

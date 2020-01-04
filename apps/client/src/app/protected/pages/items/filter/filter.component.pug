@@ -1,15 +1,68 @@
-.tabs
-  ul
-    li('[class.is-active]'='isStatus(null) && !isFavourite()', '(click)'='setStatus(null)', [attr.data-badge]="counter ? counter['all']: ''")
-      a All
-    li('*ngFor'='let status of statuses', '[class.is-active]'='isStatus(status)', '(click)'='setStatus(status)', [attr.data-badge]="counter ? counter['statuses.'+status]: ''")
-      a
-        span {{status}}
-    li.favourite('[class.is-active]'='isFavourite()', '(click)'='setFavourite()', [attr.data-badge]="counter ? counter.favourites: ''")
-      a
-        span.icon([class.has-text-warning]="isFavourite()")
-          i.fa-star([ngClass]="{fas: isFavourite(), far: !isFavourite()}")
+span.is-hidden-mobile Filter:
+.dropdown.is-hoverable.is-right.icon-alignment--first
+  .dropdown-trigger
+    span(*ngIf="params.filter.status === 'new'")
+      span.icon
+        i.far.fa-circle
+      span New
+    span.has-text-info(*ngIf="params.filter.status === 'opened'")
+      span.icon
+        i.far.fa-play-circle
+      span Started
+    span.has-text-success(*ngIf="params.filter.status === 'finished'")
+      span.icon
+        i.far.fa-check-circle
+      span Finished
+    span.has-text-warning(*ngIf="!params.filter.status && isFavourite()")
+      span.icon
+        i.fas.fa-star
+      span Favourites
+    span(*ngIf="!params.filter.status && !isFavourite()")
+      span.icon
+        i.fas.fa-list
+      span All
+    span.icon.is-small
+      i.fas.fa-angle-down(aria-hidden='true')
+  .dropdown-menu.dropdown-menu--w-none(role='menu')
+    .dropdown-content
+      a.dropdown-item.has-text-grey-light((click)="setStatus(null)")
+        span.icon
+          i.fas.fa-list
+        span All
+      a.dropdown-item(
+        (click)="setStatus('new')"
+      )
+        span.icon
+          i.far.fa-circle
+        span New
+      a.dropdown-item.has-text-info(
+        (click)="setStatus('opened')"
+      )
+        span.icon
+          i.far.fa-play-circle
+        span Started
+      a.dropdown-item.has-text-success(
+        (click)="setStatus('finished')"
+      )
+        span.icon
+          i.far.fa-check-circle
+        span Finished
+      a.dropdown-item.has-text-warning((click)="setFavourite()")
+        span.icon
+          i.fas.fa-star
+        span Favourites
 
-tt-priority-selector([priority]="filter.priority", [counter]="counter", [shouldShowAnyPriority]="true", (set)="setPriority($event)")
+tt-priority-selector(
+  [priority]="params.filter.priority",
+  [counter]="counter",
+  [shouldShowAnyPriority]="true",
+  (set)="setPriority($event)"
+)
 
-tt-tag-selector.icon-alignment--last('[tags]'='tags', '[selectedIds]'='filter.tagId ? [filter.tagId] : []', [counter]="counter", '(toggle)'='toggleTagId($event)', [isAllTagsVisible]="true")
+tt-tag-selector.icon-alignment--last(
+  [tags]="tags",
+  [selectedIds]="params.filter.tagId ? [params.filter.tagId] : []",
+  [counter]="counter",
+  (toggle)="toggleTagId($event)",
+  [isAllTagsVisible]="true"
+)

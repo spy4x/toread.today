@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { defaultFilter, Filter } from './filter.interface';
 import { ItemPriority, ItemStatus, ItemsCounter, Tag } from '../../../interfaces';
 import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
+import { RequestParams } from '../../../../services';
 
 @Component({
   selector: 'tt-items-filter',
@@ -13,35 +13,57 @@ import { ToggleTagEvent } from '../../../components/shared/items-list/list.compo
 export class ItemsFilterComponent {
   @Input() tags: Tag[];
   @Input() counter: ItemsCounter;
-  @Input() filter: Filter = defaultFilter;
-  @Output() changed = new EventEmitter<Filter>();
+  @Input() params: RequestParams;
+  @Output() changed = new EventEmitter<RequestParams>();
   statuses: ItemStatus[] = ['new', 'opened', 'finished'];
 
   toggleTagId(event: ToggleTagEvent) {
-    this.changed.emit({ ...this.filter, tagId: event.isSelected ? event.tagId : null });
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        tagId: event.isSelected ? event.tagId : null,
+      }
+    });
   }
 
   setStatus(status: null | ItemStatus) {
-    this.changed.emit({ ...this.filter, status, isFavourite: null });
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        status,
+        isFavourite: null
+      }
+    });
   }
 
   isStatus(status: null | ItemStatus): boolean {
-    return this.filter.status === status;
+    return this.params.filter.status === status;
   }
 
   isFavourite(): boolean {
-    return this.filter.isFavourite;
+    return this.params.filter.isFavourite;
   }
 
   setFavourite() {
-    this.changed.emit({ ...this.filter, status: null, isFavourite: true });
-  }
-
-  isPriority(priority: null | ItemPriority): boolean {
-    return this.filter.priority === priority;
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        status: null,
+        isFavourite: true
+      }
+    });
   }
 
   setPriority(priority: null | ItemPriority) {
-    this.changed.emit({ ...this.filter, priority });
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        priority,
+      }
+    });
   }
 }

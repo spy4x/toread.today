@@ -3,7 +3,9 @@ import { Item, ItemRating, Tag } from '../../../../interfaces';
 import {
   SetItemCommentEvent,
   SetItemPriorityEvent,
-  SetItemRatingEvent, SetItemTitleEvent, SetItemURLEvent,
+  SetItemRatingEvent,
+  SetItemTitleEvent,
+  SetItemURLEvent,
   ToggleItemFavouriteEvent,
   ToggleItemTagEvent,
   ToggleTagEvent
@@ -35,7 +37,9 @@ export class ListItemComponent {
   @Output() setURL = new EventEmitter<SetItemURLEvent>();
   isNoteVisible = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer
+  ) {}
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
@@ -76,7 +80,7 @@ export class ListItemComponent {
     if (!title || item.title === title) {
       return;
     }
-    this.setTitle.emit({item, title});
+    this.setTitle.emit({ item, title });
   }
 
   editURL(item: Item): void {
@@ -84,7 +88,7 @@ export class ListItemComponent {
     if (!url || item.url === url) {
       return;
     }
-    this.setURL.emit({item, url});
+    this.setURL.emit({ item, url });
   }
 
   getURL(item: Item): SafeUrl {

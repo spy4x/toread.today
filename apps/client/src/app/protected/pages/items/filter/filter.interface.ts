@@ -9,7 +9,7 @@ export interface Filter {
 
 export const defaultFilter: Filter = {
   tagId: null,
-  status: null,
+  status: 'new',
   isFavourite: null,
   priority: null,
 };

@@ -14,10 +14,6 @@ const routes: Routes = [
         loadChildren: './pages/add/add.module#AddModule'
       },
       {
-        path: 'dashboard',
-        loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
-      },
-      {
         path: ROUTER_CONSTANTS.items.path,
         loadChildren: './pages/items/items.module#ItemsModule'
       },
@@ -39,7 +35,7 @@ const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: 'dashboard'
+        redirectTo: ROUTER_CONSTANTS.items.path
       }
     ]
   },

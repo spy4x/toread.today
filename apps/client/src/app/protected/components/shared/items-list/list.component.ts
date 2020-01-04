@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Item, ItemPriority, ItemRating, Tag } from '../../../interfaces';
-import { Pagination } from '../../../pages/items/pagination.interface';
 import { trackByFn } from '../../../helpers';
+import { ResponseMeta } from '../../../../services';
 
 export interface ToggleTagEvent {
   tagId: string
@@ -52,7 +52,7 @@ export interface SetItemURLEvent {
 export class ListComponent {
   @Input() items: Item[];
   @Input() tags: Tag[] = [];
-  @Input() pagination: Pagination;
+  @Input() meta: ResponseMeta;
   @Output() startReading = new EventEmitter<string>();
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();
@@ -68,7 +68,9 @@ export class ListComponent {
   @Output() setURL = new EventEmitter<SetItemURLEvent>();
   @Output() loadPrev = new EventEmitter<void>();
   @Output() loadNext = new EventEmitter<void>();
+  @Output() setPaginationLimit = new EventEmitter<number>();
   trackByFn = trackByFn;
+  paginationLimits = [10,20,50,100];
 
   isZeroItems(): boolean {
     return this.items && !this.items.length;

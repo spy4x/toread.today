@@ -45,7 +45,7 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
           i.far.fa-check-circle
         span Import has been completed.
       br
-      a.button.is-primary(routerLink="/app/items", [queryParams]="{status: 'new'}") Go to imported links
+      a.button.is-primary(routerLink="/app/links", [queryParams]="{status: 'new'}") Go to imported links
 
 
 ng-template("#instructions"="")

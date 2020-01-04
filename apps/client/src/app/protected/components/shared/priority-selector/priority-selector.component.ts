@@ -13,6 +13,7 @@ export class PrioritySelectorComponent {
   @Input() counter: null | ItemsCounter = null;
   @Input() shouldShowAnyPriority = false;
   @Input() asButton = false;
+  @Input() isDropdownLeft = false;
   @Output() set = new EventEmitter<null | ItemPriority>();
 
   is(priority: null | ItemPriority): boolean {
