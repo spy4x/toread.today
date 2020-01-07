@@ -1,8 +1,8 @@
 ng-container(*ngIf="userService.user$ | async as user")
   nav.navbar.is-primary(role='navigation' aria-label='main navigation')
     .container
-      .navbar-brand([class.is-active]="addComponent.inputValue")
-        .navbar-item
+      .navbar-brand
+        .navbar-item.add-input-wrapper([class.is-active]="addComponent.inputValue")
           tt-items-add("#addComponent"="")
 
         .navbar-item.ml-auto(*ngIf="(uiService.isMobile$ | async) && !(connectionStatus.isOnline$ | async)", title="Offline mode is on.\n" +
@@ -75,8 +75,7 @@ ng-container(*ngIf="userService.user$ | async as user")
               "Looks like you're not connected to the Internet. Changes you make in offline mode will be synced when you reconnect.")
                 span.icon.has-text-warning
                   i.fas.fa-signal
-              .navbar-item
-                tt-notifications(*ngIf='!(uiService.isMobile$ | async)', '[userId]'='user.id')
+              tt-notifications.navbar-item(*ngIf='!(uiService.isMobile$ | async)', '[userId]'='user.id')
               .navbar-item
                 .dropdown.is-hoverable.is-right
                   .dropdown-trigger

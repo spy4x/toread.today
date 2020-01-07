@@ -1,8 +1,19 @@
 @import variables
 
 tt-sign-in
+  .hero-body
+    padding: $sidePadding
   .logo
-    font-size: $baseSize * 5
+    margin-bottom: $baseSize
+    .icon
+      $iconSize: $baseSize * 5
+      width: $iconSize
+      height: $iconSize
+      color: $white
+      i
+        width: $iconSize
+        height: $iconSize
+        font-size: $iconSize
   .text
     max-width: $mobile
     margin: 0 auto
@@ -14,6 +25,8 @@ tt-sign-in
         opacity: 0
       to
         opacity: 1
+    .subtitle
+      margin: $baseSize 0
   .welcome-back
     animation: $second fadeInFast
     margin-bottom: 0
@@ -22,6 +35,11 @@ tt-sign-in
         opacity: 0
       to
         opacity: 1
+
+  .oauth-providers
+    button
+      padding-left: $sidePadding
+      padding-right: $baseSize / 2
 
   .button--sign-up
     &:focus

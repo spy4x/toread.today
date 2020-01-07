@@ -8,16 +8,14 @@ section.hero.is-primary.is-fullheight
           .text
             a.has-text-white(routerLink="/")
               div.logo
-                span.icon.has-text-white
+                span.icon
                   i.far.fa-bookmark
-              h1.title
-                | Manage links for reading
-            h2.subtitle
-              | Sign in with
+              h1.title Toread.Today
+              h2.subtitle Sign in with
             .notification.is-warning.has-text-white(*ngIf="!(connectionStatus.isOnline$ | async); else signIn")
               span Your device is offline. Please restore connection to continue.
             ng-template("#signIn"="")
-              .buttons.is-centered
+              .buttons.is-centered.oauth-providers
                 button.button.is-primary.is-inverted.is-outlined(*ngFor="let provider of userService.oAuthMethods", (click)="userService.signIn(provider)")
                   span.icon
                     i.fab([ngClass]="'fa-'+provider")
@@ -42,7 +40,7 @@ section.hero.is-primary.is-fullheight
 
                 .field
                   .buttons.is-space-between
-                    button.button.is-primary.is-text.button--sign-up(type="button", (click)="userService.signUp(email, password)") Don't have an account yet?
+                    button.button.is-primary.is-text.button--sign-up(type="button", (click)="userService.signUp(email, password)") No account yet? Sign up
                     button.button.is-white Sign in
 
                 .notification.is-warning(*ngIf="userService.signError$ | async as signError")
