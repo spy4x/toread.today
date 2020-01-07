@@ -221,7 +221,7 @@ export class UserService {
           this._isSignInProgress$.next(true);
           await this.auth.auth.sendSignInLinkToEmail(email, {
             handleCodeInApp: true,
-            url: environment.frontendUrl + 'sign-in'
+            url: environment.frontendUrl + 'app'
           });
           this._isSignInProgress$.next(false);
           localStorage.setItem('emailForSignIn', email);

@@ -1,5 +1,7 @@
-ng-container(*ngIf="isSaving; else saveFinished")
-  button.button.is-loading.is-white.is-large Saving...
+.saving(*ngIf="isSaving; else saveFinished")
+  .notification
+    .text Saving...
+    progress.progress.is-small.is-primary(max="100") 15%
 
 ng-template("#saveFinished"="")
   .error-message(*ngIf="isError; else success")
