@@ -31,9 +31,9 @@
           i.fas.fa-cog(aria-hidden='true')
 
       .widget__body
-        tt-roadmap-activity([user]="userService.user$ | async",
+        tt-roadmap-activity([user]="userService.authorizedUserOnly$ | async",
                             (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
-        .field(*ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications === null")
+        .field(*ngIf="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications === null")
           .control
             .notification.is-small
               p Do you want to receive push notifications for related Roadmap activity? For example:
@@ -54,7 +54,7 @@
       .widget__body.is-paddingless
         tt-bricks-list(
           '[bricks]'='bricksNew$ | async',
-          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '[userId]'='userService.userId$ | async',
           '(vote)'="vote($event)",
           '(changeTitle)'="changeTitle($event)",
           '(changeType)'="changeType($event)",
@@ -69,7 +69,7 @@
       .widget__body.is-paddingless
         tt-bricks-list(
           '[bricks]'='bricksInProgress$ | async',
-          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '[userId]'='userService.userId$ | async',
           '(vote)'="vote($event)",
           '(changeTitle)'="changeTitle($event)",
           '(changeType)'="changeType($event)",
@@ -84,7 +84,7 @@
       .widget__body.is-paddingless
         tt-bricks-list(
           '[bricks]'='bricksDone$ | async',
-          '[userId]'='(userService.authorizedUserOnly$ | async).id',
+          '[userId]'='userService.userId$ | async',
           '(vote)'="vote($event)",
           '(changeTitle)'="changeTitle($event)",
           '(changeType)'="changeType($event)",

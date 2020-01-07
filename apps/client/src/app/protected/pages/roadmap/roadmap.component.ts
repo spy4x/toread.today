@@ -88,10 +88,10 @@ export class RoadmapComponent implements OnDestroy {
     let scoreDiff: number = rate;
     let likedBy: firestore.FieldValue;
     let dislikedBy: firestore.FieldValue;
-    const add = firestore.FieldValue.arrayUnion(this.userService.user.id);
-    const remove = firestore.FieldValue.arrayRemove(this.userService.user.id);
+    const add = firestore.FieldValue.arrayUnion(this.userService.userId);
+    const remove = firestore.FieldValue.arrayRemove(this.userService.userId);
     if (rate > 0) {
-      if (brick.likedBy.includes(this.userService.user.id)) {
+      if (brick.likedBy.includes(this.userService.userId)) {
         // double click on already voted button means - remove my vote
         scoreDiff = -1;
         likedBy = remove;
@@ -99,12 +99,12 @@ export class RoadmapComponent implements OnDestroy {
       } else {
         likedBy = add;
         dislikedBy = remove;
-        if (brick.dislikedBy.includes(this.userService.user.id)) {
+        if (brick.dislikedBy.includes(this.userService.userId)) {
           scoreDiff = 2;
         }
       }
     } else {
-      if (brick.dislikedBy.includes(this.userService.user.id)) {
+      if (brick.dislikedBy.includes(this.userService.userId)) {
         // double click on already voted button means - remove my vote
         scoreDiff = 1;
         likedBy = remove;
@@ -112,7 +112,7 @@ export class RoadmapComponent implements OnDestroy {
       } else {
         likedBy = remove;
         dislikedBy = add;
-        if (brick.likedBy.includes(this.userService.user.id)) {
+        if (brick.likedBy.includes(this.userService.userId)) {
           scoreDiff = -2;
         }
       }
@@ -161,10 +161,10 @@ export class RoadmapComponent implements OnDestroy {
       ...defaultRoadmapBrick,
       title,
       type,
-      createdBy: this.userService.user.id,
+      createdBy: this.userService.userId,
       createdAt: new Date(),
       score: 1,
-      likedBy: [this.userService.user.id]
+      likedBy: [this.userService.userId]
     };
     try {
       await this.firestore

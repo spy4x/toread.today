@@ -1,7 +1,7 @@
-ng-template("#notAuthorized"="")
+ng-template("#notAuthenticated"="")
   tt-sign-in
 
-ng-container(*ngIf="userService.user$ | async as user; else notAuthorized")
+ng-container(*ngIf="userService.isAuthenticated$ | async; else notAuthenticated")
   tt-navbar
   .container
     router-outlet

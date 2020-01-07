@@ -28,12 +28,12 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
   dateFormat = 'd MMM yyyy HH:mm';
   notificationsLimit = 5;
   // TODO: Move to NotificationService
-  allNotifications$: Observable<Notification[]> = this.userService.authorizedUserOnly$.pipe(
-    switchMap((user: User) =>
+  allNotifications$: Observable<Notification[]> = this.userService.userId$.pipe(
+    switchMap((userId: string) =>
       this.firestore
         .collection<Notification>('notifications', ref =>
           ref
-            .where('userId', '==', user.id)
+            .where('userId', '==', userId)
             .where('type', '==', 'roadmap')
             .orderBy('createdAt', 'desc')
             .limit(this.notificationsLimit)
@@ -41,14 +41,14 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
         .valueChanges({ idField: 'id' })
         .pipe(
           takeUntil(this.userService.signedOut$),
-          takeUntil(this.componentDestroy$)
-        )
+          takeUntil(this.componentDestroy$),
+          catchError(error => {
+            this.logger.error(
+              { messageForDev: 'allNotifications$ error', messageForUser: 'Failed to fetch activity', error });
+            return of([]);
+          })
+        ),
     ),
-    catchError(error => {
-      this.logger.error(
-        { messageForDev: 'allNotifications$ error', messageForUser: 'Failed to fetch activity', error });
-      return of([]);
-    }),
     shareReplay(1)
   );
   newNotifications$: Observable<Notification[]>;

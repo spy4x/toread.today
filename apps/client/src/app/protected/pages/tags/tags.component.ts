@@ -27,7 +27,7 @@ export class TagsComponent {
 
   async create(tag: Tag) {
     // TODO: Move to tagService
-    tag.createdBy = this.userService.user.id;
+    tag.createdBy = this.userService.userId;
     try {
       await this.firestore
         .collection('tags')

@@ -48,7 +48,7 @@ export class ItemService {
       comment: '',
       withComment: false,
       isFavourite: false,
-      createdBy: this.userService.user.id,
+      createdBy: this.userService.userId,
       createdAt: new Date(),
       openedAt: null,
       finishedAt: null,
@@ -66,7 +66,7 @@ export class ItemService {
     const itemToCreate = this.scaffold(skeleton);
     return this.firestore
       .collection<Item>('items',
-        ref => ref.where('url', '==', itemToCreate.url).where('createdBy', '==', this.userService.user.id).limit(1))
+        ref => ref.where('url', '==', itemToCreate.url).where('createdBy', '==', this.userService.userId).limit(1))
       .valueChanges({ idField: 'id' })
       .pipe(
         take(1),
@@ -144,8 +144,7 @@ export class ItemService {
 
   async bulkCreate(items: ItemSkeleton[]): Promise<boolean> {
     try {
-      const user = this.userService.user;
-      const userId = user.id;
+      const userId = this.userService.userId;
       const tagsCache = new Map<string, string>();
       const initialValue: string[] = [];
       const reducer = (acc: string[], cur: ItemSkeleton) => {
@@ -346,18 +345,18 @@ export class ItemService {
 
   getCounter$(): Observable<null | ItemsCounter> {
     return this.firestore
-      .doc<ItemsCounter>(`counterItems/${this.userService.user.id}`)
+      .doc<ItemsCounter>(`counterItems/${this.userService.userId}`)
       .valueChanges()
       .pipe(
         map((counter: ItemsCounter) => {
           if (counter) {
-            return { ...counter, id: this.userService.user.id };
+            return { ...counter, id: this.userService.userId };
           } else {
             return null;
           }
         }),
         catchError(error => {
-          console.error(`getCounter$ for userId:`, this.userService.user.id, error);
+          console.error(`getCounter$ for userId:`, this.userService.userId, error);
           return of(null);
         })
       );

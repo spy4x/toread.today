@@ -1,7 +1,7 @@
 .widget.widget--push-notifications
   .widget__header
-    h2.widget__header__title 
-      span Security 
+    h2.widget__header__title
+      span Security
       .button.is-loading.is-white(*ngIf="userService.isSignInProgress$ | async") Loading
   .widget__body.widget__body--is-paddingless
     table.table.is-fullwidth
@@ -11,7 +11,7 @@
             i.fas.fa-lock
           span Password
         td
-          button.button.is-small.is-warning((click)="userService.restorePassword(userService.user.email)") 
+          button.button.is-small.is-warning((click)="userService.restorePassword(userService.user.email)")
             span.icon
               i.fas.fa-key
             span Change/Set
@@ -26,16 +26,16 @@
             span {{ap.data}}
             button.button.is-text.is-small((click)="userService.unlink(ap.provider)") Unlink
           ng-template("#linkProvider"="")
-            button.button.is-small.is-info((click)="userService.link(ap.provider)") 
+            button.button.is-small.is-info((click)="userService.link(ap.provider)")
               span.icon
                 i.fas.fa-link
               span Link
 
     .side-margin
-      .notification.is-warning(*ngIf="userService.signError$ | async as signError") 
+      .notification.is-warning(*ngIf="userService.signError$ | async as signError")
         button.delete((click)="userService.clearNotification('error')")
         span {{signError}}
-      .notification.is-info(*ngIf="userService.signMessage$ | async as signMessage") 
+      .notification.is-info(*ngIf="userService.signMessage$ | async as signMessage")
         button.delete((click)="userService.clearNotification('message')")
         span {{signMessage}}
 
@@ -52,20 +52,20 @@
             th Is turned on for this browser?
         tr
           td Roadmap (related activity)
-          td 
+          td
             label.checkbox
               input(
                 type='checkbox',
-                [ngModel]="(userService.user$ | async).sendRoadmapActivityPushNotifications",
+                [ngModel]="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications",
                 (ngModelChange)="userService.setSettingSendRoadmapActivityPushNotifications($event)"
               )
           td
             span.icon.has-text-success(
-              *ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications && messagingService.isGranted()",
+              *ngIf="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications && messagingService.isGranted()",
               title="Push notifications are activated for this browser"
             )
               i.far.fa-check-circle
-            ng-container(*ngIf="(userService.user$ | async).sendRoadmapActivityPushNotifications")
+            ng-container(*ngIf="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications")
               button.button.is-primary.is-small(
                   *ngIf="messagingService.isDefault()",
                   (click)="userService.activatePushNotifications()")

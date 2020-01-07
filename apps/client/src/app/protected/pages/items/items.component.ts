@@ -34,7 +34,6 @@ export class ItemsComponent implements OnInit, OnDestroy {
   }, this.componentDestroy$);
   counter$ = this.itemService.getCounter$();
 
-  user$ = this.userService.authorizedUserOnly$;
   month$ = new BehaviorSubject<number>(new Date().getMonth() + 1);
   year$ = new BehaviorSubject<number>(new Date().getFullYear());
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -48,14 +47,13 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   // TODO: Move to ItemService
   statistics$: Observable<NewFinishedMonthlyStatistics> = combineLatest([
-    this.user$,
+    this.userService.userId$,
     this.month$,
     this.year$
-  ], (user, month, year) => ({ user, month, year }))
+  ], (userId, month, year) => ({ userId, month, year }))
     .pipe(
-      switchMap(({ user, month, year }: { user: User, month: number, year: number }) => {
-        return this.firestore
-          .doc<NewFinishedMonthlyStatistics>(`counterNewFinished/${year}_${month}_${user.id}`)
+      switchMap(({ userId, month, year }: { userId: string, month: number, year: number }) => {
+        return this.firestore.doc<NewFinishedMonthlyStatistics>(`counterNewFinished/${year}_${month}_${userId}`)
           .valueChanges()
           .pipe(
             takeUntil(this.userService.signedOut$),

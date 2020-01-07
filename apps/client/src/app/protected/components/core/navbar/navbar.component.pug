@@ -1,4 +1,4 @@
-ng-container(*ngIf="userService.user$ | async as user")
+ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
   nav.navbar.is-primary(role='navigation' aria-label='main navigation')
     .container
       .navbar-brand

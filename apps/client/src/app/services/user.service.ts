@@ -36,6 +36,8 @@ export class UserService {
   private _isSignInProgress$ = new BehaviorSubject<boolean>(false);
   collectionPath = `users`;
   firebaseUser$ = this._firebaseUser$.asObservable();
+  userId: null | string = null;
+  userId$ = this._firebaseUser$.pipe(map(u => u ? u.uid : null), shareReplay(1));
   isAuthenticated$ = this._firebaseUser$.pipe(map(v => !!v));
   signedIn$ = this._firebaseUser$.pipe(filter(v => !!v));
   signedOut$ = this._firebaseUser$.pipe(filter(v => !v));
@@ -58,6 +60,7 @@ export class UserService {
     private logger: LoggerService) {
     this.auth.authState.pipe(
       tap(async user => {
+        this.userId = user ? user.uid : null;
         this.logger.setUser(user);
         this._authState$.next(user ? AuthStates.authorising : AuthStates.notAuthenticated);
         if (user) {
@@ -350,9 +353,8 @@ export class UserService {
   }
 
   activatePushNotifications(): void {
-    this.user$
+    this.authorizedUserOnly$
       .pipe(
-        filter(v => !!v),
         take(1),
         switchMap(() => this
           .pushNotificationsService
