@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { BehaviorSubject, combineLatest, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 import { LoggerService } from '../logger.service';
 import { UserService } from '../user.service';
@@ -69,7 +69,7 @@ export class ItemService {
         ref => ref.where('url', '==', itemToCreate.url).where('createdBy', '==', this.userService.user.id).limit(1))
       .valueChanges({ idField: 'id' })
       .pipe(
-        first(),
+        take(1),
         map(results => {
           if (results.length) {
             const itemExisting = results[0] as Item;
@@ -300,7 +300,7 @@ export class ItemService {
                 })
                 .valueChanges()
                 .pipe(
-                  first(),
+                  take(1),
                   catchError(error => {
                     this.logger.error({
                       messageForDev: 'getRequest() error',

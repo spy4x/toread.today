@@ -1,18 +1,18 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
-  ViewChild,
-  ViewEncapsulation,
-  AfterViewInit,
   OnInit,
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
-import { catchError, first, map, shareReplay, takeUntil, merge, filter } from 'rxjs/operators';
+import { catchError, filter, map, merge, shareReplay, take, takeUntil } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
 import { Notification, User } from '../../../interfaces';
-import { LoggerService, UserService, PushNotificationsService, UpdateService } from '../../../../services';
+import { LoggerService, PushNotificationsService, UpdateService, UserService } from '../../../../services';
 import { DropdownDirective } from '../../shared/dropdown/dropdown.directive';
 
 const USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE_KEY = 'USER_DOESNT_WANT_TO_RECEIVE_PUSH_NOTIFICATIONS_ON_THIS_DEVICE';
@@ -40,7 +40,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
   isPushNotificationsQuestionVisible$ = this.userService
     .authorizedUserOnly$
     .pipe(map((user: User) =>
-      !!user.sendRoadmapActivityPushNotifications && this.pushNotificationsService.isDefault() && !this.arePushNotificationsDisabledInLocalStorage())
+      !!user.sendRoadmapActivityPushNotifications && this.pushNotificationsService.isDefault() &&
+      !this.arePushNotificationsDisabledInLocalStorage())
     );
 
 
@@ -104,7 +105,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.error$.pipe(
       merge(this.isAnyNewNotification$),
       takeUntil(this.componentDestroy$),
-      filter(v => !!v),
+      filter(v => !!v)
     ).subscribe(v => {
       this.dropdown.open();
     });
@@ -116,7 +117,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   markNewAsRead(): void {
-    this.newNotifications$.pipe(first()).subscribe((notifications: Notification[]) => {
+    this.newNotifications$.pipe(take(1)).subscribe((notifications: Notification[]) => {
       notifications.forEach(n => this.markAsRead(n.id));
     });
   }

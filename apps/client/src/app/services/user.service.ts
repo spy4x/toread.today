@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, filter, first, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, first, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { User as FirebaseUser, auth } from 'firebase/app';
 import { FCMToken, User } from '../protected/interfaces';
 import { LoggerService } from './logger.service';
@@ -353,13 +353,13 @@ export class UserService {
     this.user$
       .pipe(
         filter(v => !!v),
-        first(),
+        take(1),
         switchMap(() => this
           .pushNotificationsService
           .getToken$()
           .pipe(
             filter(v => !!v),
-            first(),
+            take(1),
             switchMap((token: string) => this.saveFCMToken(token)),
             catchError(error => {
               if (error.name === 'EmptyError') {

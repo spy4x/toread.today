@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of, Subject } from 'rxjs';
-import { catchError, first, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, switchMap, take, takeUntil } from 'rxjs/operators';
 import { LoggerService, UserService } from '../../../../services';
 import { User, Notification } from '../../../interfaces';
 
@@ -75,7 +75,7 @@ export class RoadmapActivityComponent implements OnInit, OnDestroy {
   }
 
   markNewAsRead(): void {
-    this.newNotifications$.pipe(first()).subscribe((notifications: Notification[]) => {
+    this.newNotifications$.pipe(take(1)).subscribe((notifications: Notification[]) => {
       notifications.forEach(n => this.markAsRead(n.id));
     });
   }

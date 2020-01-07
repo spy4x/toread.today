@@ -44,14 +44,14 @@ export class TagService {
   //   const tag = this.scaffold(skeleton);
   //   return this.afa.authState
   //     .pipe(
-  //       first(),
+  //       take(1),
   //       switchMap((user: User) =>
   //         this.firestore
   //           .collection<Tag>('tags',
   //             ref => ref.where('url', '==', tag.url).where('createdBy', '==', user.uid).limit(1))
   //           .valueChanges({ idField: 'id' })
   //           .pipe(
-  //             first(),
+  //             take(1),
   //             switchMap(async results => {
   //               if (results.length) {
   //                 return results[0];
@@ -82,7 +82,7 @@ export class TagService {
   //   // TODO: use custom AuthService to get User
   //   return this.afa.authState
   //     .pipe(
-  //       first(),
+  //       take(1),
   //       switchMap((user: User) => user.getIdToken()),
   //       switchMap(token => {
   //         const url = environment.apiPath + this.apiPathBulk;
