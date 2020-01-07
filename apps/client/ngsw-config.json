@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.39.1",
-    "description": "UI improvements for mobile devices."
+    "version": "1.39.2",
+    "description": "Improve URL parsing during \"Share to PWA\" feature use."
   },
   "assetGroups": [
     {

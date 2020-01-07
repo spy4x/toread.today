@@ -4,13 +4,19 @@
     progress.progress.is-small.is-primary(max="100") 15%
 
 ng-template("#saveFinished"="")
-  .error-message(*ngIf="isError; else success")
+  .error-message(*ngIf="error; else success")
     .has-text-centered
       h1.title.has-text-danger
         span.icon
           i.fas.fa-exclamation-triangle
         span Save failed :(
-      h2.subtitle Refresh page to retry
+      h2.subtitle.has-text-danger {{error.message}}
+      ng-container(*ngIf="error.type === 'url-invalid'")
+        p Fix URL and click "Try again".
+        textarea.textarea([(ngModel)]="url", rows="3", placeholder="URL")
+        .buttons.is-right
+          button.button.is-primary((click)="save()" ) Try again
+
   ng-template("#success"="")
     .success-message
       .has-text-centered
