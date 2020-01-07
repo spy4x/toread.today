@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.39.3",
-    "description": "Speed up application start."
+    "version": "1.39.4",
+    "description": "Disable PWA for iOS due to UX issues."
   },
   "assetGroups": [
     {
