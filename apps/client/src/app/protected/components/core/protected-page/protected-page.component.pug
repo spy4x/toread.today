@@ -3,5 +3,5 @@ ng-template("#notAuthenticated"="")
 
 ng-container(*ngIf="userService.isAuthenticated$ | async; else notAuthenticated")
   tt-navbar
-  .container
+  .container.has-navbar-fixed-top
     router-outlet

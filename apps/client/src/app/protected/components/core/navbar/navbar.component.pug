@@ -1,5 +1,5 @@
 ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
-  nav.navbar.is-primary(role='navigation' aria-label='main navigation')
+  nav.navbar.is-primary.is-fixed-top(role='navigation' aria-label='main navigation')
     .container
       .navbar-brand
         .navbar-item.add-input-wrapper([class.is-active]="addComponent.inputValue")

@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.39.9",
-    "description": "Statistics items are now links."
+    "version": "1.39.10",
+    "description": "UI - Make header fixed on the top."
   },
   "assetGroups": [
     {
