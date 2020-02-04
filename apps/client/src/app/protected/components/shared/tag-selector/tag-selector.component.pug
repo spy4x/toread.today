@@ -1,4 +1,4 @@
-.dropdown.is-hoverable([class.is-right]="!isDropdownLeft")
+.dropdown.is-hoverable.keep-on-click([class.is-right]="!isDropdownLeft")
   .dropdown-trigger
     ng-container('*ngIf'='!isDropdownTriggerCustom')
       a([ngClass]="{'has-text-info': selectedIds.length, 'has-text-grey-light': !selectedIds.length, 'button': asButton}")

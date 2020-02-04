@@ -9,7 +9,7 @@
     span.has-text-warning(*ngIf="!params.filter.status && isFavourite()")
       span Favourites
     span(*ngIf="!params.filter.status && !isFavourite()")
-      span All
+      span All links
     span.icon.is-small
       i.fas.fa-angle-down(aria-hidden='true')
   .dropdown-menu.dropdown-menu--w-none(role='menu')
@@ -17,7 +17,7 @@
       a.dropdown-item.has-text-grey-light((click)="setStatus(null)")
         span.icon
           i.fas.fa-list
-        span All
+        span All links
       a.dropdown-item(
         (click)="setStatus('new')"
       )
