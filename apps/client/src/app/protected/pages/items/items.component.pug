@@ -2,7 +2,6 @@
   .column
     .widget.widget--read-today
       .widget__header
-        h2.widget__header__title Read Today
         tt-items-filter(
           [tags]="tagService.tags$ | async",
           [params]="itemsRequest.params$ | async",
