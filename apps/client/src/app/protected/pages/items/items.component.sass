@@ -1,7 +1,11 @@
 @import variables
 
 tt-items
-  .widget.widget--recently-opened
+  .widget--recently-opened
     .more
       text-align: right
       margin: $baseSize $sidePadding
+  .widget--statistics-global
+    .level-item:hover
+      transform: scale(1.1, 1.1)
+      transition: .2s linear transform

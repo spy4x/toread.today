@@ -75,24 +75,19 @@
         nav.level.is-mobile.has-text-centered
 
           .level-item(*ngIf="counter['statuses.new'] >= 0")
-            div
+            a.has-text-dark(routerLink="/app/links", [queryParams]="{status: 'new'}")
               p.heading New
               p.title {{counter['statuses.new']}}
 
-          .level-item.has-text-info(*ngIf="counter['statuses.opened']>= 0")
-            div
+          .level-item(*ngIf="counter['statuses.opened']>= 0")
+            a.has-text-info(routerLink="/app/links", [queryParams]="{status: 'opened'}")
               p.heading Started
               p.title.has-text-info {{counter['statuses.opened']}}
 
-          .level-item.has-text-success(*ngIf="counter['statuses.finished']>= 0")
-            div
+          .level-item(*ngIf="counter['statuses.finished']>= 0")
+            a.has-text-success(routerLink="/app/links", [queryParams]="{status: 'finished'}")
               p.heading Finished
               p.title.has-text-success {{counter['statuses.finished']}}
-
-          .level-item.has-text-grey-light(*ngIf="counter['all']>= 0")
-            div
-              p.heading All
-              p.title.has-text-grey-light {{counter['all']}}
 
       ng-template("#noCounter"="")
         .widget__info

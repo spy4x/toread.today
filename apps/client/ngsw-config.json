@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.39.8",
-    "description": "Small UI improvements."
+    "version": "1.39.9",
+    "description": "Statistics items are now links."
   },
   "assetGroups": [
     {
