@@ -12,5 +12,9 @@ tt-items-filter
   .dropdown
     .dropdown-trigger
       text-transform: capitalize
-    span.icon + span
-      margin-left: $baseSize / 5
+    span.icon + span, span + span.icon
+      margin-left: $baseSize / 4
+
+  .filter--status .dropdown-trigger
+    .icon
+      font-size: 1.1rem

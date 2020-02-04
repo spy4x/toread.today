@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.39.6",
-    "description": "Automatically close dropdown after selection."
+    "version": "1.39.7",
+    "description": "Small UI improvements."
   },
   "assetGroups": [
     {

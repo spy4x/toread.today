@@ -1,14 +1,24 @@
-.dropdown.is-hoverable.is-right.icon-alignment--first
+.dropdown.is-hoverable.is-right.icon-alignment--first.filter--status
   .dropdown-trigger.widget__header__title
     span(*ngIf="params.filter.status === 'new'")
+      span.icon
+        i.far.fa-circle
       span Read Today
     span.has-text-info(*ngIf="params.filter.status === 'opened'")
+      span.icon
+        i.far.fa-play-circle
       span Started
     span.has-text-success(*ngIf="params.filter.status === 'finished'")
+      span.icon
+        i.far.fa-check-circle
       span Finished
     span.has-text-warning(*ngIf="!params.filter.status && isFavourite()")
+      span.icon
+        i.fas.fa-star
       span Favourites
     span(*ngIf="!params.filter.status && !isFavourite()")
+      span.icon
+        i.fas.fa-list
       span All links
     span.icon.is-small
       i.fas.fa-angle-down(aria-hidden='true')
