@@ -12,7 +12,7 @@ service cloud.firestore {
       allow list: if isUser(getDoc().createdBy);
       allow create: if isTag(getDocInc(), id);
       allow update: if isTag(getDocInc(), id);
-      allow delete: if isUser(getDoc().createdBy);
+      allow delete: if false;
     }
     match /notifications/{id} {
       allow get: if resource == null || isUser(getDoc().userId);

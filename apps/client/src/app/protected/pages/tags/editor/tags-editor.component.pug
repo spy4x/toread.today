@@ -32,7 +32,7 @@
           (click)="routerHelper.toItemsWithFilter({tagId:tag.id})"
       )
         span {{tag.title}}
-        span.counter {{counter ? ((counter['tags.'+tag.id] || 0) + ' item(s)') : ''}}
+        span.counter {{counter ? ((counter['tags.'+tag.id] || 0) + ' link(s)') : ''}}
       .field.has-addons('*ngIf'='isInEditMode(tag.id)')
         p.control
           input.input(
@@ -51,9 +51,10 @@
               i.fas.fa-times
 
     .tag-item--actions
-      ng-container(*ngIf="tag.mergeIntoTagId; else normalActions")
+      ng-container(*ngIf="tag.mergeIntoTagId || tag.commandToDelete; else normalActions")
         button.button.is-loading.is-text :)
-        span.has-text-grey-light Merging into other tag...
+        span.has-text-grey-light(*ngIf="tag.mergeIntoTagId") Merging into other tag...
+        span.has-text-grey-light(*ngIf="tag.commandToDelete") Deleting...
       ng-template("#normalActions"="")
         a.icon.has-text-primary(
             *ngIf="!isInEditMode(tag.id)",
@@ -62,11 +63,12 @@
           i.far.fa-edit
 
         .dropdown.is-hoverable.is-right
-          .dropdown-trigger
+          .dropdown-trigger(title="Set color")
             a.icon([ngStyle]="{color: tag.color}")
               i.fas.fa-circle
           .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
             .dropdown-content
+              .dropdown-item Color:
               a.dropdown-item(
                   '*ngFor'='let color of colors',
                   '(click)'='setColor(tag, color)',)
@@ -83,8 +85,20 @@
           a.icon(title="Merge into other tag")
             i.fas.fa-code-branch
 
-        a.icon.has-text-danger.icon-alignment--last(title="Delete tag", (click)="deleteHandler(tag)")
-          i.far.fa-trash-alt
+        .dropdown.is-hoverable.is-right
+          .dropdown-trigger
+            a.icon.has-text-danger.icon-alignment--last(title="Delete tag")
+              i.far.fa-trash-alt
+          .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+            .dropdown-content
+              a.dropdown-item((click)="deleteHandler(tag, 'onlyTag')")
+                span.icon.has-text-danger
+                  i.far.fa-trash-alt
+                span Only tag
+              a.dropdown-item((click)="deleteHandler(tag, 'withItems')")
+                span.icon.has-text-danger
+                  i.far.fa-trash-alt
+                span Tag and {{counter ? counter['tags.'+tag.id] : ''}} related link(s)
 
   .buttons.is-centered.my-3(*ngIf="!tags?.length")
     span.button.is-static No tags yet.

@@ -467,6 +467,7 @@ export class ItemService {
       title: tagIdOrTitle,
       color: '#209cee',
       mergeIntoTagId: null,
+      commandToDelete: null,
       createdBy: userId,
       createdAt: new Date()
     };

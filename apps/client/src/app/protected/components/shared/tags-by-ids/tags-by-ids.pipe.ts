@@ -19,6 +19,7 @@ export class TagsByIdsPipe implements PipeTransform {
           title: '',
           color: '',
           mergeIntoTagId: null,
+          commandToDelete: null,
           createdBy: '',
           createdAt: new Date(),
         };

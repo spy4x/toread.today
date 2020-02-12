@@ -49,16 +49,4 @@ export class TagsComponent {
         { messageForDev: 'updateTag() error:', messageForUser: 'Failed to update tag.', error, params: { ...event } });
     }
   }
-
-  async delete(tagId: string) {
-    // TODO: Move to tagService
-    try {
-      await this.firestore
-        .doc('tags/' + tagId)
-        .delete();
-    } catch (error) {
-      this.logger.error(
-        { messageForDev: 'deleteTag() error:', messageForUser: 'Failed to delete tag.', error, params: { tagId } });
-    }
-  }
 }

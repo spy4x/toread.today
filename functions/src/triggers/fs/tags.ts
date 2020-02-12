@@ -5,9 +5,9 @@ import { Tag } from '../../+utils/interfaces';
 export const fsTags = getTriggerFirestoreOnWrite<Tag>({
   collectionName: 'tags',
   onUpdate: async (before, after) => {
-    await featureMergeTags(before, after);
-  },
-  onDelete: async tag => {
-    await featureDeleteTag(tag);
+    await Promise.all([
+      featureMergeTags(before, after),
+      featureDeleteTag(before, after),
+    ]);
   }
 });
