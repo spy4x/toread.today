@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.40.0",
-    "description": "Tags - On tag delete ask \"Do you want items to be deleted too?\""
+    "version": "1.40.1",
+    "description": "Add \"Contact developer\" option to app menu."
   },
   "assetGroups": [
     {
