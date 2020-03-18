@@ -41,7 +41,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
     .pipe(map(([year, month]: number[]) => {
       const today = new Date();
       const todayYear = today.getFullYear();
-      const todayMonth = today.getMonth();
+      const todayMonth = today.getMonth() + 1;
       return year < todayYear || (year === todayYear && month < todayMonth);
     }));
 
