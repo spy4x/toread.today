@@ -28,7 +28,8 @@ export const fsItems = getTriggerFirestoreOnWrite<Item>({
   onDelete: async item => {
     await Promise.all([
       featureCheckUniquenessOfURL.onDelete(item),
-      featureItemsCounter.onDelete(item)
+      featureItemsCounter.onDelete(item),
+      featureNewFinishedCounter.onDelete(item),
     ]);
   }
 });
