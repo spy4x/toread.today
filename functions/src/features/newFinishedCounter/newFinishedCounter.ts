@@ -19,7 +19,7 @@ export const featureNewFinishedCounter = {
       await changeCounter(after, { finished: 1 });
     }
     if (before.status === 'finished' && after.status !== 'finished') {
-      await changeCounter(after, { finished: -1 });
+      await changeCounter(before, { finished: -1 });
     }
   },
   onDelete: async (item: Item): Promise<void> => {
