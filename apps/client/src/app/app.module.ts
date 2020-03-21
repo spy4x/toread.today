@@ -23,6 +23,7 @@ import {
 } from './services';
 import { environment } from '../environments/environment';
 import { firestore as Firestore } from 'firebase/app';
+import { AngularFireAnalyticsModule, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
 
 const routes: Routes = [
   {
@@ -51,6 +52,7 @@ const routes: Routes = [
     AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
     AngularFireAuthModule,
     AngularFireMessagingModule,
+    AngularFireAnalyticsModule,
     ServiceWorkerModule.register('ngsw-worker.js',
       { enabled: environment.production, registrationStrategy: 'registerImmediately' })
   ],
@@ -65,6 +67,8 @@ const routes: Routes = [
     PushNotificationsService,
     NotificationsService,
     UpdateService,
+    ScreenTrackingService,
+    UserTrackingService,
     {
       provide: ErrorHandler,
       useClass: SentryErrorHandler

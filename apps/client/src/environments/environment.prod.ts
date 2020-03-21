@@ -7,9 +7,10 @@ export const environment = {
     projectId: 'toread-today',
     storageBucket: 'toread-today.appspot.com',
     messagingSenderId: '565165890761',
-    appId: '1:565165890761:web:56e43af8e77fb5a3'
+    appId: '1:565165890761:web:56e43af8e77fb5a3',
+    measurementId: 'G-80MGZ0RNV3'
   },
   sentry: 'https://53d9978b2e1e4b47b3c2ff8445e38602@sentry.io/1529691',
   apiPath: 'https://toread.today/api/',
-  frontendUrl: 'https://toread.today/',
+  frontendUrl: 'https://toread.today/'
 };

@@ -11,7 +11,8 @@ export const environment = {
     projectId: 'toread-today-staging',
     storageBucket: 'toread-today-staging.appspot.com',
     messagingSenderId: '95014496389',
-    appId: '1:95014496389:web:b2e97188906c31fe1c61ec'
+    appId: '1:95014496389:web:b2e97188906c31fe1c61ec',
+    measurementId: 'G-80MGZ0RNV3'
   },
   sentry: '',
   apiPath: 'https://toread-today-staging.web.app/api/',

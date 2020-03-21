@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.40.1",
-    "description": "Add \"Contact developer\" option to app menu."
+    "version": "1.40.2",
+    "description": "Add \"Google Analytics\"."
   },
   "assetGroups": [
     {
