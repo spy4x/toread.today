@@ -23,7 +23,13 @@ import {
 } from './services';
 import { environment } from '../environments/environment';
 import { firestore as Firestore } from 'firebase/app';
-import { AngularFireAnalyticsModule, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
+import {
+  AngularFireAnalyticsModule,
+  APP_VERSION,
+  ScreenTrackingService,
+  UserTrackingService
+} from '@angular/fire/analytics';
+const { appData } = require('../../ngsw-config.json');
 
 const routes: Routes = [
   {
@@ -77,6 +83,9 @@ const routes: Routes = [
       provide: FirestoreSettingsToken, useValue: <Settings>{
         cacheSizeBytes: Firestore.CACHE_SIZE_UNLIMITED
       }
+    },
+    {
+      provide: APP_VERSION, useValue: appData.version
     }
   ],
   bootstrap: [AppComponent]
