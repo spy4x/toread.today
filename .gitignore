@@ -1,9 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
-/out-tsc
+dist
+tmp
+out-tsc
 
 # dependencies
 node_modules
@@ -28,10 +28,7 @@ node_modules
 /.sass-cache
 /connect.lock
 /coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
+*.log
 /typings
 
 # System Files
@@ -39,7 +36,6 @@ testem.log
 Thumbs.db
 
 # Firebase
-.firebase/
+.firebase
 /public
-firebase-debug.log
-/functions/dist/
+.runtimeconfig.json
