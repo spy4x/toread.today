@@ -3,31 +3,25 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
   "functions": {
-    "source": "functions",
+    "source": "dist/apps/api",
     "predeploy": [
-      "yarn --cwd \"$RESOURCE_DIR\" lint",
-      "yarn --cwd \"$RESOURCE_DIR\" build"
+      "yarn build api --prod",
+      "node tools/scripts/build-firebase-functions-package-json.js"
     ]
   },
   "hosting": {
-    "public": "public",
+    "public": "dist/apps/web",
+    "predeploy": [
+      "yarn build web --prod",
+      "yarn fix-ngsw"
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "predeploy": [
-      "yarn build"
-    ],
     "rewrites": [
-      {
-        "source": "/api/**",
-        "function": "https"
-      },
       {
         "source": "**",
         "destination": "/index.html"
@@ -58,6 +52,9 @@
       }
     ]
   },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "emulators": {
     "functions": {
       "port": 5001
@@ -67,9 +64,6 @@
     },
     "hosting": {
       "port": 5000
-    },
-    "pubsub": {
-      "port": 8085
     }
   }
 }

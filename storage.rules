@@ -1,20 +1,7 @@
 service firebase.storage {
   match /b/{bucket}/o {
-  	allow read: if false;
-    allow write:  if false;
-
-//     function isUser(userId) {
-//       return request.auth.uid == userId;
-//     }
-
-//     function isReqLessThanMB(mbAmount) {
-//       return request.resource.size < mbAmount * 1024 * 1024;
-//     }
-
-//     match /users/{userId}/imports/{fileId} {
-//       allow read: if isUser(userId);
-//       allow write: if isUser(userId)
-//                    && isReqLessThanMB(10);
-//     }
+    match /{allPaths=**} {
+      allow read, write: if request.auth!=null;
+    }
   }
 }
