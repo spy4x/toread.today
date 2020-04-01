@@ -1,6 +1,6 @@
 .add-input.field.has-addons.is-fullwidth
   .control.is-expanded
-    input.input(
+    input.input.has-text-dark(
         placeholder='Add new tag or filter existing tags',
         [(ngModel)]="newTagTitle"
         '(keydown.enter)'='createHandler(newTagTitle, newTagColor)')
@@ -35,7 +35,7 @@
         span.counter {{counter ? ((counter['tags.'+tag.id] || 0) + ' link(s)') : ''}}
       .field.has-addons('*ngIf'='isInEditMode(tag.id)')
         p.control
-          input.input(
+          input.input.has-text-dark(
           type='text',
           placeholder='Tag title',
           '#input'='',
