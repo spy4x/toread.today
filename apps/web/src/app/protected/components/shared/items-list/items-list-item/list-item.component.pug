@@ -28,11 +28,6 @@
         '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
       i.fas.fa-exclamation-triangle
 
-    a.button.is-info.is-small(*ngIf="item.status === 'new'", [href]='getURL(item)', target='_blank', (click)='read(item)')
-      span.icon
-        i.fas.fa-play
-      span Start
-
     .dropdown.is-hoverable.is-right(*ngIf="item.status === 'finished'")
       .dropdown-trigger
         a.icon([ngClass]="{'has-text-primary': item.rating === 1, 'has-text-danger': item.rating === -1, 'has-text-grey-light': !item.rating}")
