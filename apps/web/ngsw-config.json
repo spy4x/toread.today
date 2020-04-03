@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.40.4",
-    "description": "Show authenticated users their status on landing page."
+    "version": "1.42.0",
+    "description": "Add \"New\" and \"Random\" to the list of status filters."
   },
   "assetGroups": [
     {

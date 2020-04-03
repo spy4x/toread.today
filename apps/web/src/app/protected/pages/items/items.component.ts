@@ -26,7 +26,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
   componentDestroy$ = new Subject<void>();
   itemsRequest = this.itemService.getRequest(
     {
-      filter: { status: 'new' },
+      filter: defaultFilter,
       sort: [
         { field: 'priority', direction: 'desc' },
         { field: 'createdAt', direction: 'desc' }
@@ -95,13 +95,12 @@ export class ItemsComponent implements OnInit, OnDestroy {
       const status = params[ROUTER_CONSTANTS.items.params.status];
       const isFavourite = params[ROUTER_CONSTANTS.items.params.isFavourite];
       const priority = params[ROUTER_CONSTANTS.items.params.priority];
-      const statusNull = params[ROUTER_CONSTANTS.items.params.statusNull];
 
       const filter: Filter = { ...defaultFilter };
       if (tagId) {
         filter.tagId = tagId;
       }
-      filter.status = status || (statusNull ? null : filter.status);
+      filter.status = status || filter.status;
       if (isFavourite) {
         filter.isFavourite = isFavourite === 'true';
         filter.status = null;
@@ -175,7 +174,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   applyNewParams(params: RequestParams): void {
     switch (params.filter.status) {
-      case 'new': {
+      case 'readToday': {
         params.sort = [
           { field: 'priority', direction: 'desc' },
           { field: 'createdAt', direction: 'desc' }

@@ -25,7 +25,7 @@ ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
       .navbar-menu('[class.is-active]'='isMenuExpanded')
 
         .navbar-start
-          a.navbar-item(routerLink='/app/links', [queryParams]="{status: 'new'}", routerLinkActive='is-active', (click)='closeMenu()')
+          a.navbar-item(routerLink='/app/links', routerLinkActive='is-active', (click)='closeMenu()')
             span.icon
               i.fas.fa-list-ul
             span Links
@@ -105,7 +105,7 @@ ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
 
                       hr.dropdown-divider
 
-                      .dropdown-item
+                      .dropdown-item([title]="updateService.versionInfo.description")
                         span.icon
                           i.fas.fa-info-circle
                         span Version {{updateService.versionInfo.version}}

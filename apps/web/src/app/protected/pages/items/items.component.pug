@@ -9,6 +9,7 @@
             (changed)="routerHelper.toItemsWithFilter($event.filter)"
           )
         .widget__body.is-paddingless
+          tt-items-filter-description([params]="itemsRequest.params$ | async")
           ng-container(*ngIf="itemsRequest.response$ | async as randomItems")
             ng-container(*ngIf="randomItems.length; else noItems")
               tt-list(

@@ -13,7 +13,7 @@ export class RouterHelperService {
     const path = isCurrentPage ? [] : [pathToItems];
     this.router.navigate(path, {
       relativeTo: isCurrentPage ? this.route : undefined,
-      queryParams: { ...filter, statusNull: filter.status === null ? true : undefined },
+      queryParams: filter,
       queryParamsHandling: 'merge'
     });
   }

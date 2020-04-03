@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
 import { BehaviorSubject, combineLatest, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
@@ -225,105 +225,154 @@ export class ItemService {
           error: null
         });
       }),
-      switchMap(({ params, user }: { params: RequestParams; user: User }) =>
-        this.firestore
-          .collection<Item>('items', ref => {
-            // Basic query
-            const limit = params.pagination.limit;
-            let query = ref.where('createdBy', '==', user.id).limit(limit);
+      switchMap(async ({ params, user }: { params: RequestParams; user: User }) => {
+        const random: { recent: null | Item; oldest: null | Item } = { recent: null, oldest: null };
+        if (params.filter.status === 'random') {
+          if (params.filter.status === 'random') {
+            const query = this.firestore.firestore
+              .collection(`items`)
+              .where('createdBy', '==', user.id)
+              .where('status', '==', 'new')
+              .limit(1);
+            const recentQuerySnapshot = await query.orderBy('createdAt', 'desc').get();
+            random.recent = this.getFromSnapshot(recentQuerySnapshot.docs[0] as any);
+            const oldestQuerySnapshot = await query.orderBy('createdAt', 'asc').get();
+            random.oldest = this.getFromSnapshot(oldestQuerySnapshot.docs[0] as any);
+          }
+        }
+        return { params, user, random };
+      }),
+      switchMap(
+        ({
+          params,
+          user,
+          random
+        }: {
+          params: RequestParams;
+          user: User;
+          random: { recent: null | Item; oldest: null | Item };
+        }) =>
+          this.firestore
+            .collection<Item>('items', ref => {
+              // Basic query
+              const limit = params.pagination.limit;
+              let query = ref.where('createdBy', '==', user.id).limit(limit);
 
-            // Filters
-            if (params.filter.status) {
-              query = query.where('status', '==', params.filter.status);
-            }
-            if (params.filter.isFavourite) {
-              query = query.where('isFavourite', '==', true);
-            }
-            if (typeof params.filter.priority === 'number') {
-              // check for null|undefined to make sure priority === 0 works fine
-              query = query.where('priority', '==', params.filter.priority);
-              params.sort = params.sort.filter(s => s.field !== 'priority');
-            }
-            if (params.filter.tagId) {
-              query = query.where('tags', 'array-contains', params.filter.tagId);
-            }
-
-            // Sorting
-            params.sort.forEach(s => {
-              query = query.orderBy(s.field, s.direction);
-            });
-
-            // Pagination
-            if (params.pagination.page && data.length && params.sort.length) {
-              query = query.startAfter(...this.getValuesForStartAfter(params, data));
-            }
-
-            queryCache = query;
-            return query;
-          })
-          .valueChanges({ idField: 'id' })
-          .pipe(
-            tap(async v => (data = v)),
-            tap((items: Item[]) => {
-              if (!items.length && params.pagination.page) {
-                // if suddenly no items on a page (deleted/changed)
-                params$.next({
-                  ...params,
-                  pagination: {
-                    ...params.pagination,
-                    page: 0
+              // Filters
+              if (params.filter.status) {
+                switch (params.filter.status) {
+                  case 'all': {
+                    break;
                   }
-                });
-                return;
+                  case 'readToday': {
+                    query = query.where('status', '==', 'new');
+                    break;
+                  }
+                  case 'random': {
+                    // Random time between the most recent item and the oldest
+                    if (!random.recent || !random.oldest) {
+                      break;
+                    }
+                    const oldest = (random.oldest.createdAt as any).toDate().getTime();
+                    const recent = (random.recent.createdAt as any).toDate().getTime();
+                    const randomDate = new Date(oldest + Math.random() * (recent - oldest));
+                    query = query.where('createdAt', '<=', randomDate).where('status', '==', 'new');
+                    break;
+                  }
+                  default: {
+                    query = query.where('status', '==', params.filter.status);
+                    break;
+                  }
+                }
               }
-            }),
-            takeUntil(this.userService.signedOut$),
-            takeUntil(takeUntil$),
-            catchError(error => {
-              this.logger.error({
-                messageForDev: 'getRequest() firestore error',
-                messageForUser: 'Failed to fetch links.',
-                error,
-                params: { params, user }
+              if (params.filter.isFavourite) {
+                query = query.where('isFavourite', '==', true);
+              }
+              if (typeof params.filter.priority === 'number') {
+                // check for null|undefined to make sure priority === 0 works fine
+                query = query.where('priority', '==', params.filter.priority);
+                params.sort = params.sort.filter(s => s.field !== 'priority');
+              }
+              if (params.filter.tagId) {
+                query = query.where('tags', 'array-contains', params.filter.tagId);
+              }
+
+              // Sorting
+              params.sort.forEach(s => {
+                query = query.orderBy(s.field, s.direction);
               });
-              responseMetaSubject.next({
-                ...responseMetaSubject.value,
-                error
-              });
-              return of([] as Item[]);
-            }),
-            tap(async args => {
-              const nextItemsAvailable = data.length
-                ? await this.firestore
-                    .collection<Item>('items', () => {
-                      let query = queryCache.limit(1);
-                      query = query.startAfter(...this.getValuesForStartAfter(params, data));
-                      return query;
-                    })
-                    .valueChanges()
-                    .pipe(
-                      take(1),
-                      catchError(error => {
-                        this.logger.error({
-                          messageForDev: 'getRequest() error',
-                          messageForUser: 'Failed to fetch next page of links.',
-                          error: new Error(error),
-                          params: { params, user }
-                        });
-                        return of([] as Item[]);
-                      }),
-                      map(v => !!v.length)
-                    )
-                    .toPromise()
-                : false;
-              responseMetaSubject.next({
-                ...responseMetaSubject.value,
-                page: params.pagination.page,
-                isLoading: false,
-                nextItemsAvailable
-              });
+
+              // Pagination
+              if (params.pagination.page && data.length && params.sort.length) {
+                query = query.startAfter(...this.getValuesForStartAfter(params, data));
+              }
+
+              queryCache = query;
+              return query;
             })
-          )
+            .valueChanges({ idField: 'id' })
+            .pipe(
+              tap(async v => (data = v)),
+              tap((items: Item[]) => {
+                if (!items.length && params.pagination.page) {
+                  // if suddenly no items on a page (deleted/changed)
+                  params$.next({
+                    ...params,
+                    pagination: {
+                      ...params.pagination,
+                      page: 0
+                    }
+                  });
+                  return;
+                }
+              }),
+              takeUntil(this.userService.signedOut$),
+              takeUntil(takeUntil$),
+              catchError(error => {
+                this.logger.error({
+                  messageForDev: 'getRequest() firestore error',
+                  messageForUser: 'Failed to fetch links.',
+                  error,
+                  params: { params, user }
+                });
+                responseMetaSubject.next({
+                  ...responseMetaSubject.value,
+                  error
+                });
+                return of([] as Item[]);
+              }),
+              tap(async args => {
+                const nextItemsAvailable = data.length
+                  ? await this.firestore
+                      .collection<Item>('items', () => {
+                        let query = queryCache.limit(1);
+                        query = query.startAfter(...this.getValuesForStartAfter(params, data));
+                        return query;
+                      })
+                      .valueChanges()
+                      .pipe(
+                        take(1),
+                        catchError(error => {
+                          this.logger.error({
+                            messageForDev: 'getRequest() error',
+                            messageForUser: 'Failed to fetch next page of links.',
+                            error: new Error(error),
+                            params: { params, user }
+                          });
+                          return of([] as Item[]);
+                        }),
+                        map(v => !!v.length)
+                      )
+                      .toPromise()
+                  : false;
+                responseMetaSubject.next({
+                  ...responseMetaSubject.value,
+                  page: params.pagination.page,
+                  isLoading: false,
+                  nextItemsAvailable
+                });
+              })
+            )
       ),
       catchError(error => {
         this.logger.error({
@@ -488,6 +537,13 @@ export class ItemService {
     const doc = await this.firestore.collection(`tags`).add(newTag);
     cache.set(tagIdOrTitle, doc.id);
     return doc.id;
+  }
+
+  getFromSnapshot(snapshot: null | DocumentSnapshot<any>): null | Item {
+    if (!snapshot) {
+      return null;
+    }
+    return { ...snapshot.data(), id: snapshot.id };
   }
 
   private async update(data: Partial<Item>, errorMessageForUser?: string): Promise<void> {

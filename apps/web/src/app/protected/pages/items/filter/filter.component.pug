@@ -1,70 +1,87 @@
 .dropdown.is-hoverable.is-right.icon-alignment--first.filter--status
   .dropdown-trigger.widget__header__title
-    span(*ngIf="params.filter.status === 'new'")
-      span.icon
-        i.far.fa-circle
+    span(*ngIf="isStatus('readToday')")
+      span.icon.has-text-primary
+        i.fas.fa-brain
       span Read Today
-    span.has-text-info(*ngIf="params.filter.status === 'opened'")
-      span.icon
-        i.far.fa-play-circle
-      span Started
-    span.has-text-success(*ngIf="params.filter.status === 'finished'")
-      span.icon
-        i.far.fa-check-circle
-      span Finished
-    span.has-text-warning(*ngIf="!params.filter.status && isFavourite()")
-      span.icon
+    span(*ngIf="isFavourite()")
+      span.icon.has-text-warning
         i.fas.fa-star
       span Favourites
-    span(*ngIf="!params.filter.status && !isFavourite()")
+    span(*ngIf="isStatus('random')")
+      span.icon.has-text-link
+        i.fas.fa-random
+      span Random
+    span(*ngIf="isStatus('all') && !isFavourite()")
       span.icon
         i.fas.fa-list
       span All links
+    span(*ngIf="isStatus('new')")
+      span.icon
+        i.far.fa-circle
+      span New
+    span(*ngIf="isStatus('opened')")
+      span.icon.has-text-info
+        i.far.fa-play-circle
+      span Started
+    span(*ngIf="isStatus('finished')")
+      span.icon.has-text-success
+        i.far.fa-check-circle
+      span Finished
     span.icon.is-small
       i.fas.fa-angle-down(aria-hidden='true')
   .dropdown-menu.dropdown-menu--w-none(role='menu')
     .dropdown-content
-      a.dropdown-item.has-text-grey-light((click)="setStatus(null)")
-        span.icon
-          i.fas.fa-list
-        span All links
-      a.dropdown-item(
-        (click)="setStatus('new')"
-      )
-        span.icon
-          i.far.fa-circle
+      a.dropdown-item((click)="setStatus('readToday')",[class.is-active]="isStatus('readToday')")
+        span.icon.has-text-primary
+          i.fas.fa-brain
         span Read Today
-      a.dropdown-item.has-text-info(
-        (click)="setStatus('opened')"
-      )
-        span.icon
-          i.far.fa-play-circle
-        span Started
-      a.dropdown-item.has-text-success(
-        (click)="setStatus('finished')"
-      )
-        span.icon
-          i.far.fa-check-circle
-        span Finished
-      a.dropdown-item.has-text-warning((click)="setFavourite()")
-        span.icon
+      a.dropdown-item((click)="setFavourite()",[class.is-active]="isFavourite()")
+        span.icon.has-text-warning
           i.fas.fa-star
         span Favourites
+      .dropdown-divider
+      a.dropdown-item((click)="setStatus('new')", [class.is-active]="isStatus('new')")
+        span.icon
+          i.far.fa-circle
+        span New
+      a.dropdown-item((click)="setStatus('opened')", [class.is-active]="isStatus('opened')")
+        span.icon.has-text-info
+          i.far.fa-play-circle
+        span Started
+      a.dropdown-item((click)="setStatus('finished')", [class.is-active]="isStatus('finished')")
+        span.icon.has-text-success
+          i.far.fa-check-circle
+        span Finished
+      .dropdown-divider
+      a.dropdown-item((click)="setStatus('random')", [class.is-active]="isStatus('random')")
+        span.icon.has-text-link
+          i.fas.fa-random
+        span Random
+      a.dropdown-item((click)="setStatus('all')", [class.is-active]="isStatus('all') && !isFavourite()")
+        span.icon.has-text-grey-light
+          i.fas.fa-list
+        span All links
 
-div
-  span Filter:
 
-  tt-priority-selector(
-    [priority]="params.filter.priority",
-    [counter]="counter",
-    [shouldShowAnyPriority]="true",
-    (set)="setPriority($event)"
-  )
+ng-container(*ngIf="isStatus('random'); else regular")
+  a.icon(title="Randomise", (click)="randomise()")
+    i.fas.fa-sync
+ng-template("#regular"="")
+  div
+    span Filter:
 
-  tt-tag-selector.icon-alignment--last(
-    [tags]="tags",
-    [selectedIds]="params.filter.tagId ? [params.filter.tagId] : []",
-    [counter]="counter",
-    (toggle)="toggleTagId($event)",
-    [isAllTagsVisible]="true"
-  )
+    tt-priority-selector(
+      [priority]="params.filter.priority",
+      [counter]="counter",
+      [shouldShowAnyPriority]="true",
+      (set)="setPriority($event)"
+    )
+
+    tt-tag-selector.icon-alignment--last(
+      [tags]="tags",
+      [selectedIds]="params.filter.tagId ? [params.filter.tagId] : []",
+      [counter]="counter",
+      (toggle)="toggleTagId($event)",
+      [isAllTagsVisible]="true"
+    )

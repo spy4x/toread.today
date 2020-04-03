@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEn
 import { ItemPriority, ItemStatus, ItemsCounter, Tag } from '../../../interfaces';
 import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
 import { RequestParams } from '../../../../services';
+import { defaultFilter, Filter } from './filter.interface';
 
 @Component({
   selector: 'tt-items-filter',
@@ -15,7 +16,6 @@ export class ItemsFilterComponent {
   @Input() counter: ItemsCounter;
   @Input() params: RequestParams;
   @Output() changed = new EventEmitter<RequestParams>();
-  statuses: ItemStatus[] = ['new', 'opened', 'finished'];
 
   toggleTagId(event: ToggleTagEvent) {
     this.changed.emit({
@@ -27,18 +27,25 @@ export class ItemsFilterComponent {
     });
   }
 
-  setStatus(status: null | ItemStatus) {
+  setStatus(status: 'all' | 'random' | 'readToday' | ItemStatus) {
+    const filter =
+      status === 'random'
+        ? {
+            ...defaultFilter,
+            status
+          }
+        : {
+            ...this.params.filter,
+            status,
+            isFavourite: null
+          };
     this.changed.emit({
       ...this.params,
-      filter: {
-        ...this.params.filter,
-        status,
-        isFavourite: null
-      }
+      filter
     });
   }
 
-  isStatus(status: null | ItemStatus): boolean {
+  isStatus(status: 'all' | 'random' | 'readToday' | ItemStatus): boolean {
     return this.params.filter.status === status;
   }
 
@@ -51,7 +58,7 @@ export class ItemsFilterComponent {
       ...this.params,
       filter: {
         ...this.params.filter,
-        status: null,
+        status: 'all',
         isFavourite: true
       }
     });
@@ -63,6 +70,16 @@ export class ItemsFilterComponent {
       filter: {
         ...this.params.filter,
         priority
+      }
+    });
+  }
+
+  randomise() {
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        random: Math.random()
       }
     });
   }
