@@ -102,6 +102,10 @@
                 i.far.fa-thumbs-down
               span Mark as Finished & Useless
           hr.dropdown-divider
+          a.dropdown-item(*ngIf="shareService.isSupported", (click)="share(item)")
+            span.icon.has-text-info
+              i.fas.fa-share-alt
+            span Share
           a.dropdown-item((click)="editTitle(item)")
             span.icon.has-text-info
               i.far.fa-edit

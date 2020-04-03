@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.42.3",
-    "description": "Improve UI for failed URL parsing message."
+    "version": "1.43.0",
+    "description": "Add \"Share link\" feature."
   },
   "assetGroups": [
     {

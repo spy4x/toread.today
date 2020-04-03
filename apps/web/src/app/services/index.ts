@@ -8,3 +8,4 @@ export * from './notifications.service';
 export * from './push-notifications.service';
 export * from './routerHelper.service';
 export * from './update.service';
+export * from './share.service';

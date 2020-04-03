@@ -11,6 +11,7 @@ import {
   ToggleTagEvent
 } from '../list.component';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ShareService } from '../../../../../services';
 
 @Component({
   selector: 'tt-list-item',
@@ -37,7 +38,7 @@ export class ListItemComponent {
   @Output() setURL = new EventEmitter<SetItemURLEvent>();
   isNoteVisible = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(public shareService: ShareService, private sanitizer: DomSanitizer) {}
 
   toggleTagHandler(event: ToggleTagEvent, item: Item) {
     this.toggleTag.emit({ ...event, itemId: item.id });
@@ -92,5 +93,13 @@ export class ListItemComponent {
   getURL(item: Item): SafeUrl {
     const url = item.url.includes('://') ? item.url : `//${item.url}`;
     return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+
+  share(item: Item) {
+    this.shareService.share({
+      title: item.title,
+      text: item.title,
+      url: item.url
+    });
   }
 }

@@ -11,6 +11,7 @@ import { ListComponent } from './items-list/list.component';
 import { ListItemComponent } from './items-list/items-list-item/list-item.component';
 import { UploadInputComponent } from './upload-input/upload-input.component';
 import { ItemsAddComponent } from './items-add/items-add.component';
+import { ShareService } from '../../../services';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ItemsAddComponent } from './items-add/items-add.component';
     UploadInputComponent
   ],
   imports: [CommonModule, RouterModule, FormsModule],
+  providers: [ShareService],
   exports: [
     CommonModule,
     RouterModule,
