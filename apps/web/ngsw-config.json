@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.42.0",
-    "description": "Add \"New\" and \"Random\" to the list of status filters."
+    "version": "1.42.1",
+    "description": "Improve UI of links in the list."
   },
   "assetGroups": [
     {
