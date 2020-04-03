@@ -9,7 +9,7 @@
             (changed)="routerHelper.toItemsWithFilter($event.filter)"
           )
         .widget__body.is-paddingless
-          tt-items-filter-description([params]="itemsRequest.params$ | async")
+          tt-items-filter-description.widget__description([params]="itemsRequest.params$ | async")
           ng-container(*ngIf="itemsRequest.response$ | async as randomItems")
             ng-container(*ngIf="randomItems.length; else noItems")
               tt-list(
@@ -47,6 +47,8 @@
             .widget__header
               h2.widget__header__title Don't forget to finish:
             .widget__body.is-paddingless
+              .widget__description
+                span Recently opened
               tt-list(
                 [items]="openedItems",
                 [tags]="tagService.tags$ | async",
