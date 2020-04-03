@@ -1,9 +1,15 @@
 @import variables
 
+.control.has-icon-left
+  ::placeholder
+    color: $grey-light
+
 .control.has-button-right
   $width: 6rem
   input
     padding-right: $width
+    &::placeholder
+      color: $grey-light
   .button
     color: $grey
     position: absolute

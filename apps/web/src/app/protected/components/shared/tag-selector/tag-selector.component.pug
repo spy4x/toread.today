@@ -20,7 +20,7 @@
         span Any tags
       hr.dropdown-divider('*ngIf'='isAllTagsVisible && tags?.length')
       .dropdown-item
-        input.input.is-small(placeholder="Search", [(ngModel)]="searchText")
+        input.input.has-text-dark.is-small(placeholder="Search", [(ngModel)]="searchText")
       hr.dropdown-divider
       a.dropdown-item(
           *ngFor="let tag of tags | filterByField:[{field: 'title', value: searchText, match: 'includesString'}]",
