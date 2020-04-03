@@ -30,7 +30,7 @@
       span Finished
     span.icon.is-small
       i.fas.fa-angle-down(aria-hidden='true')
-  .dropdown-menu.dropdown-menu--w-none(role='menu')
+  .dropdown-menu(role='menu')
     .dropdown-content
       a.dropdown-item((click)="setStatus('readToday')",[class.is-active]="isStatus('readToday')")
         span.icon.has-text-primary

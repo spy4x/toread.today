@@ -18,15 +18,26 @@
     )
 
   .actions.ml-auto.icon-alignment--last
-    .icon.is-small.has-text-info(
-    *ngIf='item.urlParseStatus === "notStarted"',
-    title='URL parsing is in progress..')
-      i.fas.fa-sync
-    a.icon.is-small.has-text-danger(
-        *ngIf='item.urlParseStatus === "error"',
-        '(click)'='retryURLParsing.emit(item.id)'
-        '[title]'='"URL parse error happened. Click to retry parsing. \\nError message: "+item.urlParseError')
-      i.fas.fa-exclamation-triangle
+    .icon.is-small(
+      *ngIf='item.urlParseStatus === "notStarted"',
+      title='Parsing URL...')
+      i.fas.fa-circle-notch.fa-spin
+
+    .dropdown.is-hoverable.is-right(*ngIf="item.urlParseStatus === 'error'")
+      .dropdown-trigger
+        a.icon.has-text-warning
+          i.fas.fa-exclamation-triangle
+      .dropdown-menu(role='menu')
+        .dropdown-content
+          .dropdown-item
+            p URL parse failed. Reason:
+            p "{{item.urlParseError}}"
+          .dropdown-divider
+          a.dropdown-item((click)="retryURLParsing.emit(item.id)")
+            span.icon
+              i.fas.fa-sync
+            span Retry
+
 
     .dropdown.is-hoverable.is-right(*ngIf="item.status === 'finished'")
       .dropdown-trigger
