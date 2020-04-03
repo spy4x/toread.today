@@ -23,8 +23,18 @@ nav.navbar.is-fixed-top.is-primary.has-text-weight-medium(role='navigation' aria
         //  span FEATURES
         a.navbar-item(routerLink='/pricing', routerLinkActive='has-text-weight-bold', (click)='closeMenu()')
           span PRICING
-        a.navbar-item#sign-in(routerLink='/app')
-          span SIGN IN
-        .navbar-item
-          a.button.is-info(routerLink='/app')
-            span TRY IT FREE
+        ng-container(*ngIf="userService.firebaseUser$ | async as user; else notAuthenticated")
+          .navbar-item
+            a.button.is-info(routerLink='/app', [title]="'Welcome '+ (user.displayName || user.email)")
+              figure.image.is-24x24(*ngIf="user.photoURL; else userIcon")
+                img.is-rounded([src]="user.photoURL")
+              ng-template("#userIcon"="")
+                span.icon.has-text-white
+                  i.far.fa-user-circle
+              span Enter the app
+        ng-template("#notAuthenticated"="")
+          a.navbar-item#sign-in(routerLink='/app')
+            span SIGN IN
+          .navbar-item
+            a.button.is-info(routerLink='/app')
+              span TRY IT FREE

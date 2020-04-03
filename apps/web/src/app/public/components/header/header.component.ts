@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { UserService } from '../../../services';
 
 @Component({
   selector: 'tt-public-header',
@@ -9,6 +10,8 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 })
 export class PublicHeaderComponent {
   isMenuExpanded = false;
+
+  constructor(public userService: UserService) {}
 
   toggleMenu(): void {
     this.isMenuExpanded = !this.isMenuExpanded;

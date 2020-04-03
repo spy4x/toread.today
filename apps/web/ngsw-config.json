@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.40.3",
-    "description": "Update repository to latest Nx."
+    "version": "1.40.4",
+    "description": "Show authenticated users their status on landing page."
   },
   "assetGroups": [
     {

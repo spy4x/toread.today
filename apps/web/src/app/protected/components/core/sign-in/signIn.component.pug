@@ -11,7 +11,7 @@ section.hero.is-primary.is-fullheight
                 span.icon
                   i.far.fa-bookmark
               h1.title Toread.Today
-              h2.subtitle Sign in with
+              h2.subtitle Sign in or Sign up with
             .notification.is-warning.has-text-white(*ngIf="!(connectionStatus.isOnline$ | async); else signIn")
               span Your device is offline. Please restore connection to continue.
             ng-template("#signIn"="")
