@@ -1,8 +1,10 @@
 @import variables
 
 .widget
+
   & + .widget
     margin-top: $baseSize * 1.5
+
   &__header
     display: flex
     align-items: center
@@ -24,6 +26,7 @@
         color: $grey-light
         &:hover
           color: $grey-darker
+
   &__body
     padding: $baseSize $sidePadding 0
     &--is-paddingless
@@ -31,6 +34,15 @@
     &--is-side-paddingless
       padding-left: 0
       padding-right: 0
+
+  &__description
+    display: block
+    font-size: $baseSize * .75
+    color: $grey-light
+    padding: 0 $sidePadding
+    &--bottom-padding
+      padding-bottom: $sidePadding
+
   &__info
     font-size: $size-4
     color: $grey-light

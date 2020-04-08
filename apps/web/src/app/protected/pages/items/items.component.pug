@@ -11,11 +11,12 @@
           )
         .widget__body.is-paddingless
           tt-items-filter-description.widget__description([params]="itemsRequest.params$ | async")
-          ng-container(*ngIf="itemsRequest.response$ | async as randomItems")
-            ng-container(*ngIf="randomItems.length; else noItems")
+          ng-container(*ngIf="itemsRequest.response$ | async as items")
+            ng-container(*ngIf="items.length; else noItems")
               tt-list(
-                [items]="randomItems",
+                [items]="items",
                 [meta]="itemsRequest.responseMeta$ | async",
+                [params]="itemsRequest.params$ | async",
                 [tags]="tagService.tags$ | async",
                 (startReading)="itemService.startReading($event)",
                 (finishReading)="itemService.finishReading($event)",
@@ -75,8 +76,7 @@
 
       .widget.widget--statistics-monthly
         .widget__header
-          h2.widget__header__title Per month
-            span.widget__header__subtitle Links Added vs Finished
+          h2.widget__header__title Statistics
           .widget__header__action
             a.icon((click)="prevMonth()", title="Show prev month")
               i.fas.fa-chevron-left
@@ -88,7 +88,8 @@
             )
               i.fas.fa-chevron-right
         ng-container(*ngIf="statistics$ | async as statistics; else noStatistics")
-          .widget__body
+          .widget__body.is-paddingless
+            .widget__description.widget__description--bottom-padding Links Added vs Finished
             nav.level.is-mobile.has-text-centered
               .level-item.has-text-warning
                 div

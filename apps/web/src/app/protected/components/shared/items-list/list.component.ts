@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Item, ItemPriority, ItemRating, Tag } from '../../../interfaces';
 import { trackByFn } from '../../../helpers';
-import { ResponseMeta } from '../../../../services';
+import { RequestParams, ResponseMeta } from '../../../../services';
 
 export interface ToggleTagEvent {
   tagId: string;
@@ -53,6 +53,7 @@ export class ListComponent {
   @Input() items: Item[];
   @Input() tags: Tag[] = [];
   @Input() meta: ResponseMeta;
+  @Input() params: RequestParams;
   @Output() startReading = new EventEmitter<string>();
   @Output() finishReading = new EventEmitter<string>();
   @Output() undoReading = new EventEmitter<string>();
