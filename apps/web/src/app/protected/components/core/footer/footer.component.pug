@@ -10,24 +10,10 @@ section.hero
               span Toread.Today
           ul
             li
-              a(routerLink="/app") Sign in
-            li
-              a(routerLink="/app") Sign up
-            li
-              a(routerLink="/app") Try it for Free
-        .column
-          p.subtitle
-            span
-              span.icon.icon-alignment--first
-                i.far.fa-lightbulb
-              span Service
-          ul
-            li
-              a(routerLink="/") How it works
-            //-li
-            //- a(routerLink='/features') Features
+              a(routerLink="/") Home page
             li
               a(routerLink="/pricing") Pricing
+
         .column
           p.subtitle
             span
@@ -35,12 +21,22 @@ section.hero
                 i.far.fa-file
               span Resources
           ul
-            // -li
-            // - a(routerLink="/about") About
-            li
-              a(href="mailto:2spy4x@gmail.com?subject=Question%20about%20Toread.Today%20app", target="_blank")
-                | Contact developer
             li
               a(routerLink="/terms-and-conditions") Terms & Conditions
             li
               a(routerLink="/privacy-policy") Privacy Policy
+
+        .column
+          p.subtitle
+            span
+              span.icon.icon-alignment--first
+                i.fas.fa-code
+              span Development
+          ul
+            li
+              a(href="mailto:2spy4x@gmail.com?subject=Question%20about%20Toread.Today%20app", target="_blank")
+                | Contact developer
+            li
+              a(routerLink="/app/roadmap") Project roadmap
+            li
+              span Version {{ updateService.versionInfo.version }}

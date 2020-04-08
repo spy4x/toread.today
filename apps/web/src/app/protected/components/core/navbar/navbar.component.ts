@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { UIService, UserService, ConnectionStatusService, UpdateService } from '../../../../services';
-import { DropdownDirective } from '../../shared/dropdown/dropdown.directive';
-import { ItemsAddComponent } from '../../shared/items-add/items-add.component';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ConnectionStatusService, UIService, UserService } from '../../../../services';
 
 @Component({
   selector: 'tt-navbar',
@@ -16,7 +14,6 @@ export class NavbarComponent {
   constructor(
     public uiService: UIService,
     public userService: UserService,
-    public updateService: UpdateService,
     public connectionStatus: ConnectionStatusService
   ) {}
 

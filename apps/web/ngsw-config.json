@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.43.3",
-    "description": "Move \"Fast Add & Import\" from user menu to main menu."
+    "version": "1.43.4",
+    "description": "Move \"Version\", \"Contact developer\" and \"Project roadmap\" from user menu to footer menu."
   },
   "assetGroups": [
     {

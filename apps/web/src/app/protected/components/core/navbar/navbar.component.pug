@@ -55,26 +55,6 @@ ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
 
             hr.dropdown-divider
 
-            .navbar-item
-              span.icon
-                i.fas.fa-info-circle
-              span Version {{ updateService.versionInfo.version }}
-
-            a.navbar-item(
-              href="mailto:2spy4x@gmail.com?subject=Question%20about%20Toread.Today%20app",
-              target="_blank"
-            )
-              span.icon
-                i.fas.fa-envelope
-              span Contact developer
-
-            a.navbar-item(routerLink="/app/roadmap", routerLinkActive="is-active", (click)="closeMenu()")
-              span.icon
-                i.fas.fa-road
-              span Project roadmap
-
-            hr.dropdown-divider
-
             a.navbar-item((click)="userService.signOut()")
               span.icon
                 i.fas.fa-sign-out-alt
@@ -104,26 +84,6 @@ ng-container(*ngIf="userService.authorizedUserOnly$ | async as user")
                         span.icon
                           i.fas.fa-cog
                         span Profile settings
-
-                      hr.dropdown-divider
-
-                      .dropdown-item([title]="updateService.versionInfo.description")
-                        span.icon
-                          i.fas.fa-info-circle
-                        span Version {{ updateService.versionInfo.version }}
-
-                      a.dropdown-item(
-                        href="mailto:2spy4x@gmail.com?subject=Question%20about%20Toread.Today%20app",
-                        target="_blank"
-                      )
-                        span.icon
-                          i.fas.fa-envelope
-                        span Contact developer
-
-                      a.dropdown-item(routerLink="/app/roadmap", routerLinkActive="is-active", (click)="closeMenu()")
-                        span.icon
-                          i.fas.fa-road
-                        span Project roadmap
 
                       hr.dropdown-divider
 
