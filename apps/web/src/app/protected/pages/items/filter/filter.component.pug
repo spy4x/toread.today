@@ -36,32 +36,37 @@
         span.icon.has-text-primary
           i.fas.fa-brain
         span Read Today
-      a.dropdown-item((click)="setFavourite()", [class.is-active]="isFavourite()")
-        span.icon.has-text-warning
-          i.fas.fa-star
-        span Favourites
-      .dropdown-divider
-      a.dropdown-item((click)="setStatus('new')", [class.is-active]="isStatus('new')")
-        span.icon
-          i.far.fa-circle
-        span New
-      a.dropdown-item((click)="setStatus('opened')", [class.is-active]="isStatus('opened')")
-        span.icon.has-text-info
-          i.far.fa-play-circle
-        span Started
-      a.dropdown-item((click)="setStatus('finished')", [class.is-active]="isStatus('finished')")
-        span.icon.has-text-success
-          i.far.fa-check-circle
-        span Finished
-      .dropdown-divider
+        span.badge(*ngIf="counter") {{ counter['statuses.new'] }}
       a.dropdown-item((click)="setStatus('random')", [class.is-active]="isStatus('random')")
         span.icon.has-text-link
           i.fas.fa-random
         span Random
+      a.dropdown-item((click)="setFavourite()", [class.is-active]="isFavourite()")
+        span.icon.has-text-warning
+          i.fas.fa-star
+        span Favourites
+        span.badge(*ngIf="counter") {{ counter['favourites'] }}
+      .dropdown-divider
       a.dropdown-item((click)="setStatus('all')", [class.is-active]="isStatus('all') && !isFavourite()")
         span.icon.has-text-grey-light
           i.fas.fa-list
         span All links
+        span.badge(*ngIf="counter") {{ counter['all'] }}
+      a.dropdown-item((click)="setStatus('new')", [class.is-active]="isStatus('new')")
+        span.icon
+          i.far.fa-circle
+        span New
+        span.badge(*ngIf="counter") {{ counter['statuses.new'] }}
+      a.dropdown-item((click)="setStatus('opened')", [class.is-active]="isStatus('opened')")
+        span.icon.has-text-info
+          i.far.fa-play-circle
+        span Started
+        span.badge(*ngIf="counter") {{ counter['statuses.opened'] }}
+      a.dropdown-item((click)="setStatus('finished')", [class.is-active]="isStatus('finished')")
+        span.icon.has-text-success
+          i.far.fa-check-circle
+        span Finished
+        span.badge(*ngIf="counter") {{ counter['statuses.finished'] }}
 
 ng-container(*ngIf="isStatus('random'); else regular")
   a.icon(title="Randomise", (click)="randomise()")
@@ -72,7 +77,6 @@ ng-template(#regular="")
 
     tt-priority-selector(
       [priority]="params.filter.priority",
-      [counter]="counter",
       [shouldShowAnyPriority]="true",
       (set)="setPriority($event)"
     )
@@ -80,7 +84,6 @@ ng-template(#regular="")
     tt-tag-selector.icon-alignment--last(
       [tags]="tags",
       [selectedIds]="params.filter.tagId ? [params.filter.tagId] : []",
-      [counter]="counter",
       (toggle)="toggleTagId($event)",
       [isAllTagsVisible]="true"
     )

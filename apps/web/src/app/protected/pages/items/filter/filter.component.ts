@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { ItemPriority, ItemStatus, ItemsCounter, Tag } from '../../../interfaces';
+import { ItemPriority, ItemsCounter, ItemStatus, Tag } from '../../../interfaces';
 import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
 import { RequestParams } from '../../../../services';
-import { defaultFilter, Filter } from './filter.interface';
+import { defaultFilter } from './filter.interface';
 
 @Component({
   selector: 'tt-items-filter',

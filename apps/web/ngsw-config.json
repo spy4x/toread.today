@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.43.1",
-    "description": "Optimize component templates."
+    "version": "1.43.2",
+    "description": "Replace global statistics widget with counter badges in filter."
   },
   "assetGroups": [
     {

@@ -6,6 +6,7 @@
           tt-items-filter(
             [tags]="tagService.tags$ | async",
             [params]="itemsRequest.params$ | async",
+            [counter]="counter$ | async",
             (changed)="routerHelper.toItemsWithFilter($event.filter)"
           )
         .widget__body.is-paddingless
@@ -71,30 +72,7 @@
                   span More recently opened items
                   span.icon
                     i.fas.fa-chevron-right
-      .widget.widget--statistics-global
-        .widget__header
-          h2.widget__header__title Statistics
-            span.widget__header__subtitle How is your reading flow?
-        .widget__body(*ngIf="counter$ | async as counter; else noCounter")
-          nav.level.is-mobile.has-text-centered
-            .level-item(*ngIf="counter['statuses.new'] >= 0")
-              a.has-text-dark(routerLink="/app/links", [queryParams]="{ status: 'new' }")
-                p.heading New
-                p.title {{ counter['statuses.new'] }}
 
-            .level-item(*ngIf="counter['statuses.opened'] >= 0")
-              a.has-text-info(routerLink="/app/links", [queryParams]="{ status: 'opened' }")
-                p.heading Started
-                p.title.has-text-info {{ counter['statuses.opened'] }}
-
-            .level-item(*ngIf="counter['statuses.finished'] >= 0")
-              a.has-text-success(routerLink="/app/links", [queryParams]="{ status: 'finished' }")
-                p.heading Finished
-                p.title.has-text-success {{ counter['statuses.finished'] }}
-
-        ng-template(#noCounter="")
-          .widget__info
-            div No statistics yet.
       .widget.widget--statistics-monthly
         .widget__header
           h2.widget__header__title Per month
