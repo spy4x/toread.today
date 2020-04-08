@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.43.2",
-    "description": "Replace global statistics widget with counter badges in filter."
+    "version": "1.43.3",
+    "description": "Move \"Fast Add & Import\" from user menu to main menu."
   },
   "assetGroups": [
     {
