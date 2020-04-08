@@ -1,6 +1,6 @@
 import { Item, ItemType } from '../../+utils/interfaces';
 import { firestore } from '../../+utils/firebase/firebase';
-import isURL from 'validator/lib/isEmail';
+import isURL from 'validator/lib/isURL';
 
 const ogs = require('open-graph-scraper');
 
