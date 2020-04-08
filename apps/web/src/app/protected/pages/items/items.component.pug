@@ -23,7 +23,7 @@
                 (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
                 (delete)="itemService.remove($event)",
                 (retryURLParsing)="itemService.retryURLParsing($event)",
-                (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
+                (tagClick)="routerHelper.toItemsWithFilter({ tagId: $event })",
                 (changeRating)="itemService.changeRating($event.id, $event.rating)",
                 (changeComment)="itemService.changeComment($event.id, $event.comment)",
                 (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
@@ -31,9 +31,9 @@
                 (setURL)="itemService.setURL($event.item.id, $event.url)",
                 (loadPrev)="prev()",
                 (loadNext)="next()",
-                (setPaginationLimit)="setPaginationLimit($event)",
+                (setPaginationLimit)="setPaginationLimit($event)"
               )
-        ng-template("#noItems"="")
+        ng-template(#noItems="")
           .widget__info
             p Nothing to recommend at the moment.
             div
@@ -59,15 +59,15 @@
                 (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
                 (delete)="itemService.remove($event)",
                 (retryURLParsing)="itemService.retryURLParsing($event)",
-                (tagClick)="routerHelper.toItemsWithFilter({tagId:$event})",
+                (tagClick)="routerHelper.toItemsWithFilter({ tagId: $event })",
                 (changeRating)="itemService.changeRating($event.id, $event.rating)",
                 (changeComment)="itemService.changeComment($event.id, $event.comment)",
                 (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
                 (setTitle)="itemService.setTitle($event.item.id, $event.title)",
-                (setURL)="itemService.setURL($event.item.id, $event.url)",
+                (setURL)="itemService.setURL($event.item.id, $event.url)"
               )
               .more(*ngIf="openedItems.length >= OPENED_ITEMS_LIMIT")
-                a.icon-alignment--last(routerLink="/app/links", [queryParams]="{status: 'opened'}")
+                a.icon-alignment--last(routerLink="/app/links", [queryParams]="{ status: 'opened' }")
                   span More recently opened items
                   span.icon
                     i.fas.fa-chevron-right
@@ -77,23 +77,22 @@
             span.widget__header__subtitle How is your reading flow?
         .widget__body(*ngIf="counter$ | async as counter; else noCounter")
           nav.level.is-mobile.has-text-centered
-
             .level-item(*ngIf="counter['statuses.new'] >= 0")
-              a.has-text-dark(routerLink="/app/links", [queryParams]="{status: 'new'}")
+              a.has-text-dark(routerLink="/app/links", [queryParams]="{ status: 'new' }")
                 p.heading New
-                p.title {{counter['statuses.new']}}
+                p.title {{ counter['statuses.new'] }}
 
-            .level-item(*ngIf="counter['statuses.opened']>= 0")
-              a.has-text-info(routerLink="/app/links", [queryParams]="{status: 'opened'}")
+            .level-item(*ngIf="counter['statuses.opened'] >= 0")
+              a.has-text-info(routerLink="/app/links", [queryParams]="{ status: 'opened' }")
                 p.heading Started
-                p.title.has-text-info {{counter['statuses.opened']}}
+                p.title.has-text-info {{ counter['statuses.opened'] }}
 
-            .level-item(*ngIf="counter['statuses.finished']>= 0")
-              a.has-text-success(routerLink="/app/links", [queryParams]="{status: 'finished'}")
+            .level-item(*ngIf="counter['statuses.finished'] >= 0")
+              a.has-text-success(routerLink="/app/links", [queryParams]="{ status: 'finished' }")
                 p.heading Finished
-                p.title.has-text-success {{counter['statuses.finished']}}
+                p.title.has-text-success {{ counter['statuses.finished'] }}
 
-        ng-template("#noCounter"="")
+        ng-template(#noCounter="")
           .widget__info
             div No statistics yet.
       .widget.widget--statistics-monthly
@@ -103,8 +102,12 @@
           .widget__header__action
             a.icon((click)="prevMonth()", title="Show prev month")
               i.fas.fa-chevron-left
-            span {{monthNames[(month$ | async) - 1]}} {{year$ | async}}
-            a.icon.icon-alignment--last(*ngIf="doesNextMonthExist$ | async", (click)="nextMonth()", title="Show next month")
+            span {{ monthNames[(month$ | async) - 1] }} {{ year$ | async }}
+            a.icon.icon-alignment--last(
+              *ngIf="doesNextMonthExist$ | async",
+              (click)="nextMonth()",
+              title="Show next month"
+            )
               i.fas.fa-chevron-right
         ng-container(*ngIf="statistics$ | async as statistics; else noStatistics")
           .widget__body
@@ -112,16 +115,14 @@
               .level-item.has-text-warning
                 div
                   p.heading Added
-                  p.title.has-text-warning {{statistics.new}}
+                  p.title.has-text-warning {{ statistics.new }}
               .level-item.has-text-success
                 div
                   p.heading Finished
-                  p.title.has-text-success {{statistics.finished}}
+                  p.title.has-text-success {{ statistics.finished }}
           .widget__body.widget__body--is-side-paddingless
             tt-statistics([statistics]="statistics")
-        ng-template("#noStatistics"="")
+        ng-template(#noStatistics="")
           .widget__info
             div No statistics for this period.
             div Wanna read something?
-
-

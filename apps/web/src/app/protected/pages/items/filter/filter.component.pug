@@ -29,14 +29,14 @@
         i.far.fa-check-circle
       span Finished
     span.icon.is-small
-      i.fas.fa-angle-down(aria-hidden='true')
-  .dropdown-menu(role='menu')
+      i.fas.fa-angle-down(aria-hidden="true")
+  .dropdown-menu(role="menu")
     .dropdown-content
-      a.dropdown-item((click)="setStatus('readToday')",[class.is-active]="isStatus('readToday')")
+      a.dropdown-item((click)="setStatus('readToday')", [class.is-active]="isStatus('readToday')")
         span.icon.has-text-primary
           i.fas.fa-brain
         span Read Today
-      a.dropdown-item((click)="setFavourite()",[class.is-active]="isFavourite()")
+      a.dropdown-item((click)="setFavourite()", [class.is-active]="isFavourite()")
         span.icon.has-text-warning
           i.fas.fa-star
         span Favourites
@@ -63,11 +63,10 @@
           i.fas.fa-list
         span All links
 
-
 ng-container(*ngIf="isStatus('random'); else regular")
   a.icon(title="Randomise", (click)="randomise()")
     i.fas.fa-sync
-ng-template("#regular"="")
+ng-template(#regular="")
   div
     span Filter:
 

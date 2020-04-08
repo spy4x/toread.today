@@ -3,21 +3,21 @@
     .text Saving...
     progress.progress.is-small.is-primary(max="100") 15%
 
-ng-template("#saveFinished"="")
+ng-template(#saveFinished="")
   .error-message(*ngIf="error; else success")
     .has-text-centered
       h1.title.has-text-danger
         span.icon
           i.fas.fa-exclamation-triangle
         span Save failed :(
-      h2.subtitle.has-text-danger {{error.message}}
+      h2.subtitle.has-text-danger {{ error.message }}
       ng-container(*ngIf="error.type === 'url-invalid'")
         p Fix URL and click "Try again".
         textarea.textarea([(ngModel)]="url", rows="3", placeholder="URL")
         .buttons.is-right
-          button.button.is-primary((click)="save()" ) Try again
+          button.button.is-primary((click)="save()") Try again
 
-  ng-template("#success"="")
+  ng-template(#success="")
     .success-message
       .has-text-centered
         h1.title.has-text-primary
@@ -36,12 +36,12 @@ ng-template("#saveFinished"="")
         (retryURLParsing)="itemService.retryURLParsing($event)",
         (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
         (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
-        (tagClick)="routerHelper.toItemsWithFilter({tagId: $event})",
+        (tagClick)="routerHelper.toItemsWithFilter({ tagId: $event })",
         (changeRating)="itemService.changeRating($event.id, $event.rating)",
         (changeComment)="itemService.changeComment($event.id, $event.comment)",
         (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
         (setTitle)="itemService.setTitle($event.item.id, $event.title)",
-        (setURL)="itemService.setURL($event.item.id, $event.url)",
+        (setURL)="itemService.setURL($event.item.id, $event.url)"
       )
       .buttons.is-centered
         a.button((click)="goBack()")
@@ -52,4 +52,3 @@ ng-template("#saveFinished"="")
           span.icon
             i.fas.fa-list
           span To the list
-

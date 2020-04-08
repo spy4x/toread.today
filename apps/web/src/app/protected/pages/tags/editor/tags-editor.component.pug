@@ -1,52 +1,54 @@
 .add-input.field.has-addons.is-fullwidth
   .control.is-expanded
     input.input.has-text-dark(
-        placeholder='Add new tag or filter existing tags',
-        [(ngModel)]="newTagTitle"
-        '(keydown.enter)'='createHandler(newTagTitle, newTagColor)')
+      placeholder="Add new tag or filter existing tags",
+      [(ngModel)]="newTagTitle",
+      (keydown.enter)="createHandler(newTagTitle, newTagColor)"
+    )
 
   .control
     .dropdown.is-hoverable.is-right.button
       .dropdown-trigger
-        a.icon([ngStyle]="{color: newTagColor}")
+        a.icon([ngStyle]="{ color: newTagColor }")
           i.fas.fa-circle
-      .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+      .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role="menu")
         .dropdown-content
-          a.dropdown-item(
-              '*ngFor'='let color of colors',
-              '(click)'='newTagColor = color',)
+          a.dropdown-item(*ngFor="let color of colors", (click)="newTagColor = color")
             span.icon([style.color]="color")
-              i.fas.fa-check('[ngStyle]'='{"visibility": newTagColor === color ? "visible" : "hidden"}')
-            span([style.color]="color") {{newTagTitle || 'New tag'}}
+              i.fas.fa-check([ngStyle]="{ visibility: newTagColor === color ? 'visible' : 'hidden' }")
+            span([style.color]="color") {{ newTagTitle || 'New tag' }}
 
   .control
-    button.button.is-primary('(click)'='createHandler(newTagTitle, newTagColor)', title='Create tag')
+    button.button.is-primary((click)="createHandler(newTagTitle, newTagColor)", title="Create tag")
       span.icon
         i.fas.fa-plus
 .items
-  .tag-item(*ngFor="let tag of tags | filterByField:[{field: 'title', value: newTagTitle, match: 'includesString'}]")
-
+  .tag-item(
+    *ngFor="let tag of tags | filterByField: [{ field: 'title', value: newTagTitle, match: 'includesString' }]"
+  )
     .tag-item--title
-      a(  *ngIf="!isInEditMode(tag.id)",
-          [style.color]="tag.color",
-          (click)="routerHelper.toItemsWithFilter({tagId:tag.id})"
+      a(
+        *ngIf="!isInEditMode(tag.id)",
+        [style.color]="tag.color",
+        (click)="routerHelper.toItemsWithFilter({ tagId: tag.id })"
       )
-        span {{tag.title}}
-        span.counter {{counter ? ((counter['tags.'+tag.id] || 0) + ' link(s)') : ''}}
-      .field.has-addons('*ngIf'='isInEditMode(tag.id)')
+        span {{ tag.title }}
+        span.counter {{ counter ? (counter['tags.' + tag.id] || 0) + ' link(s)' : '' }}
+      .field.has-addons(*ngIf="isInEditMode(tag.id)")
         p.control
           input.input.has-text-dark(
-          type='text',
-          placeholder='Tag title',
-          '#input'='',
-          '[value]'='tag.title'
-          '(keydown.enter)'='setTitle(tag, input.value)')
+            type="text",
+            placeholder="Tag title",
+            #input="",
+            [value]="tag.title",
+            (keydown.enter)="setTitle(tag, input.value)"
+          )
         p.control
-          button.button.is-primary('(click)'='setTitle(tag, input.value)', title='Save tag title')
+          button.button.is-primary((click)="setTitle(tag, input.value)", title="Save tag title")
             span.icon.is-small
               i.far.fa-save
         p.control
-          button.button('(click)'='toggleEditMode(tag)', title='Cancel edit')
+          button.button((click)="toggleEditMode(tag)", title="Cancel edit")
             span.icon.is-small
               i.fas.fa-times
 
@@ -55,23 +57,18 @@
         button.button.is-loading.is-text :)
         span.has-text-grey-light(*ngIf="tag.mergeIntoTagId") Merging into other tag...
         span.has-text-grey-light(*ngIf="tag.commandToDelete") Deleting...
-      ng-template("#normalActions"="")
-        a.icon.has-text-primary(
-            *ngIf="!isInEditMode(tag.id)",
-            title="Edit tag",
-            (click)="toggleEditMode(tag)")
+      ng-template(#normalActions="")
+        a.icon.has-text-primary(*ngIf="!isInEditMode(tag.id)", title="Edit tag", (click)="toggleEditMode(tag)")
           i.far.fa-edit
 
         .dropdown.is-hoverable.is-right
           .dropdown-trigger(title="Set color")
-            a.icon([ngStyle]="{color: tag.color}")
+            a.icon([ngStyle]="{ color: tag.color }")
               i.fas.fa-circle
-          .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+          .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role="menu")
             .dropdown-content
               .dropdown-item Color:
-              a.dropdown-item(
-                  '*ngFor'='let color of colors',
-                  '(click)'='setColor(tag, color)',)
+              a.dropdown-item(*ngFor="let color of colors", (click)="setColor(tag, color)")
                 span.icon([style.color]="tag.color")
                   i.fas.fa-check([style.visibility]="isColor(tag, color) ? 'visible' : 'hidden'")
                 span([style.color]="color") {{ tag.title }}
@@ -89,7 +86,7 @@
           .dropdown-trigger
             a.icon.has-text-danger.icon-alignment--last(title="Delete tag")
               i.far.fa-trash-alt
-          .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role='menu')
+          .dropdown-menu.dropdown-menu--w-none.dropdown-menu--tiny-items(role="menu")
             .dropdown-content
               a.dropdown-item((click)="deleteHandler(tag, 'onlyTag')")
                 span.icon.has-text-danger
@@ -98,7 +95,7 @@
               a.dropdown-item((click)="deleteHandler(tag, 'withItems')")
                 span.icon.has-text-danger
                   i.far.fa-trash-alt
-                span Tag and {{counter ? counter['tags.'+tag.id] : ''}} related link(s)
+                span Tag and {{ counter ? counter['tags.' + tag.id] : '' }} related link(s)
 
   .buttons.is-centered.my-3(*ngIf="!tags?.length")
     span.button.is-static No tags yet.

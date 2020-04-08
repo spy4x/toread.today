@@ -1,40 +1,46 @@
-nav.navbar.is-fixed-top.is-primary.has-text-weight-medium(role='navigation' aria-label='main navigation')
+nav.navbar.is-fixed-top.is-primary.has-text-weight-medium(role="navigation", aria-label="main navigation")
   .container
     .navbar-brand
-      a.navbar-item(routerLink='/', (click)='closeMenu()')
+      a.navbar-item(routerLink="/", (click)="closeMenu()")
         span.icon.is-size-4.has-text-weight-bold
           i.far.fa-bookmark
         span Toread.Today
 
       a.navbar-burger.burger.ml-auto(
-          role='button',
-          aria-label='menu',
-          '[class.is-active]'='isMenuExpanded',
-          (click)='toggleMenu()')
-        span(aria-hidden='true')
-        span(aria-hidden='true')
-        span(aria-hidden='true')
+        role="button",
+        aria-label="menu",
+        [class.is-active]="isMenuExpanded",
+        (click)="toggleMenu()"
+      )
+        span(aria-hidden="true")
+        span(aria-hidden="true")
+        span(aria-hidden="true")
 
-    .navbar-menu('[class.is-active]'='isMenuExpanded')
+    .navbar-menu([class.is-active]="isMenuExpanded")
       .navbar-end
-        a.navbar-item(routerLink='/', routerLinkActive='has-text-weight-bold', [routerLinkActiveOptions]="{exact: true}", (click)='closeMenu()')
+        a.navbar-item(
+          routerLink="/",
+          routerLinkActive="has-text-weight-bold",
+          [routerLinkActiveOptions]="{ exact: true }",
+          (click)="closeMenu()"
+        )
           span HOW IT WORKS
         //a.navbar-item(routerLink='/features', routerLinkActive='has-text-weight-bold', (click)='closeMenu()')
-        //  span FEATURES
-        a.navbar-item(routerLink='/pricing', routerLinkActive='has-text-weight-bold', (click)='closeMenu()')
+        // span FEATURES
+        a.navbar-item(routerLink="/pricing", routerLinkActive="has-text-weight-bold", (click)="closeMenu()")
           span PRICING
         ng-container(*ngIf="userService.firebaseUser$ | async as user; else notAuthenticated")
           .navbar-item
-            a.button.is-info(routerLink='/app', [title]="'Welcome '+ (user.displayName || user.email)")
+            a.button.is-info(routerLink="/app", [title]="'Welcome ' + (user.displayName || user.email)")
               figure.image.is-24x24(*ngIf="user.photoURL; else userIcon")
                 img.is-rounded([src]="user.photoURL")
-              ng-template("#userIcon"="")
+              ng-template(#userIcon="")
                 span.icon.has-text-white
                   i.far.fa-user-circle
               span Enter the app
-        ng-template("#notAuthenticated"="")
-          a.navbar-item#sign-in(routerLink='/app')
+        ng-template(#notAuthenticated="")
+          a#sign-in.navbar-item(routerLink="/app")
             span SIGN IN
           .navbar-item
-            a.button.is-info(routerLink='/app')
+            a.button.is-info(routerLink="/app")
               span TRY IT FREE

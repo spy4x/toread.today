@@ -1,4 +1,6 @@
-.loading-indicator.button.is-loading.icon-alignment--last([class.is-hidden]="!meta || !meta.isLoading || !items || !items.length")
+.loading-indicator.button.is-loading.icon-alignment--last(
+  [class.is-hidden]="!meta || !meta.isLoading || !items || !items.length"
+)
 
 .items
   tt-list-item(
@@ -17,23 +19,23 @@
     (changeComment)="changeComment.emit($event)",
     (setPriority)="setPriority.emit($event)",
     (setTitle)="setTitle.emit($event)",
-    (setURL)="setURL.emit($event)",
+    (setURL)="setURL.emit($event)"
   )
 
 .tt-pagination.buttons.are-small.is-right(*ngIf="meta")
-  button.button('[class.is-hidden]'='!meta.page || meta.isLoading', '(click)'='loadPrev.emit()', title="To the first page")
+  button.button([class.is-hidden]="!meta.page || meta.isLoading", (click)="loadPrev.emit()", title="To the first page")
     span.icon
       i.fas.fa-angle-double-left
-  .dropdown.is-hoverable.is-right.is-up(*ngIf="!meta.isLoading && meta.page || meta.nextItemsAvailable")
+  .dropdown.is-hoverable.is-right.is-up(*ngIf="(!meta.isLoading && meta.page) || meta.nextItemsAvailable")
     .dropdown-trigger
       a.button
-        span Page {{meta.page+1}}
+        span Page {{ meta.page + 1 }}
         span.icon.is-small
-          i.fas.fa-angle-up(aria-hidden='true')
-    .dropdown-menu.dropdown-menu--w-none(role='menu')
+          i.fas.fa-angle-up(aria-hidden="true")
+    .dropdown-menu.dropdown-menu--w-none(role="menu")
       .dropdown-content
         .dropdown-item Limit per page:
-        a.dropdown-item(*ngFor="let limit of paginationLimits", (click)="setPaginationLimit.emit(limit)") {{limit}}
+        a.dropdown-item(*ngFor="let limit of paginationLimits", (click)="setPaginationLimit.emit(limit)") {{ limit }}
   button.button(
     (click)="loadNext.emit()",
     [class.is-loading]="meta.isLoading",

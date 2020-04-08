@@ -1,5 +1,6 @@
 tt-tags-editor(
-    '[tags]'='tagService.tags$ | async',
-    '[counter]'='counter$ | async',
-    '(create)'='create($event)',
-    '(update)'='update($event)')
+  [tags]="tagService.tags$ | async",
+  [counter]="counter$ | async",
+  (create)="create($event)",
+  (update)="update($event)"
+)

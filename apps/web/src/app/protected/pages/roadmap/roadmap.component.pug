@@ -9,18 +9,23 @@
           .field
             .control
               label.radio
-                input(type='radio', name='type', '#suggestion'='', checked, value='suggestion')
+                input(type="radio", name="type", #suggestion="", checked, value="suggestion")
                 span Suggestion
               label.radio
-                input(type='radio', name='type', '#bug'='', value='bug')
+                input(type="radio", name="type", #bug="", value="bug")
                 span Bug
 
           .field
             .control
-              textarea.textarea('#textarea'='', placeholder='Enter description (more details would help your idea to be implemented faster)')
+              textarea.textarea(
+                #textarea="",
+                placeholder="Enter description (more details would help your idea to be implemented faster)"
+              )
           .field
             .control
-              button.button.is-primary('(click)'='add(textarea.value, suggestion.checked ? "suggestion" : "bug"); textarea.value = ""') Submit
+              button.button.is-primary(
+                (click)="add(textarea.value, suggestion.checked ? 'suggestion' : 'bug'); textarea.value = ''"
+              ) Submit
 
   .column.is-6
     .widget.activity
@@ -28,11 +33,13 @@
         h2.widget__header__title Activity
           span.widget__header__subtitle (for your ideas, bugs or liked items)
         a.widget__header__action.icon(routerLink="/app/profile", title="Settings")
-          i.fas.fa-cog(aria-hidden='true')
+          i.fas.fa-cog(aria-hidden="true")
 
       .widget__body
-        tt-roadmap-activity([user]="userService.authorizedUserOnly$ | async",
-                            (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)")
+        tt-roadmap-activity(
+          [user]="userService.authorizedUserOnly$ | async",
+          (setSettingSendRoadmapActivityPushNotifications)="userService.setSettingSendRoadmapActivityPushNotifications($event)"
+        )
         .field(*ngIf="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications === null")
           .control
             .notification.is-small
@@ -50,44 +57,44 @@
     .widget
       .widget__header
         h2.widget__header__title New
-        .widget__header__action {{(bricksNew$ | async)?.length}}
+        .widget__header__action {{ (bricksNew$ | async)?.length }}
       .widget__body.is-paddingless
         tt-bricks-list(
-          '[bricks]'='bricksNew$ | async',
-          '[userId]'='userService.userId$ | async',
-          '(vote)'="vote($event)",
-          '(changeTitle)'="changeTitle($event)",
-          '(changeType)'="changeType($event)",
-          '(changeStatus)'="changeStatus($event)",
-          '(remove)'="remove($event)",
+          [bricks]="bricksNew$ | async",
+          [userId]="userService.userId$ | async",
+          (vote)="vote($event)",
+          (changeTitle)="changeTitle($event)",
+          (changeType)="changeType($event)",
+          (changeStatus)="changeStatus($event)",
+          (remove)="remove($event)"
         )
   .column.is-one-third
     .widget
       .widget__header
         h2.widget__header__title In Progress
-        .widget__header__action {{(bricksInProgress$ | async)?.length}}
+        .widget__header__action {{ (bricksInProgress$ | async)?.length }}
       .widget__body.is-paddingless
         tt-bricks-list(
-          '[bricks]'='bricksInProgress$ | async',
-          '[userId]'='userService.userId$ | async',
-          '(vote)'="vote($event)",
-          '(changeTitle)'="changeTitle($event)",
-          '(changeType)'="changeType($event)",
-          '(changeStatus)'="changeStatus($event)",
-          '(remove)'="remove($event)",
+          [bricks]="bricksInProgress$ | async",
+          [userId]="userService.userId$ | async",
+          (vote)="vote($event)",
+          (changeTitle)="changeTitle($event)",
+          (changeType)="changeType($event)",
+          (changeStatus)="changeStatus($event)",
+          (remove)="remove($event)"
         )
   .column.is-one-third
     .widget
       .widget__header
         h2.widget__header__title Done
-        .widget__header__action {{(bricksDone$ | async)?.length}}
+        .widget__header__action {{ (bricksDone$ | async)?.length }}
       .widget__body.is-paddingless
         tt-bricks-list(
-          '[bricks]'='bricksDone$ | async',
-          '[userId]'='userService.userId$ | async',
-          '(vote)'="vote($event)",
-          '(changeTitle)'="changeTitle($event)",
-          '(changeType)'="changeType($event)",
-          '(changeStatus)'="changeStatus($event)",
-          '(remove)'="remove($event)",
+          [bricks]="bricksDone$ | async",
+          [userId]="userService.userId$ | async",
+          (vote)="vote($event)",
+          (changeTitle)="changeTitle($event)",
+          (changeType)="changeType($event)",
+          (changeStatus)="changeStatus($event)",
+          (remove)="remove($event)"
         )

@@ -26,7 +26,7 @@
     "help": "nx help",
     "ngcc": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "pug": "node tools/scripts/ng-add-pug-loader.js",
-    "precommit": "echo 'no precommit scripts yet' # node tools/scripts/precommit-format.js",
+    "precommit": "node tools/scripts/precommit-format.js",
     "postinstall": "yarn ngcc && yarn pug",
     "deploy": "firebase deploy",
     "fix-ngsw": "node tools/scripts/fix-ngsw.js"
@@ -88,6 +88,7 @@
     "@nrwl/nest": "9.2.1",
     "@nrwl/node": "9.2.1",
     "@nrwl/workspace": "9.2.1",
+    "@prettier/plugin-pug": "^1.2.0",
     "@types/jest": "25.1.4",
     "@types/node": "~8.9.4",
     "@types/smoothscroll-polyfill": "^0.3.1",

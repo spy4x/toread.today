@@ -1,16 +1,10 @@
 .chart-wrapper(*ngIf="statistics && values")
-  ngx-charts-area-chart(
-    [results]="values",
-    [scheme]="colorScheme",
-    [xAxis]="true",
-    [yAxis]="true",
-    [curve]="curve",
-  )
-    ng-template("#tooltipTemplate"="" let-model="model")
+  ngx-charts-area-chart([results]="values", [scheme]="colorScheme", [xAxis]="true", [yAxis]="true", [curve]="curve")
+    ng-template(#tooltipTemplate="", let-model="model")
       .is-size-4.has-text-right
-        p.has-text-white {{model.name | date:'MMM dd'}}
-        span([style.color]="getColorBySeriesTitle(model.series)") {{model.series}}: {{model.value}}
-    ng-template("#seriesTooltipTemplate"="" let-model="model")
+        p.has-text-white {{ model.name | date: 'MMM dd' }}
+        span([style.color]="getColorBySeriesTitle(model.series)") {{ model.series }}: {{ model.value }}
+    ng-template(#seriesTooltipTemplate="", let-model="model")
       .is-size-4.has-text-right
-        p.has-text-white {{model[0].name | date:'MMM dd'}}
-        p(*ngFor="let point of model", [style.color]="point.color") {{point.series}}: &nbsp;{{point.value}}
+        p.has-text-white {{ model[0].name | date: 'MMM dd' }}
+        p(*ngFor="let point of model", [style.color]="point.color") {{ point.series }}: &nbsp;{{ point.value }}

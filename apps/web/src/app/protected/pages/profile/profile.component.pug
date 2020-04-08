@@ -19,13 +19,13 @@
       tr(*ngFor="let ap of authProviders")
         td
           span.icon
-            i.fab([ngClass]="'fa-'+ap.provider")
-          span.capitalize {{ap.provider}}
+            i.fab([ngClass]="'fa-' + ap.provider")
+          span.capitalize {{ ap.provider }}
         td
           div(*ngIf="ap.data; else linkProvider")
-            span {{ap.data}}
+            span {{ ap.data }}
             button.button.is-text.is-small((click)="userService.unlink(ap.provider)") Unlink
-          ng-template("#linkProvider"="")
+          ng-template(#linkProvider="")
             button.button.is-small.is-info((click)="userService.link(ap.provider)")
               span.icon
                 i.fas.fa-link
@@ -34,10 +34,10 @@
     .side-margin
       .notification.is-warning(*ngIf="userService.signError$ | async as signError")
         button.delete((click)="userService.clearNotification('error')")
-        span {{signError}}
+        span {{ signError }}
       .notification.is-info(*ngIf="userService.signMessage$ | async as signMessage")
         button.delete((click)="userService.clearNotification('message')")
-        span {{signMessage}}
+        span {{ signMessage }}
 
 .widget.widget--push-notifications
   .widget__header
@@ -55,7 +55,7 @@
           td
             label.checkbox
               input(
-                type='checkbox',
+                type="checkbox",
                 [ngModel]="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications",
                 (ngModelChange)="userService.setSettingSendRoadmapActivityPushNotifications($event)"
               )
@@ -67,8 +67,9 @@
               i.far.fa-check-circle
             ng-container(*ngIf="(userService.authorizedUserOnly$ | async)?.sendRoadmapActivityPushNotifications")
               button.button.is-primary.is-small(
-                  *ngIf="messagingService.isDefault()",
-                  (click)="userService.activatePushNotifications()")
+                *ngIf="messagingService.isDefault()",
+                (click)="userService.activatePushNotifications()"
+              )
                 span Activate
 
               span(*ngIf="!messagingService.isSupported()") Browser doesn't support push notifications.
@@ -76,6 +77,12 @@
               div(*ngIf="messagingService.isDenied()")
                 span Denied. To activate - go to browser settings. Here are some instructions:
                 .buttons.are-small
-                  a.button(href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DAndroid&oco=1", target="_blank") Chrome for Android
-                  a.button(href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DDesktop&oco=1", target="_blank") Chrome for Desktop
+                  a.button(
+                    href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DAndroid&oco=1",
+                    target="_blank"
+                  ) Chrome for Android
+                  a.button(
+                    href="https://support.google.com/chrome/answer/114662?visit_id=637065060206456040-66104529&rd=1&co=GENIE.Platform%3DDesktop&oco=1",
+                    target="_blank"
+                  ) Chrome for Desktop
                   a.button(href="https://support.apple.com/en-gb/guide/safari/sfri40734/mac", target="_blank") Safari for Desktop

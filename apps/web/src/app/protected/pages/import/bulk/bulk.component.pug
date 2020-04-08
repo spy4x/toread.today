@@ -13,7 +13,7 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
         span Import failed. Please try again.
     .notification.common-actions
       button.delete((click)="reset()")
-      div.text-decoration-none
+      .text-decoration-none
         p.has-text-weight-semibold File has been parsed.
         span You can set priority
         tt-priority-selector([priority]="priority", [asButton]="true", (set)="priority = $event")
@@ -23,7 +23,7 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
           [selectedIds]="inputTags",
           (toggle)="toggleTag($event)",
           [asButton]="true",
-          [hideSelected]="true",
+          [hideSelected]="true"
         )
         span for all links.
       div
@@ -45,10 +45,9 @@ ng-container(*ngIf="bookmarksImport$ | async as import; else instructions")
           i.far.fa-check-circle
         span Import has been completed.
       br
-      a.button.is-primary(routerLink="/app/links", [queryParams]="{status: 'new'}") Go to imported links
+      a.button.is-primary(routerLink="/app/links", [queryParams]="{ status: 'new' }") Go to imported links
 
-
-ng-template("#instructions"="")
+ng-template(#instructions="")
   .content
     ul
       li Browser bookmarks (.html file, folders will become tags)
@@ -58,9 +57,6 @@ ng-template("#instructions"="")
   p You can drag and drop a file as well.
   tt-upload-input((selected)="parseFile($event)")
 
-
-
 //button.button.my-1('(click)'='isImportVideoVisible = !isImportVideoVisible') Show/hide "How to" video
 //figure.image.is-16by9('*ngIf'='isImportVideoVisible')
-//  iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')
-
+// iframe.has-ratio(width='560' height='315' src='https://www.youtube.com/embed/dQw4w9WgXcQ' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')

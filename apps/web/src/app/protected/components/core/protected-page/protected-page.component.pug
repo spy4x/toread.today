@@ -1,4 +1,4 @@
-ng-template("#notAuthenticated"="")
+ng-template(#notAuthenticated="")
   tt-sign-in
 
 ng-container(*ngIf="userService.isAuthenticated$ | async; else notAuthenticated")

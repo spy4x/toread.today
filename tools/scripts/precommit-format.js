@@ -14,7 +14,10 @@ const formatAndStage = () => {
    */
   const command = `git diff --cached --name-only --diff-filter=ACM "*" | sed 's| |\\ |g'`;
   const result = exec(command);
-  const files = result.split('\n').filter(file => !!file);
+  const supportedFileExtensions = ['ts', 'js', 'css', 'sass', 'scss', 'pug', 'html', 'json'];
+  const files = result
+    .split('\n')
+    .filter(file => !!file && supportedFileExtensions.some(ext => file.endsWith('.' + ext)));
 
   if (!files.length) {
     console.log('No changed files');

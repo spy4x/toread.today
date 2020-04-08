@@ -1,39 +1,43 @@
 .dropdown.is-hoverable.is-right
-  .dropdown-trigger(title='Show notifications')
+  .dropdown-trigger(title="Show notifications")
     a
       span.icon.is-white.has-text-white
         i.far.fa-bell
-      .indicator('[class.is-hidden]'='!(isAnyNewNotification$ | async) && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)')
-  .dropdown-menu(role='notifications')
+      .indicator(
+        [class.is-hidden]="!(isAnyNewNotification$ | async) && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)"
+      )
+  .dropdown-menu(role="notifications")
     .dropdown-content.notification-messages
       //- Error
-      .dropdown-item('*ngIf'='error$ | async as error; else notifications')
-        p.has-text-danger {{error}}
+      .dropdown-item(*ngIf="error$ | async as error; else notifications")
+        p.has-text-danger {{ error }}
         .buttons.are-small.is-right
-          button.button('(click)'='hideError()')
+          button.button((click)="hideError()")
             span.icon
               i.fas.fa-times
             span Close
-      ng-template('#notifications'='')
-        ng-container('*ngIf'='allNotifications$ | async as notifications; else loading')
-          a.dropdown-item.mark-all-as-read(*ngIf='isAnyNewNotification$ | async', '(click)'='markNewAsRead()')
+      ng-template(#notifications="")
+        ng-container(*ngIf="allNotifications$ | async as notifications; else loading")
+          a.dropdown-item.mark-all-as-read(*ngIf="isAnyNewNotification$ | async", (click)="markNewAsRead()")
             span.icon
               i.fas.fa-check
             span Mark as read
-          ng-container('*ngFor'='let notification of notifications; last as isLast')
+          ng-container(*ngFor="let notification of notifications; last as isLast")
             .dropdown-item.notif
-              .line.first {{notification.text}}
+              .line.first {{ notification.text }}
               .line.second
-                a.indicator('[class.has-background-primary]'='notification.status === "new"',
-                '[class.has-background-grey]'='notification.status !== "new"',
-                '(click)'='markAsRead(notification.id)',
-                title='Mark as read')
-                .has-text-grey-light.is-size-7 {{notification.createdAt.toDate() | date:dateFormat}}
-                a.icon.button--delete.ml-auto('(click)'='delete(notification.id)')
+                a.indicator(
+                  [class.has-background-primary]="notification.status === 'new'",
+                  [class.has-background-grey]="notification.status !== 'new'",
+                  (click)="markAsRead(notification.id)",
+                  title="Mark as read"
+                )
+                .has-text-grey-light.is-size-7 {{ notification.createdAt.toDate() | date: dateFormat }}
+                a.icon.button--delete.ml-auto((click)="delete(notification.id)")
                   i.far.fa-trash-alt
-            hr.dropdown-divider('[ngClass]'='{"is-hidden": isLast}')
+            hr.dropdown-divider([ngClass]="{ 'is-hidden': isLast }")
 
-          .last-items-shown('*ngIf'='notifications.length === notificationsLimit') Last {{notificationsLimit}} items shown
+          .last-items-shown(*ngIf="notifications.length === notificationsLimit") Last {{ notificationsLimit }} items shown
 
           a.dropdown-item.has-text-info(*ngIf="isAnyUnreadRoadmapNotifications$ | async", routerLink="/app/roadmap")
             span.icon
@@ -48,15 +52,16 @@
               button.button.is-primary((click)="activatePushNotifications()") Yes
 
           .dropdown-item(*ngIf="updateService.newVersionAvailable$ | async as updateInfo")
-            div New version {{updateInfo.version}} is available.
-            div {{updateInfo.description}}
+            div New version {{ updateInfo.version }} is available.
+            div {{ updateInfo.description }}
             .buttons.is-right.are-small
               button.button.is-primary((click)="updateService.update()") Update
 
-          .dropdown-item('*ngIf'='!notifications.length && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)')
+          .dropdown-item(
+            *ngIf="!notifications.length && !(isAnyUnreadRoadmapNotifications$ | async) && !(isPushNotificationsQuestionVisible | async) && !(isPushNotificationsQuestionVisible$ | async) && !(updateService.newVersionAvailable$ | async)"
+          )
             span No notifications yet.
 
-        ng-template('#loading'='')
+        ng-template(#loading="")
           .dropdown-item
             button.button.is-loading.is-white.is-fullwidth Loading
-

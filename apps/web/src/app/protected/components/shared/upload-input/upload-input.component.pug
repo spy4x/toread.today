@@ -1,7 +1,13 @@
 .field
   .file.is-medium.is-primary.is-boxed
     label.file-label
-      input.file-input(type="file", name="Upload File", (change)="selected.emit($event)", title="Click to upload file", accept="text/html, text/plain")
+      input.file-input(
+        type="file",
+        name="Upload File",
+        (change)="selected.emit($event)",
+        title="Click to upload file",
+        accept="text/html, text/plain"
+      )
       span.file-cta
         span.file-icon
           i.fas.fa-upload
