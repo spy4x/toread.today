@@ -1,0 +1,87 @@
+.widget
+  .widget__header
+    h2.widget__header__title Filter
+  .widget__body.is-paddingless
+    a.dropdown-item((click)="setStatus('readToday')", [class.is-active]="isStatus('readToday')")
+      span.icon.has-text-primary
+        i.fas.fa-brain
+      span Read Today
+      span.badge(*ngIf="counter") {{ counter['statuses.new'] }}
+    a.dropdown-item((click)="setStatus('random')", [class.is-active]="isStatus('random')")
+      span.icon.has-text-link
+        i.fas.fa-random
+      span Random
+      span.badge(*ngIf="isStatus('random')")
+        a.icon(title="Randomise", (click)="randomise()")
+          i.fas.fa-sync
+    a.dropdown-item((click)="setFavourite()", [class.is-active]="isFavourite()")
+      span.icon.has-text-warning
+        i.fas.fa-star
+      span Favourites
+      span.badge(*ngIf="counter") {{ counter['favourites'] }}
+
+    .dropdown-divider
+
+    a.dropdown-item((click)="setStatus('all')", [class.is-active]="isStatus('all') && !isFavourite()")
+      span.icon.has-text-grey-light
+        i.fas.fa-list
+      span All links
+      span.badge(*ngIf="counter") {{ counter['all'] }}
+    a.dropdown-item((click)="setStatus('new')", [class.is-active]="isStatus('new')")
+      span.icon
+        i.far.fa-circle
+      span New
+      span.badge(*ngIf="counter") {{ counter['statuses.new'] }}
+    a.dropdown-item((click)="setStatus('opened')", [class.is-active]="isStatus('opened')")
+      span.icon.has-text-info
+        i.far.fa-play-circle
+      span Started
+      span.badge(*ngIf="counter") {{ counter['statuses.opened'] }}
+    a.dropdown-item((click)="setStatus('finished')", [class.is-active]="isStatus('finished')")
+      span.icon.has-text-success
+        i.far.fa-check-circle
+      span Finished
+      span.badge(*ngIf="counter") {{ counter['statuses.finished'] }}
+
+.widget
+  .widget__header
+    h2.widget__header__title Priority
+  .widget__body.is-paddingless
+    a.dropdown-item.has-text-grey-light((click)="setPriority(null)")
+      span.icon
+        i.fas.fa-times
+      span Any priority
+    a.dropdown-item((click)="setPriority(3)", [class.is-active]="isPriority(3)")
+      span.icon.has-text-danger
+        i.far.fa-flag
+      span Top priority
+    a.dropdown-item((click)="setPriority(2)", [class.is-active]="isPriority(2)")
+      span.icon.has-text-warning
+        i.far.fa-flag
+      span High priority
+    a.dropdown-item((click)="setPriority(1)", [class.is-active]="isPriority(1)")
+      span.icon.has-text-info
+        i.far.fa-flag
+      span Medium priority
+    a.dropdown-item((click)="setPriority(0)", [class.is-active]="isPriority(0)")
+      span.icon.has-text-dark
+        i.far.fa-flag
+      span Low priority
+
+.widget
+  .widget__header
+    h2.widget__header__title Tags
+  .widget__body.is-paddingless
+    a.dropdown-item.has-text-grey-light((click)="setTag(null)")
+      span.icon
+        i.fas.fa-times
+      span Any tag
+    a.dropdown-item(
+      *ngFor="let tag of tags; trackBy: trackByFn()",
+      (click)="setTag(tag.id)",
+      [class.is-active]="isTag(tag.id)",
+      [style.color]="tag.color"
+    )
+      span.icon
+        i.fas.fa-hashtag
+      span {{ tag.title }}

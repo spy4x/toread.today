@@ -1,16 +1,26 @@
 .mobile-full
   .columns
+    .column.column--filters(*ngIf="!(uiService.isMobile$ | async)")
+      tt-items-filter-desktop(
+        [tags]="tagService.tags$ | async",
+        [params]="itemsRequest.params$ | async",
+        [counter]="counter$ | async",
+        (changed)="routerHelper.toItemsWithFilter($event.filter)"
+      )
     .column
       .widget.widget--read-today
-        .widget__header
-          tt-items-filter(
+        .widget__header(*ngIf="uiService.isMobile$ | async")
+          tt-items-filter-mobile(
             [tags]="tagService.tags$ | async",
             [params]="itemsRequest.params$ | async",
             [counter]="counter$ | async",
             (changed)="routerHelper.toItemsWithFilter($event.filter)"
           )
         .widget__body.is-paddingless
-          tt-items-filter-description.widget__description([params]="itemsRequest.params$ | async")
+          tt-items-filter-description.widget__description(
+            *ngIf="uiService.isMobile$ | async",
+            [params]="itemsRequest.params$ | async"
+          )
           ng-container(*ngIf="itemsRequest.response$ | async as items")
             ng-container(*ngIf="items.length; else noItems")
               tt-list(

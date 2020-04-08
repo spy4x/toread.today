@@ -1,28 +1,33 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { ItemPriority, ItemsCounter, ItemStatus, Tag } from '../../../interfaces';
-import { ToggleTagEvent } from '../../../components/shared/items-list/list.component';
-import { RequestParams } from '../../../../services';
+import { EventEmitter, Input, Output } from '@angular/core';
+import { ItemPriority, ItemsCounter, ItemStatus, Tag } from '../../../../interfaces';
+import { ToggleTagEvent } from '../../../../components/shared/items-list/list.component';
+import { RequestParams } from '../../../../../services';
 import { defaultFilter } from './filter.interface';
+import { trackByFn } from '../../../../helpers';
 
-@Component({
-  selector: 'tt-items-filter',
-  templateUrl: './filter.component.pug',
-  styleUrls: ['./filter.component.sass'],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class ItemsFilterComponent {
+export class ItemsFilterBaseComponent {
   @Input() tags: Tag[];
   @Input() counter: ItemsCounter;
   @Input() params: RequestParams;
   @Output() changed = new EventEmitter<RequestParams>();
+  trackByFn = trackByFn;
 
-  toggleTagId(event: ToggleTagEvent) {
+  toggleTag(event: ToggleTagEvent) {
     this.changed.emit({
       ...this.params,
       filter: {
         ...this.params.filter,
         tagId: event.isSelected ? event.tagId : null
+      }
+    });
+  }
+
+  setTag(tagId: null | string) {
+    this.changed.emit({
+      ...this.params,
+      filter: {
+        ...this.params.filter,
+        tagId
       }
     });
   }
@@ -62,6 +67,14 @@ export class ItemsFilterComponent {
         isFavourite: true
       }
     });
+  }
+
+  isPriority(priority: null | ItemPriority): boolean {
+    return priority === this.params.filter.priority;
+  }
+
+  isTag(tagId: string): boolean {
+    return tagId === this.params.filter.tagId;
   }
 
   setPriority(priority: null | ItemPriority) {

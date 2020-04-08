@@ -84,6 +84,6 @@ ng-template(#regular="")
     tt-tag-selector.icon-alignment--last(
       [tags]="tags",
       [selectedIds]="params.filter.tagId ? [params.filter.tagId] : []",
-      (toggle)="toggleTagId($event)",
+      (toggle)="toggleTag($event)",
       [isAllTagsVisible]="true"
     )

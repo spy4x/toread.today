@@ -6,6 +6,7 @@ import {
   RequestParams,
   RouterHelperService,
   TagService,
+  UIService,
   UserService
 } from '../../../services';
 import { catchError, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
@@ -13,7 +14,7 @@ import { ItemPriority, NewFinishedMonthlyStatistics, User } from '../../interfac
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ROUTER_CONSTANTS } from '../../helpers';
-import { defaultFilter, Filter } from './filter/filter.interface';
+import { defaultFilter, Filter } from './filter/base/filter.interface';
 
 @Component({
   selector: 'tt-items',
@@ -85,6 +86,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
     public itemService: ItemService,
     public tagService: TagService,
     public routerHelper: RouterHelperService,
+    public uiService: UIService,
     private logger: LoggerService,
     private route: ActivatedRoute
   ) {}

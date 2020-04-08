@@ -1,4 +1,4 @@
-import { ItemPriority, ItemStatus } from '../../../interfaces/item.interface';
+import { ItemPriority, ItemStatus } from '../../../../interfaces/item.interface';
 
 export interface Filter {
   tagId: null | string;

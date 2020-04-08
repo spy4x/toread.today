@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Filter } from '../protected/pages/items/filter/filter.interface';
+import { Filter } from '../protected/pages/items/filter/base/filter.interface';
 import { ItemAddEvent } from '../protected/components/shared/items-add/items-add.component';
 
 @Injectable()
