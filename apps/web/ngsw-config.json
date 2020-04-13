@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.44.0",
-    "description": "[On Desktop] Move filters to the left as additional column."
+    "version": "1.44.1",
+    "description": "Improve link line UI."
   },
   "assetGroups": [
     {

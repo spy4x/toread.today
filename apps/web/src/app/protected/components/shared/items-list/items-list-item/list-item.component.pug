@@ -19,13 +19,13 @@
     )
 
   .actions.ml-auto.icon-alignment--last
-    .icon.is-small(*ngIf="item.urlParseStatus === 'notStarted'", title="Parsing URL...")
-      i.fas.fa-circle-notch.fa-spin
+    .icon.is-small.has-text-grey-lighter(*ngIf="item.urlParseStatus === 'notStarted'", title="Parsing URL...")
+      i.far.fa-compass.fa-spin
 
     .dropdown.is-hoverable.is-right(*ngIf="item.urlParseStatus === 'error'")
       .dropdown-trigger
         a.icon.has-text-warning
-          i.fas.fa-exclamation-triangle
+          i.fas.fa-exclamation-circle
       .dropdown-menu(role="menu")
         .dropdown-content
           .dropdown-item
@@ -37,39 +37,46 @@
               i.fas.fa-sync
             span Retry
 
-    .dropdown.is-hoverable.is-right(*ngIf="item.status === 'finished'")
+    .dropdown.is-hoverable.is-right
       .dropdown-trigger
-        a.icon(
-          [ngClass]="{ 'has-text-primary': item.rating === 1, 'has-text-danger': item.rating === -1, 'has-text-grey-light': !item.rating }"
-        )
-          i.far([ngClass]="{ 'fa-thumbs-up': item.rating !== -1, 'fa-thumbs-down': item.rating === -1 }")
+        //- Start/Finish/Change rating button + dropdown to change status
+        ng-container([ngSwitch]="item.status")
+          ng-container(*ngSwitchCase="'new'")
+            a.icon.has-text-grey-light
+              i.far.fa-circle
+          ng-container(*ngSwitchCase="'opened'")
+            span.icon.has-text-info
+              i.far.fa-dot-circle
+          ng-container(*ngSwitchCase="'finished'")
+            a.icon(
+              [class.has-text-success]="item.rating === ItemRatingEnum.positive",
+              [class.has-text-danger]="item.rating === ItemRatingEnum.negative"
+            )
+              i.far.fa-check-circle
       .dropdown-menu.dropdown-menu--w-none(role="menu")
         .dropdown-content
-          a.dropdown-item((click)="setRating(item.id, 1)", [class.is-hidden]="item.rating === 1")
+          a.dropdown-item(*ngIf="item.status !== 'new'", (click)="undoReading.emit(item.id)")
+            span.icon
+              i.far.fa-circle
+            span Mark as New
+          a.dropdown-item(*ngIf="item.status !== 'opened'", (click)="startReading.emit(item.id)")
+            span.icon.has-text-info
+              i.far.fa-envelope-open
+            span Mark as Opened
+          a.dropdown-item(
+            *ngIf="item.status !== 'finished' || item.rating !== ItemRatingEnum.positive",
+            (click)="finishReadingHandler(item.id, ItemRatingEnum.positive)"
+          )
             span.icon.has-text-success
-              i.far.fa-thumbs-up
-            span Mark as Useful
-          a.dropdown-item((click)="setRating(item.id, -1)", [class.is-hidden]="item.rating === -1")
+              i.far.fa-check-circle
+            span Mark as Finished & Useful
+          a.dropdown-item(
+            *ngIf="item.status !== 'finished' || item.rating !== ItemRatingEnum.negative",
+            (click)="finishReadingHandler(item.id, ItemRatingEnum.negative)"
+          )
             span.icon.has-text-danger
-              i.far.fa-thumbs-down
-            span Mark as Useless
-
-    .dropdown.is-hoverable.is-right(*ngIf="item.status === 'opened'")
-      .dropdown-trigger
-        button.button.finish.is-primary.is-small
-          span.icon
-            i.fas.fa-check
-          span Finish
-      .dropdown-menu.dropdown-menu--w-none(role="menu")
-        .dropdown-content
-          a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
-            span.icon.has-text-success
-              i.far.fa-thumbs-up
-            span Finish & mark as useful
-          a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
-            span.icon.has-text-danger
-              i.far.fa-thumbs-down
-            span Finish & mark as useless
+              i.far.fa-check-circle
+            span Mark as Finished & Useless
 
     a.icon.has-text-warning(
       (click)="toggleFavouriteHandler(item)",
@@ -87,24 +94,6 @@
             i.fas.fa-ellipsis-v(aria-hidden="true")
       .dropdown-menu(role="menu")
         .dropdown-content
-          a.dropdown-item(*ngIf="item.status !== 'new'", (click)="undoReading.emit(item.id)")
-            span.icon
-              i.far.fa-circle
-            span Mark as New
-          a.dropdown-item(*ngIf="item.status === 'finished'", (click)="startReading.emit(item.id)")
-            span.icon.has-text-info
-              i.far.fa-envelope-open
-            span Mark as Opened
-          ng-container(*ngIf="item.status === 'new'")
-            a.dropdown-item((click)="finishReadingHandler(item.id, 1)")
-              span.icon.has-text-success
-                i.far.fa-thumbs-up
-              span Mark as Finished & Useful
-            a.dropdown-item((click)="finishReadingHandler(item.id, -1)")
-              span.icon.has-text-danger
-                i.far.fa-thumbs-down
-              span Mark as Finished & Useless
-          hr.dropdown-divider
           a.dropdown-item(*ngIf="shareService.isSupported", (click)="share(item)")
             span.icon.has-text-info
               i.fas.fa-share-alt

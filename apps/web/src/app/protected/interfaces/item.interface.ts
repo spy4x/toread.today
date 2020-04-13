@@ -5,6 +5,11 @@ export type ItemType = null | 'website' | 'video' | 'article' | 'profile';
 export type ItemURLParseStatus = 'notStarted' | 'done' | 'error';
 export type ItemPriority = 0 | 1 | 2 | 3;
 export type ItemRating = -1 | 0 | 1;
+export enum ItemRatingEnum {
+  negative = -1,
+  neutral = 0,
+  positive = 1
+}
 
 export interface ItemSkeleton {
   url: string;

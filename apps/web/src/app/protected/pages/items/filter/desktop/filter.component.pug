@@ -34,7 +34,7 @@
       span.badge(*ngIf="counter") {{ counter['statuses.new'] }}
     a.dropdown-item((click)="setStatus('opened')", [class.is-active]="isStatus('opened')")
       span.icon.has-text-info
-        i.far.fa-play-circle
+        i.far.fa-dot-circle
       span Started
       span.badge(*ngIf="counter") {{ counter['statuses.opened'] }}
     a.dropdown-item((click)="setStatus('finished')", [class.is-active]="isStatus('finished')")

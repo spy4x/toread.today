@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { Item, ItemRating, Tag } from '../../../../interfaces';
+import { Item, ItemRating, ItemRatingEnum, Tag } from '../../../../interfaces';
 import {
   SetItemCommentEvent,
   SetItemPriorityEvent,
@@ -37,6 +37,7 @@ export class ListItemComponent {
   @Output() setTitle = new EventEmitter<SetItemTitleEvent>();
   @Output() setURL = new EventEmitter<SetItemURLEvent>();
   isNoteVisible = false;
+  ItemRatingEnum = ItemRatingEnum;
 
   constructor(public shareService: ShareService, private sanitizer: DomSanitizer) {}
 
