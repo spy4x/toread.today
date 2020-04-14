@@ -55,14 +55,6 @@
               i.far.fa-check-circle
       .dropdown-menu.dropdown-menu--w-none(role="menu")
         .dropdown-content
-          a.dropdown-item(*ngIf="item.status !== 'new'", (click)="undoReading.emit(item.id)")
-            span.icon
-              i.far.fa-circle
-            span Mark as New
-          a.dropdown-item(*ngIf="item.status !== 'opened'", (click)="startReading.emit(item.id)")
-            span.icon.has-text-info
-              i.far.fa-envelope-open
-            span Mark as Opened
           a.dropdown-item(
             *ngIf="item.status !== 'finished' || item.rating !== ItemRatingEnum.positive",
             (click)="finishReadingHandler(item.id, ItemRatingEnum.positive)"
@@ -77,6 +69,15 @@
             span.icon.has-text-danger
               i.far.fa-check-circle
             span Mark as Finished & Useless
+          .dropdown-divider
+          a.dropdown-item(*ngIf="item.status !== 'new'", (click)="undoReading.emit(item.id)")
+            span.icon
+              i.far.fa-circle
+            span Mark as New
+          a.dropdown-item(*ngIf="item.status !== 'opened'", (click)="startReading.emit(item.id)")
+            span.icon.has-text-info
+              i.far.fa-dot-circle
+            span Mark as Opened
 
     a.icon.has-text-warning(
       (click)="toggleFavouriteHandler(item)",
