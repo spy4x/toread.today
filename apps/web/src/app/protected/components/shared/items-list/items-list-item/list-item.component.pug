@@ -19,7 +19,7 @@
     )
 
   .actions.ml-auto.icon-alignment--last
-    .icon.is-small.has-text-grey-lighter(*ngIf="item.urlParseStatus === 'notStarted'", title="Parsing URL...")
+    span.icon.has-text-grey-lighter(*ngIf="item.urlParseStatus === 'notStarted'", title="Parsing URL...")
       i.far.fa-compass.fa-spin
 
     .dropdown.is-hoverable.is-right(*ngIf="item.urlParseStatus === 'error'")
