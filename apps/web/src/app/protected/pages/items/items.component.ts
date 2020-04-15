@@ -159,12 +159,14 @@ export class ItemsComponent implements OnInit, OnDestroy {
   next(): void {
     const params = this.itemsRequest.params$.value;
     params.pagination.page++;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.itemsRequest.params$.next(params);
   }
 
   prev(): void {
     const params = this.itemsRequest.params$.value;
     params.pagination.page = 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.itemsRequest.params$.next(params);
   }
 
@@ -197,6 +199,8 @@ export class ItemsComponent implements OnInit, OnDestroy {
       }
     }
 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     this.itemsRequest.params$.next({
       ...params,
       pagination: {
@@ -204,6 +208,5 @@ export class ItemsComponent implements OnInit, OnDestroy {
         page: 0
       }
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

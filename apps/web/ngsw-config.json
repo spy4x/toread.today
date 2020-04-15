@@ -2,8 +2,8 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.44.1",
-    "description": "Improve link line UI."
+    "version": "1.44.2",
+    "description": "Fix scroll to the top of the page when filter changes or next/prev page clicked."
   },
   "assetGroups": [
     {
