@@ -70,7 +70,7 @@ export class ItemsComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
-  OPENED_ITEMS_LIMIT = 3;
+  OPENED_ITEMS_LIMIT = 1;
   openedItemsRequest = this.itemService.getRequest(
     {
       filter: { status: 'opened' },

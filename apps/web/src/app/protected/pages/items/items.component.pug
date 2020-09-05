@@ -7,6 +7,7 @@
         [counter]="counter$ | async",
         (changed)="routerHelper.toItemsWithFilter($event.filter)"
       )
+
     .column
       .widget.widget--read-today
         .widget__header(*ngIf="uiService.isMobile$ | async")
@@ -21,6 +22,38 @@
             *ngIf="uiService.isMobile$ | async",
             [params]="itemsRequest.params$ | async"
           )
+
+          ng-container(*ngIf="openedItemsRequest.response$ | async as openedItems")
+            ng-container(*ngIf="openedItems.length && itemsRequest.params$.value.filter.status === 'readToday'")
+              .widget.widget--recently-opened
+                .widget__body.is-paddingless
+                  .widget__description
+                    span Recently opened
+                    ng-container(*ngIf="counter$ | async as counter")
+                      .more(*ngIf="counter['statuses.opened'] > OPENED_ITEMS_LIMIT")
+                        a.icon-alignment--last(routerLink="/app/links", [queryParams]="{ status: 'opened' }")
+                          span {{ counter['statuses.opened'] - 1 }} more
+                          span.icon
+                            i.fas.fa-chevron-right
+                  tt-list(
+                    [items]="openedItems",
+                    [tags]="tagService.tags$ | async",
+                    (startReading)="itemService.startReading($event)",
+                    (finishReading)="itemService.finishReading($event)",
+                    (undoReading)="itemService.markAsNew($event)",
+                    (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
+                    (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
+                    (delete)="itemService.remove($event)",
+                    (retryURLParsing)="itemService.retryURLParsing($event)",
+                    (tagClick)="routerHelper.toItemsWithFilter({ tagId: $event })",
+                    (changeRating)="itemService.changeRating($event.id, $event.rating)",
+                    (changeComment)="itemService.changeComment($event.id, $event.comment)",
+                    (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
+                    (setTitle)="itemService.setTitle($event.item.id, $event.title)",
+                    (setURL)="itemService.setURL($event.item.id, $event.url)"
+                  )
+                  .widget__description.rest Rest
+
           ng-container(*ngIf="itemsRequest.response$ | async as items")
             ng-container(*ngIf="items.length; else noItems")
               tt-list(
@@ -52,38 +85,8 @@
               a.inline-block((click)="focusOnAddInput()") Try add a link 🔗
               div or
               a.inline-block(routerLink="/app/import") Import your bookmarks 🔖
-    .column
-      ng-container(*ngIf="openedItemsRequest.response$ | async as openedItems")
-        ng-container(*ngIf="openedItems.length && itemsRequest.params$.value.filter.status !== 'opened'")
-          .widget.widget--recently-opened
-            .widget__header
-              h2.widget__header__title Don't forget to finish:
-            .widget__body.is-paddingless
-              .widget__description
-                span Recently opened
-              tt-list(
-                [items]="openedItems",
-                [tags]="tagService.tags$ | async",
-                (startReading)="itemService.startReading($event)",
-                (finishReading)="itemService.finishReading($event)",
-                (undoReading)="itemService.markAsNew($event)",
-                (toggleTag)="itemService.toggleTag($event.itemId, $event.isSelected, $event.tagId)",
-                (toggleFavourite)="itemService.toggleFavourite($event.id, $event.isFavourite)",
-                (delete)="itemService.remove($event)",
-                (retryURLParsing)="itemService.retryURLParsing($event)",
-                (tagClick)="routerHelper.toItemsWithFilter({ tagId: $event })",
-                (changeRating)="itemService.changeRating($event.id, $event.rating)",
-                (changeComment)="itemService.changeComment($event.id, $event.comment)",
-                (setPriority)="itemService.setPriority($event.item.id, $event.priority)",
-                (setTitle)="itemService.setTitle($event.item.id, $event.title)",
-                (setURL)="itemService.setURL($event.item.id, $event.url)"
-              )
-              .more(*ngIf="openedItems.length >= OPENED_ITEMS_LIMIT")
-                a.icon-alignment--last(routerLink="/app/links", [queryParams]="{ status: 'opened' }")
-                  span More recently opened items
-                  span.icon
-                    i.fas.fa-chevron-right
 
+    .column
       .widget.widget--statistics-monthly
         .widget__header
           h2.widget__header__title Statistics

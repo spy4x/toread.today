@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentSnapshot } from '@angular/fire/firestore';
 import { BehaviorSubject, combineLatest, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 import { LoggerService } from '../logger.service';
 import { UserService } from '../user.service';
@@ -411,7 +411,8 @@ export class ItemService {
         catchError(error => {
           console.error(`getCounter$ for userId:`, this.userService.userId, error);
           return of(null);
-        })
+        }),
+        shareReplay(1)
       );
   }
 

@@ -4,6 +4,15 @@ tt-items
   .column--filters
     max-width: 220px
   .widget--recently-opened
-    .more
-      text-align: right
-      margin: $baseSize $sidePadding
+    margin-top: $baseSize
+    @media(min-width: 480px)
+      margin-top: $baseSize / 2
+    .widget__description
+      display: flex
+      align-items: baseline
+      justify-content: space-between
+      .more
+        .icon
+          margin-left: 0
+    .widget__description.rest
+      margin-top: $baseSize
